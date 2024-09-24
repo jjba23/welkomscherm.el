@@ -16,13 +16,24 @@
   :type 'string
   :group 'welkomscherm)
 
+(defvar welkomscherm-bookmarks '("~/Ontwikkeling/Persoonlijk/dotfiles/users/joe/emacs/init.el"
+                                 "~/Ontwikkeling/Persoonlijk/welkomscherm.el/welkomscherm.el")
+  ""  )
+
 (defun welkomscherm ()
   (interactive)
+  (kill-buffer welkomscherm-buffer-name)
   (let ((buf (get-buffer-create welkomscherm-buffer-name)))
     (with-current-buffer welkomscherm-buffer-name
       (read-only-mode -1)
       (welkomscherm-insert-muted welkomscherm-buffer-name)
       (center-line)
+      (insert "\n")
+      (dolist (el welkomscherm-bookmarks)
+        (print el)
+        (insert-button el :action (find-file el))
+        (insert "\n")
+        )
       (insert "\n")
       (read-only-mode 1)
       )
