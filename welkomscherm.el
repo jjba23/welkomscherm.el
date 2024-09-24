@@ -31,7 +31,7 @@
       (insert "\n")
       (dolist (el welkomscherm-bookmarks)
         (print el)
-        (insert-button el :action (find-file el))
+        (insert-button el '(:action '(find-file el)))
         (insert "\n")
         )
       (insert "\n")
