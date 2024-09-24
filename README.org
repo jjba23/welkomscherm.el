@@ -1,0 +1,11 @@
+* welkomscherm.el
+
+/welkomscherm/ means welcome screen in the Dutch language.
+
+#+begin_html
+<div>
+<img src="https://img.shields.io/badge/GNU%20Emacs-7F5AB6?logo=gnuemacs&logoColor=fff&style=plastic" alt="GNU Emacs"/>
+</div>
+#+end_html
+
+WIP dashboard package for Emacs.

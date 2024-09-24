@@ -1,0 +1,23 @@
+name: Emacs Lisp lint
+on:
+  push:
+    branches:
+      - trunk
+  pull_request:
+    types:
+      - opened
+      - edited
+jobs:
+  emacs-lisp-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Set up Emacs
+        uses: purcell/setup-emacs@master
+        with:
+          version: 29.4
+      - name: Emacs Lisp check
+        uses: leotaku/elisp-check@master
+        with:
+          file: welkomscherm.el
