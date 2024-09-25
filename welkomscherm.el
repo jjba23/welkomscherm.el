@@ -53,35 +53,50 @@
   :type '(list string)
   :group 'welkomscherm)
 
-(defcustom welkomscherm-bookmarks '("~/.emacs.d/init.el"
-                                    "~/.ssh/config")
-  ""
-  :type '(list string)
+
+
+(defcustom welkomscherm-bookmarks '( ("dotfiles" . "~/Ontwikkeling/Persoonlijk/dotfiles/")
+                                     ("notes" . "~/Ontwikkeling/Persoonlijk/private-notes/")
+                                     ("emacs config" . "~/Ontwikkeling/Persoonlijk/dotfiles/users/joe/emacs/init.el")
+                                     ("wikimusic-api" . "~/Ontwikkeling/Persoonlijk/wikimusic-api/")
+                                     ("wikimusic-ssr" . "~/Ontwikkeling/Persoonlijk/wikimusic-ssr/")
+                                     )
+  "Bookmark alias and path pairs."
+  :type 'alist
   :group 'welkomscherm)
 
+
+
+(defun welkomscherm-on-button-click (btn)
+  (let (
+        (welkomscherm-path (button-get btn 'welkomscherm-path))
+        )
+    
+    (find-file welkomscherm-path)))
+
 (defun welkomscherm-insert ()
-  ""
+  "Render a new Welkomscherm."
+
   (dolist (x welkomscherm-top-title)
     (welkomscherm-insert-muted x)
     (center-line)
-    (welkomscherm-insert-new-line)
-    )
+    (welkomscherm-insert-new-line))
   
   (center-line)
   (welkomscherm-insert-new-line)
   (welkomscherm-insert-new-line)
   (dolist (x welkomscherm-bookmarks)
-    (insert-button x
-                   'my-file-path x
-                   'action (lambda(btn) (find-file (button-get btn 'my-file-path))))
+    (insert-button (car x)
+                   'welkomscherm-alias (car x)
+                   'welkomscherm-path (cdr x)
+                   'action 'welkomscherm-on-button-click)
     (center-line)
     (welkomscherm-insert-new-line)
     )
-  (welkomscherm-insert-new-line)
-  )
+  (welkomscherm-insert-new-line))
 
 (defun welkomscherm ()
-  "Start a new Welkomscherm."
+  "Start a new Welkomscherm killing any live previous instances."
   (interactive)
   (when (buffer-live-p (get-buffer welkomscherm-buffer-name)) (kill-buffer welkomscherm-buffer-name))
   
