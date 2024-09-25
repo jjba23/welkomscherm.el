@@ -31,19 +31,19 @@ An example installation with Elpaca:
           welkomscherm-use-section-title t)
 
 
-    (setq welkomscherm-bookmarks-top
+    (setq welkomscherm-bookmarks-personal
           '((("dotfiles" . "~/Dev/Personal/dotfiles/")
              ("notes" . "~/Dev/Personal/private-notes/")
              ("emacs config" . "~/Dev/Personal/dotfiles/users/joe/emacs/init.el")
              )
             (("second-row-api" . "~/Dev/Personal/second-row-api/README.md")
              ("second-row-ssr" . "~/Dev/Personal/second-row-ssr/"))))
-    (setq welkomscherm-bookmarks-bottom
+    (setq welkomscherm-bookmarks-work
           '((("my-work" . "~/Dev/Work/my-work/")
              ("hem-wiki" . "~/Dev/Work/hem-wiki/"))          
             ))
 
-    (setq welkomscherm-middle-buttons
+    (setq welkomscherm-buttons-actions
           '((("*scratch*" . (lambda(btn) (switch-to-buffer "*scratch*")))
              ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))
              ("re-render me" . (lambda(btn) (welkomscherm)))
