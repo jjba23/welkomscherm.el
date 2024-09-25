@@ -1,4 +1,4 @@
-;;; welkomscherm.el --- Proportionally sized faces -*- lexical-binding: t -*-
+;;; welkomscherm.el --- Simple welcome screen / dashboard -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2024 Josep Bigorra
 
@@ -7,7 +7,7 @@
 ;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;; URL: https://github.com/jjba23/tekengrootte.el
 ;; Keywords: faces
-;; Package: tekengrootte
+;; Package: welkomscherm
 ;; Package-Requires: ((emacs "25.1") (page-break-lines "0.15"))
 
 
