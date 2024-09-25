@@ -11,7 +11,7 @@
 Simple and customizable dashboard package for Emacs.
 
 #+begin_html
-<img src="./resources/tekengrootte.webp"/>
+<img src="./resources/2024-09-25.png"/>
 #+end_html
 
 
