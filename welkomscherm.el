@@ -66,23 +66,19 @@
   "" :type 'string :group 'welkomscherm)
 
 (defcustom welkomscherm-bookmarks-top
-  '((("dotfiles" . "~/Ontwikkeling/Persoonlijk/dotfiles/")
-     ("notes" . "~/Ontwikkeling/Persoonlijk/private-notes/")
-     ("emacs config" . "~/Ontwikkeling/Persoonlijk/dotfiles/users/joe/emacs/init.el")
+  '((("row0c0" . "~/Dev/row0c0")
+     ("row0c1" . "~/Downloads/some-file.pdf")
      )
-    (("wikimusic-api" . "~/Ontwikkeling/Persoonlijk/wikimusic-api/")
-     ("wikimusic-ssr" . "~/Ontwikkeling/Persoonlijk/wikimusic-ssr/")))
+    (("row1c0" . "~/Documents/row1c0")
+     ))
   "Bookmark alias and path pairs shown up top."
   :type 'alist
   :group 'welkomscherm)
 
 
-
-
 (defcustom welkomscherm-bookmarks-bottom
-  '((("Vandebron" . "~/Ontwikkeling/Werk/Vandebron/")
-     ("hem-wiki" . "~/Ontwikkeling/Werk/hem-wiki/"))
-    
+  '((("work-project-1" . "~/Work/work-project-1/")
+     ("wiki-work" . "~/Work/wiki-work/"))    
     )
   "Bookmark alias and path pairs shown down below."
   :type 'alist
