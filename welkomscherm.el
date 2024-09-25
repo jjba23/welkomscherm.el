@@ -145,7 +145,7 @@
   (when welkomscherm-use-section-title
     (welkomscherm-insert-muted welkomscherm-bookmarks-personal-name)) 
   (welkomscherm-insert-new-line)
-  (welkomscherm-insert-bookmark-rows welkomscherm-bookmarks-top)
+  (welkomscherm-insert-bookmark-rows welkomscherm-bookmarks-personal)
 
   (welkomscherm-maybe-form-feed)
   (welkomscherm-insert-new-line)
