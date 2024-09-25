@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2024 Josep Bigorra
 
-;; Version: 0.1.1
+;; Version: 0.1.2
 ;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;; URL: https://github.com/jjba23/tekengrootte.el
