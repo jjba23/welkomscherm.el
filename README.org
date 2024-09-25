@@ -51,3 +51,6 @@ An example installation with Elpaca:
             ))
     )
 #+end_src
+
+** Project management - Backlog
+**** Add recent files section, think also of recent projects with project.el, and allow user to provide mechanisms to abbreviate paths
