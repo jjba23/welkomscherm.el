@@ -43,6 +43,8 @@
 
 (defun welkomscherm-insert-new-line () (insert "\n"))
 
+(defun welkomscherm-insert-spacer () (insert "   "))
+
 (defcustom welkomscherm-buffer-name "*welkomscherm*"
   ""
   :type 'string
@@ -54,18 +56,45 @@
   :group 'welkomscherm)
 
 
+(defcustom welkomscherm-bookmarks-top-name "bookmarks: "
+  "" :type 'string :group 'welkomscherm)
 
-(defcustom welkomscherm-bookmarks '( ("dotfiles" . "~/Ontwikkeling/Persoonlijk/dotfiles/")
-                                     ("notes" . "~/Ontwikkeling/Persoonlijk/private-notes/")
-                                     ("emacs config" . "~/Ontwikkeling/Persoonlijk/dotfiles/users/joe/emacs/init.el")
-                                     ("wikimusic-api" . "~/Ontwikkeling/Persoonlijk/wikimusic-api/")
-                                     ("wikimusic-ssr" . "~/Ontwikkeling/Persoonlijk/wikimusic-ssr/")
-                                     )
-  "Bookmark alias and path pairs."
+(defcustom welkomscherm-bookmarks-middle-name "actions: "
+  "" :type 'string :group 'welkomscherm)
+
+(defcustom welkomscherm-bookmarks-bottom-name "work: "
+  "" :type 'string :group 'welkomscherm)
+
+(defcustom welkomscherm-bookmarks-top
+  '((("dotfiles" . "~/Ontwikkeling/Persoonlijk/dotfiles/")
+     ("notes" . "~/Ontwikkeling/Persoonlijk/private-notes/")
+     ("emacs config" . "~/Ontwikkeling/Persoonlijk/dotfiles/users/joe/emacs/init.el")
+     )
+    (("wikimusic-api" . "~/Ontwikkeling/Persoonlijk/wikimusic-api/")
+     ("wikimusic-ssr" . "~/Ontwikkeling/Persoonlijk/wikimusic-ssr/")))
+  "Bookmark alias and path pairs shown up top."
   :type 'alist
   :group 'welkomscherm)
 
 
+
+
+(defcustom welkomscherm-bookmarks-bottom
+  '((("Vandebron" . "~/Ontwikkeling/Werk/Vandebron/")
+     ("hem-wiki" . "~/Ontwikkeling/Werk/hem-wiki/"))
+    
+    )
+  "Bookmark alias and path pairs shown down below."
+  :type 'alist
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-middle-buttons
+  '((("*scratch*" . (lambda(btn) (switch-to-buffer "*scratch*")))
+     ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))                                          )
+    )
+  "Buttons with desired actions in the middle."
+  :type 'alist
+  :group 'welkomscherm)
 
 (defun welkomscherm-on-button-click (btn)
   (let (
@@ -85,14 +114,52 @@
   (center-line)
   (welkomscherm-insert-new-line)
   (welkomscherm-insert-new-line)
-  (dolist (x welkomscherm-bookmarks)
-    (insert-button (car x)
-                   'welkomscherm-alias (car x)
-                   'welkomscherm-path (cdr x)
-                   'action 'welkomscherm-on-button-click)
-    (center-line)
+
+  (welkomscherm-insert-muted welkomscherm-bookmarks-top-name)
+  (welkomscherm-insert-new-line)
+
+  (dolist (row welkomscherm-bookmarks-top)
+    (dolist (x row)
+      (insert-button (car x)
+                     'welkomscherm-alias (car x)
+                     'welkomscherm-path (cdr x)
+                     'action 'welkomscherm-on-button-click)
+      (center-line)
+      (welkomscherm-insert-spacer))
+    (welkomscherm-insert-new-line))
+  
+  (welkomscherm-insert-new-line)
+  (welkomscherm-insert-new-line)
+
+  (welkomscherm-insert-muted welkomscherm-bookmarks-middle-name)
+  (welkomscherm-insert-new-line)
+  (dolist (row welkomscherm-middle-buttons)
+    (dolist (x row)
+      (insert-button (car x)
+                     'action (cdr x))
+      (center-line)
+      (welkomscherm-insert-spacer))
+    (welkomscherm-insert-new-line))
+
+
+
+  (welkomscherm-insert-new-line)
+
+  (welkomscherm-insert-muted welkomscherm-bookmarks-bottom-name)
+  (welkomscherm-insert-new-line)
+  
+  (dolist (row welkomscherm-bookmarks-bottom)
+    (dolist (x row)
+      (insert-button (car x)
+                     'welkomscherm-alias (car x)
+                     'welkomscherm-path (cdr x)
+                     'action 'welkomscherm-on-button-click)
+      (center-line)
+      (welkomscherm-insert-spacer))
     (welkomscherm-insert-new-line)
     )
+  
+  
   (welkomscherm-insert-new-line))
 
 (defun welkomscherm ()
@@ -105,13 +172,11 @@
       (read-only-mode -1)
       (setq-local line-spacing 4)
       (welkomscherm-insert)
-      (read-only-mode 1)
-      )
-    (switch-to-buffer buf)
-    )
-  )
+      (read-only-mode 1))
+    (switch-to-buffer buf)))
 
 
 (provide 'welkomscherm)
 
 ;;; welkomscherm.el ends here
+
