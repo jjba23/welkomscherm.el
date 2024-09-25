@@ -86,7 +86,10 @@
 
 (defcustom welkomscherm-middle-buttons
   '((("*scratch*" . (lambda(btn) (switch-to-buffer "*scratch*")))
-     ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))                                          )
+     ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))
+     ("re-render me" . (lambda(btn) (welkomscherm)))
+     )
+    
     )
   "Buttons with desired actions in the middle."
   :type 'alist
@@ -158,7 +161,7 @@
   (let ((buf (get-buffer-create welkomscherm-buffer-name)))
     (with-current-buffer buf
       (read-only-mode -1)
-      (setq-local line-spacing 4)
+      (setq line-spacing 12)
       (welkomscherm-insert)
       (read-only-mode 1))
     (switch-to-buffer buf)))
