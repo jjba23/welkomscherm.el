@@ -8,4 +8,46 @@
 </div>
 #+end_html
 
-WIP dashboard package for Emacs.
+Simple and customizable dashboard package for Emacs.
+
+#+begin_html
+<img src="./resources/tekengrootte.webp"/>
+#+end_html
+
+
+** Installing
+
+This package is not (yet) available in popular Emacs repositories such as MELPA or ELPA.
+An example installation with Elpaca:
+
+#+begin_src emacs-lisp
+  (use-package welkomscherm
+    :ensure (:host github :repo "jjba23/welkomscherm.el" :branch "trunk")
+    :bind (("C-c SPC SPC" . welkomscherm)
+           )
+    :init
+    (setq welkomscherm-use-form-feed nil
+          welkomscherm-centered t
+          welkomscherm-use-section-title t)
+
+
+    (setq welkomscherm-bookmarks-top
+          '((("dotfiles" . "~/Dev/Personal/dotfiles/")
+             ("notes" . "~/Dev/Personal/private-notes/")
+             ("emacs config" . "~/Dev/Personal/dotfiles/users/joe/emacs/init.el")
+             )
+            (("second-row-api" . "~/Dev/Personal/second-row-api/README.md")
+             ("second-row-ssr" . "~/Dev/Personal/second-row-ssr/"))))
+    (setq welkomscherm-bookmarks-bottom
+          '((("my-work" . "~/Dev/Work/my-work/")
+             ("hem-wiki" . "~/Dev/Work/hem-wiki/"))          
+            ))
+
+    (setq welkomscherm-middle-buttons
+          '((("*scratch*" . (lambda(btn) (switch-to-buffer "*scratch*")))
+             ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))
+             ("re-render me" . (lambda(btn) (welkomscherm)))
+             )
+            ))
+    )
+#+end_src
