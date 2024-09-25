@@ -111,7 +111,6 @@
     (center-line)
     (welkomscherm-insert-new-line))
   
-  (center-line)
   (welkomscherm-insert-new-line)
   (welkomscherm-insert-new-line)
 
@@ -124,40 +123,33 @@
                      'welkomscherm-alias (car x)
                      'welkomscherm-path (cdr x)
                      'action 'welkomscherm-on-button-click)
-      (center-line)
       (welkomscherm-insert-spacer))
     (welkomscherm-insert-new-line))
   
-  (welkomscherm-insert-new-line)
-  (welkomscherm-insert-new-line)
 
+  (welkomscherm-insert-new-line)
   (welkomscherm-insert-muted welkomscherm-bookmarks-middle-name)
   (welkomscherm-insert-new-line)
   (dolist (row welkomscherm-middle-buttons)
     (dolist (x row)
       (insert-button (car x)
                      'action (cdr x))
-      (center-line)
       (welkomscherm-insert-spacer))
     (welkomscherm-insert-new-line))
 
 
 
   (welkomscherm-insert-new-line)
-
   (welkomscherm-insert-muted welkomscherm-bookmarks-bottom-name)
   (welkomscherm-insert-new-line)
-  
   (dolist (row welkomscherm-bookmarks-bottom)
     (dolist (x row)
       (insert-button (car x)
                      'welkomscherm-alias (car x)
                      'welkomscherm-path (cdr x)
                      'action 'welkomscherm-on-button-click)
-      (center-line)
       (welkomscherm-insert-spacer))
-    (welkomscherm-insert-new-line)
-    )
+    (welkomscherm-insert-new-line))
   
   
   (welkomscherm-insert-new-line))
