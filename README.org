@@ -23,13 +23,11 @@ An example installation with Elpaca:
 #+begin_src emacs-lisp
   (use-package welkomscherm
     :ensure (:host github :repo "jjba23/welkomscherm.el" :branch "trunk")
-    :bind (("C-c SPC SPC" . welkomscherm)
-           )
+    :bind (("C-c SPC SPC" . welkomscherm))
     :init
     (setq welkomscherm-use-form-feed nil
           welkomscherm-centered t
           welkomscherm-use-section-title t)
-
 
     (setq welkomscherm-bookmarks-personal
           '((("dotfiles" . "~/Dev/Personal/dotfiles/")
@@ -38,24 +36,21 @@ An example installation with Elpaca:
              )
             (("second-row-api" . "~/Dev/Personal/second-row-api/README.md")
              ("second-row-ssr" . "~/Dev/Personal/second-row-ssr/"))))
+    
     (setq welkomscherm-bookmarks-work
           '((("my-work" . "~/Dev/Work/my-work/")
-             ("hem-wiki" . "~/Dev/Work/hem-wiki/"))          
-            ))
+             ("hem-wiki" . "~/Dev/Work/hem-wiki/"))))
 
     (setq welkomscherm-buttons-actions
-          '((("*scratch*" . (lambda(btn) (switch-to-buffer "*scratch*")))
-             ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))
-             ("re-render me" . (lambda(btn) (welkomscherm)))
-             )
-            ))
-    )
-#+end_src
+          '((("*scratch*" . (lambda (btn) (switch-to-buffer "*scratch*")))
+             ("*Messages*" . (lambda (btn) (switch-to-buffer "*Messages*")))
+             ("re-render me" . (lambda (btn) (welkomscherm)))))))
+            #+end_src
 
 ** Welkomscherm at startup
 If you want the welkomscherm to be your initial buffer when you start a new emacsclient (either GUI or terminal) then add this to your Emacs config:
 #+begin_src emacs-lisp
-    (setq initial-buffer-choice
+  (setq initial-buffer-choice
         (lambda () (welkomscherm) (get-buffer welkomscherm-buffer-name)))
 #+end_src
 
