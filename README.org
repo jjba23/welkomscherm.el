@@ -8,7 +8,7 @@
 </div>
 #+end_html
 
-Simple and customizable dashboard package for Emacs.
+Simple, customizable and elegant dashboard package for Emacs. Compatible with GUI and TUI Emacs (> 25).
 
 #+begin_html
 <img src="./resources/2024-09-25.png"/>
@@ -51,6 +51,15 @@ An example installation with Elpaca:
             ))
     )
 #+end_src
+
+** Welkomscherm at startup
+If you want the welkomscherm to be your initial buffer when you start a new emacsclient (either GUI or terminal) then add this to your Emacs config:
+#+begin_src emacs-lisp
+    (setq initial-buffer-choice
+        (lambda () (welkomscherm) (get-buffer welkomscherm-buffer-name)))
+#+end_src
+
+Do note that if using ~use-package~ it's recommendable to apply this setting in your ~(use-package emacs)~ declaration.
 
 ** Project management - Backlog
 **** Add recent files section, think also of recent projects with project.el, and allow user to provide mechanisms to abbreviate paths
