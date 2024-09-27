@@ -84,13 +84,16 @@
   :type 'string :group 'welkomscherm)
 
 (defcustom welkomscherm-use-form-feed nil
-  "" :type 'boolean :group 'welkomscherm)
+  "User option to enable use of form feeds to separate sections."
+  :type 'boolean :group 'welkomscherm)
 
 (defcustom welkomscherm-centered t
-  "" :type 'boolean :group 'welkomscherm)
+  "User option to enable use of centered text."
+  :type 'boolean :group 'welkomscherm)
 
 (defcustom welkomscherm-use-section-title t
-  "" :type 'boolean :group 'welkomscherm)
+  "User option to enable display of section titles."
+  :type 'boolean :group 'welkomscherm)
 
 (defcustom welkomscherm-bookmarks-personal
   '((("row0c0" . "~/Dev/row0c0")
