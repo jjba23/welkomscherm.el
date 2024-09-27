@@ -32,31 +32,40 @@
 
 (require 'page-break-lines)
 
-(defgroup welkomscherm ()
-  ""
+(defgroup welkomscherm nil
+  "Simple welcome screen / dashboard for Emacs."
   :group 'tools)
 
-(defface welkomscherm-muted-face '((t (:inherit 'font-lock-comment-face ))) ""
+(defface welkomscherm-muted-face
+  '((t (:inherit 'font-lock-comment-face )))
+  "Face used to draw headers and titles."
   :group 'welkomscherm)
 
-
 (defun welkomscherm-insert-muted (x)
+  "Insert muted text X into the welkomscherm buffer with optional centering."
   (insert (propertize x 'face 'welkomscherm-muted-face))
   (when welkomscherm-centered (center-line)))
 
-(defun welkomscherm-insert-new-line () (insert "\n"))
+(defun welkomscherm-insert-new-line ()
+  "Insert new line into the welkomscherm buffer."
+  (insert "\n"))
 
-(defun welkomscherm-insert-form-feed () (insert "\f"))
+(defun welkomscherm-insert-form-feed ()
+  "Insert new form feed (hr) into the welkomscherm buffer."
+  (insert "\f"))
 
-(defun welkomscherm-insert-spacer () (insert "  "))
+(defun welkomscherm-insert-spacer ()
+  "Insert a spacer into the welkomscher buffer."
+  (insert "  "))
 
 (defcustom welkomscherm-buffer-name "*welkomscherm*"
-  ""
+  "Name of the welkomscherm buffer."
   :type 'string
   :group 'welkomscherm)
 
 (defcustom welkomscherm-top-title
-  '("While any editor can save your files" "only Emacs can save your soul !")
+  '("While any editor can save your files"
+    "only Emacs can save your soul !")
   "Text lines to show as top title banner."
   :type '(list string)
   :group 'welkomscherm)
@@ -107,8 +116,8 @@
   :type 'alist
   :group 'welkomscherm)
 
-(defun welkomscherm-on-button-click (btn)
-  ""
+(defun welkomscherm-on-bookmark-click (btn)
+  "Action to perform upon clicking a bookmark BTN in welkomscherm."
   (let ((welkomscherm-path (button-get btn 'welkomscherm-path)))
     (find-file welkomscherm-path)))
 
@@ -119,17 +128,17 @@
       (insert-button (car x)
                      'welkomscherm-alias (car x)
                      'welkomscherm-path (cdr x)
-                     'action 'welkomscherm-on-button-click)
+                     'action 'welkomscherm-on-bookmark-click)
       (welkomscherm-insert-spacer))
     (welkomscherm-maybe-centered)
     (welkomscherm-insert-new-line)))
 
 (defun welkomscherm-maybe-form-feed ()
-  ""
+  "Insert a form feed character based on user preference."
   (when welkomscherm-use-form-feed (welkomscherm-insert-form-feed)))
 
 (defun welkomscherm-maybe-centered ()
-  ""
+  "Center current line based on user preference."
   (when welkomscherm-centered (center-line)))
 
 (defun welkomscherm-insert ()
@@ -143,7 +152,7 @@
 
   (welkomscherm-maybe-form-feed)
   (when welkomscherm-use-section-title
-    (welkomscherm-insert-muted welkomscherm-bookmarks-personal-name)) 
+    (welkomscherm-insert-muted welkomscherm-bookmarks-personal-name))
   (welkomscherm-insert-new-line)
   (welkomscherm-insert-bookmark-rows welkomscherm-bookmarks-personal)
 
@@ -184,8 +193,7 @@
       (setq line-spacing 12)
       (welkomscherm-insert)
       (read-only-mode 1)
-      (page-break-lines-mode)
-      )
+      (page-break-lines-mode))
     (switch-to-buffer buf)
     (setq fringe-indicator-alist '((truncation nil)))))
 
