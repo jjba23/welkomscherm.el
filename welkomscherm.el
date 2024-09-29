@@ -113,8 +113,7 @@
 (defcustom welkomscherm-buttons-actions
   '((("*scratch*" . (lambda(btn) (switch-to-buffer "*scratch*")))
      ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))
-     ("re-render me" . (lambda(btn) (welkomscherm)))
-     ))
+     ("re-render me" . (lambda(btn) (welkomscherm)))))
   "Buttons with desired actions in the middle."
   :type 'alist
   :group 'welkomscherm)
