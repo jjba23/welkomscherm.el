@@ -41,22 +41,9 @@
   "Face used to draw headers and titles."
   :group 'welkomscherm)
 
-(defun welkomscherm-insert-muted (x)
-  "Insert muted text X into the welkomscherm buffer with optional centering."
-  (insert (propertize x 'face 'welkomscherm-muted-face))
-  (when welkomscherm-centered (center-line)))
-
-(defun welkomscherm-insert-new-line ()
-  "Insert new line into the welkomscherm buffer."
-  (insert "\n"))
-
-(defun welkomscherm-insert-form-feed ()
-  "Insert new form feed (hr) into the welkomscherm buffer."
-  (insert "\f"))
-
-(defun welkomscherm-insert-spacer ()
-  "Insert a spacer into the welkomscher buffer."
-  (insert "  "))
+(defcustom welkomscherm-centered t
+  "User option to enable use of centered text."
+  :type 'boolean :group 'welkomscherm)
 
 (defcustom welkomscherm-buffer-name "*welkomscherm*"
   "Name of the welkomscherm buffer."
@@ -69,7 +56,6 @@
   "Text lines to show as top title banner."
   :type '(list string)
   :group 'welkomscherm)
-
 
 (defcustom welkomscherm-bookmarks-personal-name "bookmarks: "
   "Title to show in personal bookmark section."
@@ -85,10 +71,6 @@
 
 (defcustom welkomscherm-use-form-feed nil
   "User option to enable use of form feeds to separate sections."
-  :type 'boolean :group 'welkomscherm)
-
-(defcustom welkomscherm-centered t
-  "User option to enable use of centered text."
   :type 'boolean :group 'welkomscherm)
 
 (defcustom welkomscherm-use-section-title t
@@ -117,6 +99,23 @@
   "Buttons with desired actions in the middle."
   :type 'alist
   :group 'welkomscherm)
+
+(defun welkomscherm-insert-muted (x)
+  "Insert muted text X into the welkomscherm buffer with optional centering."
+  (insert (propertize x 'face 'welkomscherm-muted-face))
+  (when welkomscherm-centered (center-line)))
+
+(defun welkomscherm-insert-new-line ()
+  "Insert new line into the welkomscherm buffer."
+  (insert "\n"))
+
+(defun welkomscherm-insert-form-feed ()
+  "Insert new form feed (hr) into the welkomscherm buffer."
+  (insert "\f"))
+
+(defun welkomscherm-insert-spacer ()
+  "Insert a spacer into the welkomscher buffer."
+  (insert "  "))
 
 (defun welkomscherm-on-bookmark-click (btn)
   "Action to perform upon clicking a bookmark BTN in welkomscherm."
