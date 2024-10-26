@@ -2,11 +2,11 @@
 
 ;; Copyright (C) 2024 Josep Bigorra
 
-;; Version: 0.1.2
+;; Version: 0.1.3
 ;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;; URL: https://github.com/jjba23/tekengrootte.el
-;; Keywords: faces
+;; Keywords: splash dashboard faces
 ;; Package: welkomscherm
 ;; Package-Requires: ((emacs "25.1") (page-break-lines "0.15"))
 
@@ -26,7 +26,17 @@
 
 ;;; Commentary:
 
-;; TODO
+;; welkomscherm.el is meant to be simple, extensible and performant.
+;;
+;; A big emphasis is put on being a clean and utilitarian splash page
+;; for when you start up Emacs and not be full of items and complexity.
+;;
+;; If you are looking for a zen dashboard / splash screen with
+;; a plain sectioned list of links, for Emacs, look no further.
+;;
+;; For more advanced dashboards, refer to `dashboard' or `enlight'.
+;;
+
 
 ;;; Code:
 
@@ -144,7 +154,6 @@
 
 (defun welkomscherm-insert ()
   "Render a new Welkomscherm."
-  
   (dolist (x welkomscherm-top-title)
     (welkomscherm-insert-muted x)
     (welkomscherm-maybe-centered)
@@ -184,7 +193,6 @@
 (defun welkomscherm ()
   "Start a new Welkomscherm killing any live previous instances."
   (interactive)
-  
   (when (buffer-live-p (get-buffer welkomscherm-buffer-name))
     (kill-buffer welkomscherm-buffer-name))
   

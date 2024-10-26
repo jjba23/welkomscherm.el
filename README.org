@@ -11,6 +11,7 @@
 Simple, customizable and elegant dashboard package for Emacs. Compatible with GUI and TUI Emacs (> 25).
 
 #+begin_html
+<img src="./resources/2024-10-27_00-21.png"/>
 <img src="./resources/2024-09-25.png"/>
 #+end_html
 
