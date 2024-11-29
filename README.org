@@ -23,7 +23,7 @@ An example installation with Elpaca:
 
 #+begin_src emacs-lisp
   (use-package welkomscherm
-    :ensure (:host github :repo "jjba23/welkomscherm.el" :branch "trunk")
+    :ensure (:host codeberg :repo "jjba23/welkomscherm.el" :branch "trunk")
     :bind (("C-c SPC SPC" . welkomscherm))
     :init
     (setq welkomscherm-use-form-feed nil

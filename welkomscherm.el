@@ -5,7 +5,7 @@
 ;; Version: 0.1.3
 ;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
-;; URL: https://github.com/jjba23/tekengrootte.el
+;; URL: https://codeberg.org/jjba23/tekengrootte.el
 ;; Keywords: splash dashboard faces
 ;; Package: welkomscherm
 ;; Package-Requires: ((emacs "25.1") (page-break-lines "0.15"))
