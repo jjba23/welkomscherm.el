@@ -26,11 +26,11 @@ An example installation with Elpaca:
     :ensure (:host codeberg :repo "jjba23/welkomscherm.el" :branch "trunk")
     :bind (("C-c SPC SPC" . welkomscherm))
     :init
-    (setq welkomscherm-use-form-feed nil
+    (setopt welkomscherm-use-form-feed nil
           welkomscherm-centered t
           welkomscherm-use-section-title t)
 
-    (setq welkomscherm-bookmarks-personal
+    (setopt welkomscherm-bookmarks-personal
           '((("dotfiles" . "~/Dev/Personal/dotfiles/")
              ("notes" . "~/Dev/Personal/private-notes/")
              ("emacs config" . "~/Dev/Personal/dotfiles/users/joe/emacs/init.el")
@@ -38,11 +38,11 @@ An example installation with Elpaca:
             (("second-row-api" . "~/Dev/Personal/second-row-api/README.md")
              ("second-row-ssr" . "~/Dev/Personal/second-row-ssr/"))))
     
-    (setq welkomscherm-bookmarks-work
+    (setopt welkomscherm-bookmarks-work
           '((("my-work" . "~/Dev/Work/my-work/")
              ("hem-wiki" . "~/Dev/Work/hem-wiki/"))))
 
-    (setq welkomscherm-buttons-actions
+    (setopt welkomscherm-buttons-actions
           '((("*scratch*" . (lambda (btn) (switch-to-buffer "*scratch*")))
              ("*Messages*" . (lambda (btn) (switch-to-buffer "*Messages*")))
              ("re-render me" . (lambda (btn) (welkomscherm)))))))
