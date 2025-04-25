@@ -1,20 +1,16 @@
-* welkomscherm.el
+#+title: welkomscherm.el
+#+author: Josep Bigorra
+#+email: jjbigorra@gmail.com
+#+language: en
+#+options: toc:nil num:nil
+
+[[https://jointhefreeworld.org/static-assets/badges/Emacs-30-a8516e.png]]
 
 /welkomscherm/ means welcome screen in the Dutch language.
 
-#+begin_html
-<div>
-<img src="https://img.shields.io/badge/GNU%20Emacs-7F5AB6?logo=gnuemacs&logoColor=fff&style=plastic" alt="GNU Emacs"/>
-</div>
-#+end_html
-
 Simple, customizable and elegant dashboard package for Emacs. Compatible with GUI and TUI Emacs (> 25).
 
-#+begin_html
-<img src="./resources/2024-10-27_00-21.png"/>
-<img src="./resources/2024-09-25.png"/>
-#+end_html
-
+[[https://jointhefreeworld.org/static-assets/other/img/welkomscherm-emacs-2025-04-25.png]]
 
 ** Installing
 
@@ -55,7 +51,4 @@ If you want the welkomscherm to be your initial buffer when you start a new emac
         (lambda () (welkomscherm) (get-buffer welkomscherm-buffer-name)))
 #+end_src
 
-Do note that if using ~use-package~ it's recommendable to apply this setting in your ~(use-package emacs)~ declaration.
-
-** Project management - Backlog
-**** Add recent files section, think also of recent projects with project.el, and allow user to provide mechanisms to abbreviate paths
+Note that if using ~use-package~ it's recommendable to apply this setting in your ~(use-package emacs)~ declaration.
