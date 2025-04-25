@@ -1,15 +1,14 @@
 ;;; welkomscherm.el --- Simple welcome screen / dashboard -*- lexical-binding: t -*-
 
-;; Copyright (C) 2024 Josep Bigorra
+;; Copyright © Josep Bigorra <jjbigorra@gmail.com>
 
-;; Version: 0.1.3
+;; Version: 0.1.4
 ;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;; URL: https://codeberg.org/jjba23/tekengrootte.el
 ;; Keywords: splash dashboard faces
 ;; Package: welkomscherm
 ;; Package-Requires: ((emacs "25.1") (page-break-lines "0.15"))
-
 
 ;; welkomscherm is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -36,7 +35,6 @@
 ;;
 ;; For more advanced dashboards, refer to `dashboard' or `enlight'.
 ;;
-
 
 ;;; Code:
 
@@ -67,17 +65,22 @@
   :type '(list string)
   :group 'welkomscherm)
 
-(defcustom welkomscherm-bookmarks-personal-name "bookmarks: "
+(defcustom welkomscherm-bookmarks-personal-name "♥ Bookmarks ♥"
   "Title to show in personal bookmark section."
   :type 'string :group 'welkomscherm)
 
-(defcustom welkomscherm-actions-name "actions: "
+(defcustom welkomscherm-actions-name "♦ Actions ♦"
   "Title to show for action buttons."
   :type 'string :group 'welkomscherm)
 
-(defcustom welkomscherm-bookmarks-work-name "work: "
+(defcustom welkomscherm-bookmarks-work-name "♠ Work ♠"
   "Title to show for work bookmark section."
   :type 'string :group 'welkomscherm)
+
+(defcustom welkomscherm-init-time-name "τ Emacs startup took τ"
+  "Title to show for init time section."
+  :type 'string :group 'welkomscherm)
+
 
 (defcustom welkomscherm-use-form-feed nil
   "User option to enable use of form feeds to separate sections."
@@ -85,6 +88,10 @@
 
 (defcustom welkomscherm-use-section-title t
   "User option to enable display of section titles."
+  :type 'boolean :group 'welkomscherm)
+
+(defcustom welkomscherm-show-init-time t
+  "User option to enable display of init (startup) time."
   :type 'boolean :group 'welkomscherm)
 
 (defcustom welkomscherm-bookmarks-personal
@@ -188,7 +195,13 @@
 
   (welkomscherm-insert-new-line)
   (welkomscherm-insert-bookmark-rows welkomscherm-bookmarks-work)
-  (welkomscherm-maybe-form-feed))
+  (welkomscherm-maybe-form-feed)
+
+  (when welkomscherm-show-init-time
+    (welkomscherm-insert-new-line)
+    (welkomscherm-insert-muted welkomscherm-init-time-name)
+    (welkomscherm-insert-new-line)
+    (welkomscherm-insert-muted (emacs-init-time))))
 
 (defun welkomscherm ()
   "Start a new Welkomscherm killing any live previous instances."
