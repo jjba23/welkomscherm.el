@@ -2,17 +2,21 @@
 #+author: Josep Bigorra
 #+email: jjbigorra@gmail.com
 #+language: en
-#+options: toc:nil num:nil
 
-[[https://jointhefreeworld.org/static-assets/badges/Emacs-30-a8516e.png]]
+[[https://jointhefreeworld.org/ggg/dist/emacs-lisp.svg]] [[https://jointhefreeworld.org/ggg/dist/license-gpl3+.svg]]    [[https://jointhefreeworld.org/ggg/dist/license-fdl13+.svg]] 
 
 /welkomscherm/ means welcome screen in the Dutch language.
 
 Simple, customizable and elegant dashboard package for Emacs. Compatible with GUI and TUI Emacs (> 25).
 
+If you like my work, please support me by [[https://bmc.link/jjbigorra][buying me a cup of coffee ☕]] so I can continue with a lot of motivation.
+
+-------------------------
+
 [[https://jointhefreeworld.org/static-assets/other/img/welkomscherm-emacs-2025-04-25.png]]
 
-** Installing
+
+* Installing
 
 This package is not (yet) available in popular Emacs repositories such as MELPA or ELPA.
 An example installation with Elpaca:
@@ -44,7 +48,10 @@ An example installation with Elpaca:
              ("re-render me" . (lambda (btn) (welkomscherm)))))))
             #+end_src
 
-** Welkomscherm at startup
+
+---------------------------            
+            
+* Welkomscherm at startup
 If you want the welkomscherm to be your initial buffer when you start a new emacsclient (either GUI or terminal) then add this to your Emacs config:
 #+begin_src emacs-lisp
   (setq initial-buffer-choice
@@ -52,3 +59,39 @@ If you want the welkomscherm to be your initial buffer when you start a new emac
 #+end_src
 
 Note that if using ~use-package~ it's recommendable to apply this setting in your ~(use-package emacs)~ declaration.
+
+------------------------  
+  
+* Licensing
+
+welkomscherm.el and all of its source code are free software, licensed under the GNU General Public License v3 (or newer at your convenience).
+
+https://www.gnu.org/licenses/gpl-3.0.html
+
+The documentation and examples, including this document, which are provided with welkomscherm.el, are all licensed under the GNU Free Documentation License v1.3 (or newer at your convenience).
+
+https://www.gnu.org/licenses/fdl-1.3.html
+
+---------
+
+* Code of conduct
+
+This project adheres to the jointhefreeworld code of conduct. Find it here:
+
+https://jointhefreeworld.org/blog/articles/personal/jointhefreeworld-code-of-conduct/index.html
+
+In summary, we foster an inclusive, respectful, and cooperative environment for all contributors and users of this free software project. Inspired by the ideals of the GNU Project, we strive to uphold freedom, equality, and community as guiding principles. We believe that collaboration in a community of mutual respect is essential to creating excellent free software.
+
+
+--------------
+
+* welkomscherm.el project
+
+Contributing to free software is a uniquely beautiful act because it embodies principles of generosity, collaboration, and empowerment.
+
+We welcome everyone to feel invited to the welkomscherm.el project, and encourage active contribution in all forms, to improve it and/or suggest improvements, brainstorm with me, make it more modular/flexible, etc, feel free to contact me <jjbigorra@gmail.com> to chat, discuss or report feedback.
+
+Find here the Backlog and Kanban boards for my Emacs packages: https://lucidplan.jointhefreeworld.org/tickets/emacs-pkg
+
+
+--------------------------
