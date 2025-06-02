@@ -13,8 +13,11 @@ If you like my work, please support me by [[https://bmc.link/jjbigorra][buying m
 
 -------------------------
 
+[[https://jointhefreeworld.org/static-assets/other/img/welkomscherm-emacs-2025-06-02.png]]
+
 [[https://jointhefreeworld.org/static-assets/other/img/welkomscherm-emacs-2025-04-25.png]]
 
+---------
 
 * Installing
 
