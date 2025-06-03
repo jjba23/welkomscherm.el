@@ -2,7 +2,7 @@
 
 ;; Copyright © Josep Bigorra <jjbigorra@gmail.com>
 
-;; Version: 0.1.6
+;; Version: 0.2.0
 ;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;; URL: https://codeberg.org/jjba23/tekengrootte.el
@@ -81,7 +81,6 @@
   "Title to show for init time section."
   :type 'string :group 'welkomscherm)
 
-
 (defcustom welkomscherm-use-form-feed nil
   "User option to enable use of form feeds to separate sections."
   :type 'boolean :group 'welkomscherm)
@@ -115,6 +114,18 @@
      ("re-render me" . (lambda(btn) (welkomscherm)))))
   "Buttons with desired actions in the middle."
   :type 'alist
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-post-render-hook nil
+  "Hook run after `welkomscherm' buffer is created and populated.
+This hook is run with `welkomscherm' buffer as current buffer."
+  :type 'hook
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-pre-render-hook nil
+  "Hook run before `welkomscherm' buffer is created.
+This hook is run with `welkomscherm' buffer as current buffer."
+  :type 'hook
   :group 'welkomscherm)
 
 (defun welkomscherm-insert-muted (x)
@@ -211,11 +222,13 @@
   
   (let ((buf (get-buffer-create welkomscherm-buffer-name)))
     (with-current-buffer buf
+      (run-hooks 'welkomscherm-pre-render-hook)
       (read-only-mode -1)
       (setq line-spacing 12)
       (welkomscherm-insert)
       (read-only-mode 1)
-      (page-break-lines-mode))
+      (page-break-lines-mode)
+      (run-hooks 'welkomscherm-post-render-hook))
     (switch-to-buffer buf)
     (setq fringe-indicator-alist '((truncation nil)))))
 

@@ -15,8 +15,6 @@ If you like my work, please support me by [[https://bmc.link/jjbigorra][buying m
 
 [[https://jointhefreeworld.org/static-assets/other/img/welkomscherm-emacs-2025-06-02.png]]
 
-[[https://jointhefreeworld.org/static-assets/other/img/welkomscherm-emacs-2025-04-25.png]]
-
 ---------
 
 * Installing
@@ -55,6 +53,7 @@ An example installation with Elpaca:
 ---------------------------            
             
 * Welkomscherm at startup
+
 If you want the welkomscherm to be your initial buffer when you start a new emacsclient (either GUI or terminal) then add this to your Emacs config:
 #+begin_src emacs-lisp
   (setq initial-buffer-choice
@@ -62,6 +61,29 @@ If you want the welkomscherm to be your initial buffer when you start a new emac
 #+end_src
 
 Note that if using ~use-package~ it's recommendable to apply this setting in your ~(use-package emacs)~ declaration.
+
+------------------
+
+* Available hooks
+
+welkomscherm.el allows you to run code arbitrarily both before it renders, as well as after. You should feel free to customize this to your liking.
+
+On the technical side, this means two hooks are made available, ~welkomscherm-pre-render-hook~ and ~welkomscherm-post-render-hook~. 
+
+Find here an example where we adjust the ~fill-column~ in the welkomscherm buffer so that the dashboard gets centered properly according to the size of the frame.
+
+By default, without this, centering is based on your default ~fill-column~ (likely 70 char) due to ~(center-line)~.
+
+#+begin_src emacs-lisp
+(add-hook 'welkomscherm-pre-render-hook
+          (lambda() (setq-local fill-column (frame-parameter nil 'width))))
+#+end_src
+
+Find here an example of running arbitrary code after rendering:
+#+begin_src emacs-lisp
+(add-hook 'welkomscherm-post-render-hook
+          (lambda() (message "welkomscherm rendered successfully")))
+#+end_src
 
 ------------------------  
   
