@@ -58,7 +58,7 @@
   :type 'string
   :group 'welkomscherm)
 
-(defcustom welkomscherm-top-title
+(defcustom welkomscherm-top-title-list
   '("While any editor can save your files"
     "only Emacs can save your soul !")
   "Text lines to show as top title banner."
@@ -94,17 +94,18 @@
   :type 'boolean :group 'welkomscherm)
 
 (defcustom welkomscherm-sections (list welkomscherm-top-title
+                                       welkomscherm-work
                                        welkomscherm-bookmarks
                                        welkomscherm-actions
-                                       welkomscherm-work
-                                       welkomscherm-init-time)
+                                       welkomscherm-init-time
+                                       )
   "A list of section-generating functions."
-  :type '(list function)
+  :type 'list
   :group 'welkomscherm)
 
 (defcustom welkomscherm-top-title
   (lambda()
-    (dolist (x welkomscherm-top-title)
+    (dolist (x welkomscherm-top-title-list)
       (welkomscherm-insert-muted x)
       (welkomscherm-maybe-centered)
       (welkomscherm-insert-new-line)))
@@ -116,7 +117,6 @@
   (lambda()
     (welkomscherm-insert-new-line)
     (welkomscherm-maybe-form-feed)
-    (welkomscherm-insert-new-line)
     (when welkomscherm-use-section-title
       (welkomscherm-insert-muted welkomscherm-bookmarks-name))
     (welkomscherm-insert-new-line)
@@ -129,7 +129,6 @@
   (lambda()
     (welkomscherm-insert-new-line)
     (welkomscherm-maybe-form-feed)
-    (welkomscherm-insert-new-line)
     (when welkomscherm-use-section-title
       (welkomscherm-insert-muted welkomscherm-work-name))
     (welkomscherm-insert-new-line)
@@ -142,11 +141,10 @@
   (lambda()
     (welkomscherm-insert-new-line)
     (welkomscherm-maybe-form-feed)
-    (welkomscherm-insert-new-line)
     (when welkomscherm-use-section-title
       (welkomscherm-insert-muted welkomscherm-actions-name))
     (welkomscherm-insert-new-line)
-    (welkomscherm-render-action-rows welkomscherm-actions))
+    (welkomscherm-render-action-rows welkomscherm-actions-list))
   "Render actions/buttons."
   :type 'function
   :group 'welkomscherm)
@@ -240,7 +238,8 @@
 (defun welkomscherm-insert ()
   "Render a new Welkomscherm."
   (dolist (section-thunk welkomscherm-sections)
-    (apply section-thunk)))
+    (format "%s" section-thunk)
+    (apply section-thunk '())))
 
 (defcustom welkomscherm-post-render-hook nil
   "Hook run after `welkomscherm' buffer is created and populated.
