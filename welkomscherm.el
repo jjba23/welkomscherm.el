@@ -2,7 +2,7 @@
 
 ;; Copyright © Josep Bigorra <jjbigorra@gmail.com>
 
-;; Version: 0.2.1
+;; Version: 1.0.0
 ;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;; URL: https://codeberg.org/jjba23/welkomscherm.el
@@ -65,19 +65,19 @@
   :type '(list string)
   :group 'welkomscherm)
 
-(defcustom welkomscherm-bookmarks-personal-name "♥ Bookmarks ♥"
+(defcustom welkomscherm-bookmarks-name "Bookmarks ♥"
   "Title to show in personal bookmark section."
   :type 'string :group 'welkomscherm)
 
-(defcustom welkomscherm-actions-name "♦ Actions ♦"
+(defcustom welkomscherm-actions-name "Actions ♦"
   "Title to show for action buttons."
   :type 'string :group 'welkomscherm)
 
-(defcustom welkomscherm-bookmarks-work-name "♠ Work ♠"
+(defcustom welkomscherm-work-name "Work ♠"
   "Title to show for work bookmark section."
   :type 'string :group 'welkomscherm)
 
-(defcustom welkomscherm-init-time-name "τ Emacs startup took τ"
+(defcustom welkomscherm-init-time-name "Emacs startup took τ"
   "Title to show for init time section."
   :type 'string :group 'welkomscherm)
 
@@ -93,7 +93,76 @@
   "User option to enable display of init (startup) time."
   :type 'boolean :group 'welkomscherm)
 
-(defcustom welkomscherm-bookmarks-personal
+(defcustom welkomscherm-sections (list welkomscherm-top-title
+                                       welkomscherm-bookmarks
+                                       welkomscherm-actions
+                                       welkomscherm-work
+                                       welkomscherm-init-time)
+  "A list of section-generating functions."
+  :type '(list function)
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-top-title
+  (lambda()
+    (dolist (x welkomscherm-top-title)
+      (welkomscherm-insert-muted x)
+      (welkomscherm-maybe-centered)
+      (welkomscherm-insert-new-line)))
+  "Render the top title."
+  :type 'function
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-bookmarks
+  (lambda()
+    (welkomscherm-insert-new-line)
+    (welkomscherm-maybe-form-feed)
+    (welkomscherm-insert-new-line)
+    (when welkomscherm-use-section-title
+      (welkomscherm-insert-muted welkomscherm-bookmarks-name))
+    (welkomscherm-insert-new-line)
+    (welkomscherm-render-rows welkomscherm-bookmarks-list))
+  "Render bookmarks section."
+  :type 'function
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-work
+  (lambda()
+    (welkomscherm-insert-new-line)
+    (welkomscherm-maybe-form-feed)
+    (welkomscherm-insert-new-line)
+    (when welkomscherm-use-section-title
+      (welkomscherm-insert-muted welkomscherm-work-name))
+    (welkomscherm-insert-new-line)
+    (welkomscherm-render-rows welkomscherm-work-list))
+  "Render work section."
+  :type 'function
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-actions
+  (lambda()
+    (welkomscherm-insert-new-line)
+    (welkomscherm-maybe-form-feed)
+    (welkomscherm-insert-new-line)
+    (when welkomscherm-use-section-title
+      (welkomscherm-insert-muted welkomscherm-actions-name))
+    (welkomscherm-insert-new-line)
+    (welkomscherm-render-action-rows welkomscherm-actions))
+  "Render actions/buttons."
+  :type 'function
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-init-time
+  (lambda()
+    (when welkomscherm-show-init-time
+      (welkomscherm-insert-new-line)
+      (welkomscherm-insert-muted welkomscherm-init-time-name)
+      (welkomscherm-insert-new-line)
+      (welkomscherm-insert-muted (emacs-init-time))))
+  "Render init time."
+  :type 'function
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-bookmarks-list
   '((("row0c0" . "~/Dev/row0c0")
      ("row0c1" . "~/Downloads/some-file.pdf"))
     (("row1c0" . "~/Documents/row1c0")))
@@ -101,31 +170,19 @@
   :type 'alist
   :group 'welkomscherm)
 
-(defcustom welkomscherm-bookmarks-work
+(defcustom welkomscherm-work-list
   '((("work-project-1" . "~/Work/work-project-1/")
      ("wiki-work" . "~/Work/wiki-work/")))
   "Bookmark alias and path pairs for work."
   :type 'alist
   :group 'welkomscherm)
 
-(defcustom welkomscherm-buttons-actions
+(defcustom welkomscherm-actions-list
   '((("*scratch*" . (lambda(btn) (switch-to-buffer "*scratch*")))
      ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))
      ("re-render me" . (lambda(btn) (welkomscherm)))))
   "Buttons with desired actions in the middle."
   :type 'alist
-  :group 'welkomscherm)
-
-(defcustom welkomscherm-post-render-hook nil
-  "Hook run after `welkomscherm' buffer is created and populated.
-This hook is run with `welkomscherm' buffer as current buffer."
-  :type 'hook
-  :group 'welkomscherm)
-
-(defcustom welkomscherm-pre-render-hook nil
-  "Hook run before `welkomscherm' buffer is created.
-This hook is run with `welkomscherm' buffer as current buffer."
-  :type 'hook
   :group 'welkomscherm)
 
 (defun welkomscherm-insert-muted (x)
@@ -150,7 +207,7 @@ This hook is run with `welkomscherm' buffer as current buffer."
   (let ((welkomscherm-path (button-get btn 'welkomscherm-path)))
     (find-file welkomscherm-path)))
 
-(defun welkomscherm-insert-bookmark-rows (rows)
+(defun welkomscherm-render-rows (rows)
   "Render ROWS of bookmarks."
   (dolist (row rows)
     (dolist (x row)
@@ -158,6 +215,16 @@ This hook is run with `welkomscherm' buffer as current buffer."
                      'welkomscherm-alias (car x)
                      'welkomscherm-path (cdr x)
                      'action 'welkomscherm-on-bookmark-click)
+      (welkomscherm-insert-spacer))
+    (welkomscherm-maybe-centered)
+    (welkomscherm-insert-new-line)))
+
+(defun welkomscherm-render-action-rows (rows)
+  "Render ROWS of actions/buttons."
+  (dolist (row rows)
+    (dolist (x row)
+      (insert-button (car x)
+                     'action (cdr x))
       (welkomscherm-insert-spacer))
     (welkomscherm-maybe-centered)
     (welkomscherm-insert-new-line)))
@@ -172,47 +239,20 @@ This hook is run with `welkomscherm' buffer as current buffer."
 
 (defun welkomscherm-insert ()
   "Render a new Welkomscherm."
-  (dolist (x welkomscherm-top-title)
-    (welkomscherm-insert-muted x)
-    (welkomscherm-maybe-centered)
-    (welkomscherm-insert-new-line))
-  (welkomscherm-insert-new-line)
+  (dolist (section-thunk welkomscherm-sections)
+    (apply section-thunk)))
 
-  (welkomscherm-maybe-form-feed)
-  (when welkomscherm-use-section-title
-    (welkomscherm-insert-muted welkomscherm-bookmarks-personal-name))
-  (welkomscherm-insert-new-line)
-  (welkomscherm-insert-bookmark-rows welkomscherm-bookmarks-personal)
+(defcustom welkomscherm-post-render-hook nil
+  "Hook run after `welkomscherm' buffer is created and populated.
+This hook is run with `welkomscherm' buffer as current buffer."
+  :type 'hook
+  :group 'welkomscherm)
 
-  (welkomscherm-maybe-form-feed)
-  (welkomscherm-insert-new-line)
-  (when welkomscherm-use-section-title
-    (welkomscherm-insert-muted welkomscherm-actions-name))
-  (welkomscherm-insert-new-line)
-  
-  (dolist (row welkomscherm-buttons-actions)
-    (dolist (x row)
-      (insert-button (car x)
-                     'action (cdr x))
-      (welkomscherm-insert-spacer))
-    (welkomscherm-maybe-centered)
-    (welkomscherm-insert-new-line))
-
-
-  (welkomscherm-maybe-form-feed)
-  (welkomscherm-insert-new-line)
-  (when welkomscherm-use-section-title
-    (welkomscherm-insert-muted welkomscherm-bookmarks-work-name))
-
-  (welkomscherm-insert-new-line)
-  (welkomscherm-insert-bookmark-rows welkomscherm-bookmarks-work)
-  (welkomscherm-maybe-form-feed)
-
-  (when welkomscherm-show-init-time
-    (welkomscherm-insert-new-line)
-    (welkomscherm-insert-muted welkomscherm-init-time-name)
-    (welkomscherm-insert-new-line)
-    (welkomscherm-insert-muted (emacs-init-time))))
+(defcustom welkomscherm-pre-render-hook nil
+  "Hook run before `welkomscherm' buffer is created.
+This hook is run with `welkomscherm' buffer as current buffer."
+  :type 'hook
+  :group 'welkomscherm)
 
 (defun welkomscherm ()
   "Start a new Welkomscherm killing any live previous instances."
