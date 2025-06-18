@@ -124,6 +124,6 @@ Find here the Backlog and Kanban boards for my Emacs packages: https://lucidplan
 
 * Showcase
 
-[[https://jointhefreeworld.org/static-assets/welkomscherm/2025-06-18.png]]
+[[https://jointhefreeworld.org/static-assets/welkomscherm/2025-06-18-small.png]]
 
 [[https://jointhefreeworld.org/static-assets/other/img/welkomscherm-emacs-2025-06-02.png]]
