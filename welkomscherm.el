@@ -103,6 +103,29 @@
   :type 'function
   :group 'welkomscherm)
 
+(defcustom welkomscherm-bookmarks-list
+  '((("row0c0" . "~/Dev/row0c0")
+     ("row0c1" . "~/Downloads/some-file.pdf"))
+    (("row1c0" . "~/Documents/row1c0")))
+  "Bookmark alias and path pairs for personal."
+  :type 'alist
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-work-list
+  '((("work-project-1" . "~/Work/work-project-1/")
+     ("wiki-work" . "~/Work/wiki-work/")))
+  "Bookmark alias and path pairs for work."
+  :type 'alist
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-actions-list
+  '((("*scratch*" . (lambda(btn) (switch-to-buffer "*scratch*")))
+     ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))
+     ("re-render me" . (lambda(btn) (welkomscherm)))))
+  "Buttons with desired actions in the middle."
+  :type 'alist
+  :group 'welkomscherm)
+
 (defcustom welkomscherm-bookmarks
   (lambda()
     (unless (null welkomscherm-bookmarks-list)
@@ -160,29 +183,6 @@
                                        welkomscherm-init-time)
   "A list of section-generating functions."
   :type 'list
-  :group 'welkomscherm)
-
-(defcustom welkomscherm-bookmarks-list
-  '((("row0c0" . "~/Dev/row0c0")
-     ("row0c1" . "~/Downloads/some-file.pdf"))
-    (("row1c0" . "~/Documents/row1c0")))
-  "Bookmark alias and path pairs for personal."
-  :type 'alist
-  :group 'welkomscherm)
-
-(defcustom welkomscherm-work-list
-  '((("work-project-1" . "~/Work/work-project-1/")
-     ("wiki-work" . "~/Work/wiki-work/")))
-  "Bookmark alias and path pairs for work."
-  :type 'alist
-  :group 'welkomscherm)
-
-(defcustom welkomscherm-actions-list
-  '((("*scratch*" . (lambda(btn) (switch-to-buffer "*scratch*")))
-     ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))
-     ("re-render me" . (lambda(btn) (welkomscherm)))))
-  "Buttons with desired actions in the middle."
-  :type 'alist
   :group 'welkomscherm)
 
 (defun welkomscherm-insert-muted (x)
