@@ -93,16 +93,6 @@
   "User option to enable display of init (startup) time."
   :type 'boolean :group 'welkomscherm)
 
-(defcustom welkomscherm-sections (list welkomscherm-top-title
-                                       welkomscherm-work
-                                       welkomscherm-bookmarks
-                                       welkomscherm-actions
-                                       welkomscherm-init-time
-                                       )
-  "A list of section-generating functions."
-  :type 'list
-  :group 'welkomscherm)
-
 (defcustom welkomscherm-top-title
   (lambda()
     (dolist (x welkomscherm-top-title-list)
@@ -115,36 +105,39 @@
 
 (defcustom welkomscherm-bookmarks
   (lambda()
-    (welkomscherm-insert-new-line)
-    (welkomscherm-maybe-form-feed)
-    (when welkomscherm-use-section-title
-      (welkomscherm-insert-muted welkomscherm-bookmarks-name))
-    (welkomscherm-insert-new-line)
-    (welkomscherm-render-rows welkomscherm-bookmarks-list))
+    (unless (null welkomscherm-bookmarks-list)
+      (progn (welkomscherm-insert-new-line)
+             (welkomscherm-maybe-form-feed)
+             (when welkomscherm-use-section-title
+               (welkomscherm-insert-muted welkomscherm-bookmarks-name))
+             (welkomscherm-insert-new-line)
+             (welkomscherm-render-rows welkomscherm-bookmarks-list))))
   "Render bookmarks section."
   :type 'function
   :group 'welkomscherm)
 
 (defcustom welkomscherm-work
   (lambda()
-    (welkomscherm-insert-new-line)
-    (welkomscherm-maybe-form-feed)
-    (when welkomscherm-use-section-title
-      (welkomscherm-insert-muted welkomscherm-work-name))
-    (welkomscherm-insert-new-line)
-    (welkomscherm-render-rows welkomscherm-work-list))
+    (unless (null welkomscherm-work-list)
+      (progn (welkomscherm-insert-new-line)
+             (welkomscherm-maybe-form-feed)
+             (when welkomscherm-use-section-title
+               (welkomscherm-insert-muted welkomscherm-work-name))
+             (welkomscherm-insert-new-line)
+             (welkomscherm-render-rows welkomscherm-work-list))))
   "Render work section."
   :type 'function
   :group 'welkomscherm)
 
 (defcustom welkomscherm-actions
   (lambda()
-    (welkomscherm-insert-new-line)
-    (welkomscherm-maybe-form-feed)
-    (when welkomscherm-use-section-title
-      (welkomscherm-insert-muted welkomscherm-actions-name))
-    (welkomscherm-insert-new-line)
-    (welkomscherm-render-action-rows welkomscherm-actions-list))
+    (unless (null welkomscherm-actions-list)
+      (progn (welkomscherm-insert-new-line)
+             (welkomscherm-maybe-form-feed)
+             (when welkomscherm-use-section-title
+               (welkomscherm-insert-muted welkomscherm-actions-name))
+             (welkomscherm-insert-new-line)
+             (welkomscherm-render-action-rows welkomscherm-actions-list))))
   "Render actions/buttons."
   :type 'function
   :group 'welkomscherm)
@@ -152,12 +145,21 @@
 (defcustom welkomscherm-init-time
   (lambda()
     (when welkomscherm-show-init-time
-      (welkomscherm-insert-new-line)
-      (welkomscherm-insert-muted welkomscherm-init-time-name)
-      (welkomscherm-insert-new-line)
-      (welkomscherm-insert-muted (emacs-init-time))))
+      (progn (welkomscherm-insert-new-line)
+             (welkomscherm-insert-muted welkomscherm-init-time-name)
+             (welkomscherm-insert-new-line)
+             (welkomscherm-insert-muted (emacs-init-time)))))
   "Render init time."
   :type 'function
+  :group 'welkomscherm)
+
+(defcustom welkomscherm-sections (list welkomscherm-top-title
+                                       welkomscherm-work
+                                       welkomscherm-bookmarks
+                                       welkomscherm-actions
+                                       welkomscherm-init-time)
+  "A list of section-generating functions."
+  :type 'list
   :group 'welkomscherm)
 
 (defcustom welkomscherm-bookmarks-list
