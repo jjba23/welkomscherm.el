@@ -49,6 +49,8 @@ An example installation with Elpaca:
              ("re-render me" . (lambda (btn) (welkomscherm)))))))
             #+end_src
 
+You can go deeper into customization, by modifying ~welkomscherm/sections~ , which is a list of thunks (lambda expressions) to be used to render.
+
 ---------------------------            
             
 * Welkomscherm at startup
