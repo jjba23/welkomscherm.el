@@ -8,7 +8,7 @@
 ;; URL: https://codeberg.org/jjba23/welkomscherm.el
 ;; Keywords: splash dashboard faces
 ;; Package: welkomscherm
-;; Package-Requires: ((emacs "25.1") (page-break-lines "0.15"))
+;; Package-Requires: ((emacs "25.1"))
 
 ;; welkomscherm is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -35,17 +35,24 @@
 ;;
 ;; For more advanced dashboards, refer to `dashboard' or `enlight'.
 ;;
+;; The package needs no external library to run.  When it is available,
+;; `page-break-lines' is used to draw the form feeds that separate
+;; sections into horizontal lines; without it, form feeds simply show as
+;; the usual ^L glyph.
+;;
 
 ;;; Code:
 
-(require 'page-break-lines)
+(require 'page-break-lines nil t)
+
+(declare-function page-break-lines-mode "page-break-lines" (&optional arg))
 
 (defgroup welkomscherm nil
   "Simple welcome screen / dashboard for Emacs."
   :group 'tools)
 
 (defface welkomscherm/muted-face
-  '((t (:inherit 'font-lock-comment-face )))
+  '((t (:inherit font-lock-comment-face)))
   "Face used to draw headers and titles."
   :group 'welkomscherm)
 
@@ -62,7 +69,7 @@
   '("While any editor can save your files"
     "only Emacs can save your soul !")
   "Text lines to show as top title banner."
-  :type '(list string)
+  :type '(repeat string)
   :group 'welkomscherm)
 
 (defcustom welkomscherm/bookmarks-name "Bookmarks ♥"
@@ -81,6 +88,14 @@
   "Title to show for init time section."
   :type 'string :group 'welkomscherm)
 
+(defcustom welkomscherm/system-details-name "System ⚙"
+  "Title to show for system details section."
+  :type 'string :group 'welkomscherm)
+
+(defcustom welkomscherm/recent-files-name "Recent ♣"
+  "Title to show for recent files section."
+  :type 'string :group 'welkomscherm)
+
 (defcustom welkomscherm/use-form-feed nil
   "User option to enable use of form feeds to separate sections."
   :type 'boolean :group 'welkomscherm)
@@ -92,6 +107,20 @@
 (defcustom welkomscherm/show-init-time t
   "User option to enable display of init (startup) time."
   :type 'boolean :group 'welkomscherm)
+
+(defcustom welkomscherm/show-system-details nil
+  "User option to enable the system details section.
+When non-nil, `welkomscherm/system-details' is rendered."
+  :type 'boolean :group 'welkomscherm)
+
+(defcustom welkomscherm/show-recent-files nil
+  "User option to enable the recent files section.
+When non-nil, `welkomscherm/recent-files-section' is rendered."
+  :type 'boolean :group 'welkomscherm)
+
+(defcustom welkomscherm/recent-files-limit 5
+  "Maximum number of recent files to show in the recent files section."
+  :type 'integer :group 'welkomscherm)
 
 (defcustom welkomscherm/top-title
   (lambda()
@@ -124,6 +153,19 @@
      ("re-render me" . (lambda(btn) (welkomscherm)))))
   "Buttons with desired actions in the middle."
   :type 'alist
+  :group 'welkomscherm)
+
+(defcustom welkomscherm/system-details-list
+  '(("Emacs" . welkomscherm/system-emacs-version)
+    ("System" . welkomscherm/system-description)
+    ("Host" . system-name)
+    ("User" . welkomscherm/system-user-name))
+  "Labels and values shown in the system details section.
+Each entry is a cons cell whose car is a label string and whose cdr is
+either a string or a function of no arguments returning a string.  Only
+used when `welkomscherm/show-system-details' is non-nil."
+  :type '(alist :key-type string
+                :value-type (choice string function))
   :group 'welkomscherm)
 
 (defcustom welkomscherm/bookmarks
@@ -165,6 +207,34 @@
   :type 'function
   :group 'welkomscherm)
 
+(defcustom welkomscherm/recent-files-section
+  (lambda()
+    (when welkomscherm/show-recent-files
+      (let ((files (welkomscherm/recent-files)))
+        (when files
+          (welkomscherm/insert-new-line)
+          (welkomscherm/maybe-form-feed)
+          (when welkomscherm/use-section-title
+            (welkomscherm/insert-muted welkomscherm/recent-files-name))
+          (welkomscherm/insert-new-line)
+          (welkomscherm/render-rows (list files))))))
+  "Render recent files section."
+  :type 'function
+  :group 'welkomscherm)
+
+(defcustom welkomscherm/system-details
+  (lambda()
+    (when welkomscherm/show-system-details
+      (welkomscherm/insert-new-line)
+      (welkomscherm/maybe-form-feed)
+      (when welkomscherm/use-section-title
+        (welkomscherm/insert-muted welkomscherm/system-details-name))
+      (welkomscherm/insert-new-line)
+      (welkomscherm/render-system-details)))
+  "Render system details section."
+  :type 'function
+  :group 'welkomscherm)
+
 (defcustom welkomscherm/init-time
   (lambda()
     (when welkomscherm/show-init-time
@@ -179,10 +249,12 @@
 (defcustom welkomscherm/sections (list welkomscherm/top-title
                                        welkomscherm/work
                                        welkomscherm/bookmarks
+                                       welkomscherm/recent-files-section
                                        welkomscherm/actions
+                                       welkomscherm/system-details
                                        welkomscherm/init-time)
   "A list of section-generating functions."
-  :type 'list
+  :type '(repeat function)
   :group 'welkomscherm)
 
 (defun welkomscherm/insert-muted (x)
@@ -199,8 +271,38 @@
   (insert "\f"))
 
 (defun welkomscherm/insert-spacer ()
-  "Insert a spacer into the welkomscher buffer."
+  "Insert a spacer into the welkomscherm buffer."
   (insert "  "))
+
+(defun welkomscherm/system-emacs-version ()
+  "Return the running Emacs version as a MAJOR.MINOR string."
+  (format "%d.%d" emacs-major-version emacs-minor-version))
+
+(defun welkomscherm/system-description ()
+  "Return a short description of the system Emacs runs on."
+  (format "%s (%s)" system-type (or system-configuration "unknown")))
+
+(defun welkomscherm/system-user-name ()
+  "Return the login name of the current user."
+  (or (getenv "USER") (getenv "LOGNAME") user-login-name "unknown"))
+
+(defun welkomscherm/recent-files ()
+  "Return up to `welkomscherm/recent-files-limit' recently visited files.
+
+The list comes from the built-in `recentf-list' that `recentf-mode'
+maintains.  Each element is a cons cell of a display name and the file
+path.  The result is nil when recentf is unavailable, empty, or when
+no recent file still exists on disk."
+  (when (require 'recentf nil t)
+    (let ((files (and (boundp 'recentf-list) recentf-list))
+          (n welkomscherm/recent-files-limit)
+          result)
+      (dolist (file files)
+        (when (and (> n 0) (stringp file) (file-exists-p file))
+          (push (cons (file-name-nondirectory (directory-file-name file)) file)
+                result)
+          (setq n (1- n))))
+      (nreverse result))))
 
 (defun welkomscherm/on-bookmark-click (btn)
   "Action to perform upon clicking a bookmark BTN in welkomscherm."
@@ -229,6 +331,15 @@
     (welkomscherm/maybe-centered)
     (welkomscherm/insert-new-line)))
 
+(defun welkomscherm/render-system-details ()
+  "Render the rows of the system details section."
+  (dolist (entry welkomscherm/system-details-list)
+    (let* ((label (car entry))
+           (value (cdr entry))
+           (value (if (functionp value) (funcall value) value)))
+      (welkomscherm/insert-muted (format "%s: %s" label value))
+      (welkomscherm/insert-new-line))))
+
 (defun welkomscherm/maybe-form-feed ()
   "Insert a form feed character based on user preference."
   (when welkomscherm/use-form-feed (welkomscherm/insert-form-feed)))
@@ -254,20 +365,23 @@ This hook is run with `welkomscherm' buffer as current buffer."
   :type 'hook
   :group 'welkomscherm)
 
+;;;###autoload
 (defun welkomscherm ()
   "Start a new Welkomscherm killing any live previous instances."
   (interactive)
   (when (buffer-live-p (get-buffer welkomscherm/buffer-name))
     (kill-buffer welkomscherm/buffer-name))
-  
+
   (let ((buf (get-buffer-create welkomscherm/buffer-name)))
     (with-current-buffer buf
       (run-hooks 'welkomscherm/pre-render-hook)
       (read-only-mode -1)
+      (erase-buffer)
       (setq-local line-spacing 10)
       (welkomscherm/render-to-screen)
       (read-only-mode 1)
-      (page-break-lines-mode)
+      (when (fboundp 'page-break-lines-mode)
+        (page-break-lines-mode))
       (run-hooks 'welkomscherm/post-render-hook))
     (switch-to-buffer buf)
     (setq-local fringe-indicator-alist '((truncation nil)))))
@@ -276,5 +390,3 @@ This hook is run with `welkomscherm' buffer as current buffer."
 (provide 'welkomscherm)
 
 ;;; welkomscherm.el ends here
-
-

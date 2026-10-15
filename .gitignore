@@ -1,0 +1,6 @@
+# Byte-compilation artifacts.
+*.elc
+*.eln
+
+# Editor backups.
+*~
