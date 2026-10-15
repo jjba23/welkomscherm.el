@@ -2,7 +2,7 @@
 
 ;; Copyright © Josep Bigorra <jjbigorra@gmail.com>
 
-;; Version: 1.2.0
+;; Version: 1.2.1
 ;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;; URL: https://codeberg.org/jjba23/welkomscherm.el
@@ -557,6 +557,11 @@ add your own."
       (setq-local line-spacing 10)
       (welkomscherm/render-to-screen)
       (read-only-mode 1)
+      ;; Rendering ends with point at the end of the buffer, so a freshly
+      ;; displayed dashboard would already be scrolled down to its last line.
+      ;; Put point back on the first line; the post-render hook still runs
+      ;; with the buffer current and is free to move point on purpose.
+      (goto-char (point-min))
       (run-hooks 'welkomscherm/post-render-hook))
     (switch-to-buffer buf)
     (setq-local fringe-indicator-alist '((truncation nil)))

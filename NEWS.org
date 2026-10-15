@@ -7,6 +7,17 @@ All notable changes to this project will be documented in this file. Changes are
 
 This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
 
+* 1.2.1
+
+*** Fixed
+
+- The dashboard no longer opens already scrolled to its last line. Rendering ends with point at the end of the buffer, so the window that first displayed it started at the bottom; ~welkomscherm~ now moves point back to the first line before switching to the buffer. The post-render hook still runs with the buffer current, so a hook that moves point on purpose is unaffected.
+- Added a regression test, ~welkomscherm-test/opens-at-the-first-line~.
+
+*** Changed
+
+- Bumped the version to 1.2.1.
+
 * 1.2.0
 
 *** Added

@@ -479,6 +479,28 @@ This guards the old bug where the inherit value was the quoted symbol
       (when (buffer-live-p (get-buffer welkomscherm/buffer-name))
         (kill-buffer welkomscherm/buffer-name)))))
 
+(ert-deftest welkomscherm-test/opens-at-the-first-line ()
+  "The dashboard is shown from its first line, not scrolled to the bottom.
+
+Rendering ends with point at the end of the buffer, which used to leave
+the freshly displayed window scrolled down to its last line."
+  (save-window-excursion
+    (unwind-protect
+        (progn
+          (welkomscherm)
+          (with-current-buffer welkomscherm/buffer-name
+            ;; Point is on the first line, and that line is the top title
+            ;; (possibly indented, since centring is on by default).
+            (should (= (point) (point-min)))
+            (should (string-match-p
+                     (regexp-quote (car welkomscherm/top-title-list))
+                     (thing-at-point 'line t)))
+            ;; The window showing it starts at the top of the buffer.
+            (should (= (window-start (get-buffer-window))
+                       (point-min)))))
+      (when (buffer-live-p (get-buffer welkomscherm/buffer-name))
+        (kill-buffer welkomscherm/buffer-name)))))
+
 (ert-deftest welkomscherm-test/renders-twice-without-error ()
   "Rendering again simply replaces the previous buffer."
   (save-window-excursion
