@@ -51,6 +51,56 @@ An example installation with Elpaca:
 
 You can go deeper into customization, by modifying ~welkomscherm/sections~ , which is a list of thunks (lambda expressions) to be used to render.
 
+** Optional sections
+
+Two further sections ship with the package, both off by default so that they
+never surprise you before you ask for them.
+
+*** System details
+
+Set ~welkomscherm/show-system-details~ to a non-nil value to show a small
+section listing the running Emacs version, the operating system, the host and
+the user. The rows come from ~welkomscherm/system-details-list~, an alist of a
+label and either a string or a function of no arguments returning a string, so
+you can add or drop rows freely. The section title is ~welkomscherm/system-details-name~.
+
+#+begin_src emacs-lisp
+  (setopt welkomscherm/show-system-details t)
+#+end_src
+
+*** Recent files
+
+Set ~welkomscherm/show-recent-files~ to a non-nil value to list the files you
+visited recently. The list is read from the built-in ~recentf-list~ (so enable
+~recentf-mode~ for it to fill up) and is trimmed to
+~welkomscherm/recent-files-limit~ entries; files that no longer exist on disk
+are skipped. The section title is ~welkomscherm/recent-files-name~.
+
+#+begin_src emacs-lisp
+  (setopt welkomscherm/show-recent-files t
+          welkomscherm/recent-files-limit 5)
+#+end_src
+
+Both sections render in the same style as the rest: clickable rows for the
+recent files, muted label/value rows for the system details. Neither needs a
+library beyond Emacs itself.
+
+* Testing and development
+
+The project ships with an ERT suite in ~test/welkomscherm-test.el~ and a
+[[https://codeberg.org/jjba23/maak][Maak]] file. With ~maak~ installed, a single command runs the whole quality
+gate from a clean tree: byte-compile with warnings turned into errors, report
+~checkdoc~ findings, then run the tests.
+
+#+begin_src shell
+  maak
+#+end_src
+
+Other tasks: ~maak compile~, ~maak test~, ~maak lint~, ~maak clean~ and ~maak tasks~.
+The package itself needs no external library: when ~page-break-lines~ is
+available it is used to draw the form feeds that separate sections, otherwise
+form feeds show as the usual ~^L~ glyph.
+
 ---------------------------            
             
 * Welkomscherm at startup
