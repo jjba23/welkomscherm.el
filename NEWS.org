@@ -1,0 +1,64 @@
+#+title: Changelog and News 📰
+#+author: Josep Bigorra
+#+email: jjbigorra@gmail.com
+#+options: toc:nil
+
+All notable changes to this project will be documented in this file. Changes are listed per release and within each release there are details about additions, changes, fixes and removals.
+
+This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
+
+* 1.2.0
+
+*** Added
+
+- Added *composable sections*. Every block of the screen is now a self-contained unit, a ~welkomscherm/section~ record built with ~welkomscherm/make-section~, carrying its own heading (~:name~), its own visibility rule (~:condition~) and its own body (~:render~). The shared framing — the blank line, the optional separator and the heading — is drawn for you by ~welkomscherm/render-section~, so a section body only ever draws its own content. Adding, removing or reordering a section is now a matter of editing the ~welkomscherm/sections~ list alone. Supporting functions: ~welkomscherm/section-visible-p~, ~welkomscherm/section-heading~ and ~welkomscherm/render-section~.
+- Added the *system details section*, off by default: ~welkomscherm/show-system-details~, ~welkomscherm/system-details-list~ and ~welkomscherm/system-details-name~.
+- Added the *recent files section*, off by default and read from the built-in ~recentf-list~: ~welkomscherm/show-recent-files~, ~welkomscherm/recent-files-limit~ and ~welkomscherm/recent-files-name~. Files that no longer exist on disk are skipped.
+- Added *self-drawn section separators*: ~welkomscherm/use-separator~, ~welkomscherm/separator~ (a character) and ~welkomscherm/separator-width~. The buffer keeps a plain form feed and welkomscherm draws it as a horizontal rule with a display table, so the rule needs no library and re-flows to the window width whenever the frame is resized.
+- Added an ERT test suite in ~test/welkomscherm-test.el~ and a ~maak~ file. ~maak~ alone runs the whole quality gate: byte-compile with warnings turned into errors, enforce ~checkdoc~ (through ~test/welkomscherm-checkdoc.el~), then run the tests.
+
+*** Changed
+
+- ~welkomscherm/sections~ now holds section units rather than bare thunks. A plain function of no arguments is still accepted as a section, so the simplest customizations keep working unchanged.
+- The old form-feed separators, which relied on ~page-break-lines~ to become horizontal lines, are replaced by the self-drawn rules described above. A form feed used to show as an invisible ~^L~ glyph when that package was missing; now the rule is always a rule.
+- Separators now share the centring axis of the text. The rule spans the content width (~fill-column~ columns, or the window when that is narrower) instead of the whole frame, and it re-flows automatically when the frame is resized.
+- Bumped the version to 1.2.0.
+
+*** Removed
+
+- Removed the runtime relationship with ~page-break-lines~: the package no longer ~require~s it, no longer enables ~page-break-lines-mode~, and no longer lists it in ~Package-Requires~. welkomscherm now depends on nothing beyond Emacs itself.
+
+*** Renamed (with obsolete aliases kept)
+
+The form-feed names became separator names. The old names still work, so nothing breaks; they simply warn when used.
+
+- ~welkomscherm/use-form-feed~ -> ~welkomscherm/use-separator~ (variable alias).
+- ~welkomscherm/insert-form-feed~ -> ~welkomscherm/insert-separator~ (function alias).
+- ~welkomscherm/maybe-form-feed~ -> ~welkomscherm/maybe-separator~ (function alias).
+
+*** Migration notes
+
+Read this only if you customized the screen; the defaults need no change.
+
+- *If you only set options, you are done.* Setting ~welkomscherm/bookmarks-list~, ~welkomscherm/work-list~, ~welkomscherm/actions-list~, the ~*-name~ titles or any boolean option works exactly as before.
+- *If you customized ~welkomscherm/sections~ with your own functions*, nothing changes: a bare function is still a valid section and is called as before.
+- *If you stored the built-in section variables* (~welkomscherm/top-title~, ~welkomscherm/work~, ~welkomscherm/bookmarks~, ~welkomscherm/actions~, ~welkomscherm/init-time~, and the two new ones ~welkomscherm/system-details~ and ~welkomscherm/recent-files-section~), note that they now hold section records rather than functions. Render them through ~welkomscherm/render-section~. A bare function of no arguments is still accepted by ~welkomscherm/sections~, so the common cases are unaffected.
+- *If you wrote a custom section as a bare lambda that drew its own heading*, it keeps rendering exactly as it did. To adopt the new framing — so that heading and visibility are handled for you — build it with ~welkomscherm/make-section~ and give it a ~:name~:
+
+  #+begin_src emacs-lisp
+    ;; Before
+    (setopt welkomscherm/sections
+            (list (lambda ()
+                    (welkomscherm/insert-new-line)
+                    (welkomscherm/insert-muted "Today")
+                    (welkomscherm/insert-new-line)
+                    (welkomscherm/insert-muted "Make it a good one."))))
+
+    ;; After
+    (setopt welkomscherm/sections
+            (list (welkomscherm/make-section
+                   :name "Today"
+                   :render (lambda () (welkomscherm/insert-muted "Make it a good one.")))))
+  #+end_src
+
+- *If you enabled form feeds*, rename ~welkomscherm/use-form-feed~ to ~welkomscherm/use-separator~ at your leisure; the old name still works through its obsolete alias.

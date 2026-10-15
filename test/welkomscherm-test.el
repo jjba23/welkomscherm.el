@@ -17,10 +17,9 @@
 
 ;;; Commentary:
 
-;; ERT suite for welkomscherm.el.  It checks three things: that the
-;; package loads without any external library, that every rendering
-;; primitive writes what it promises, and that the optional system
-;; details and recent files sections stay off until they are asked for.
+;; ERT suite for welkomscherm.el.  It checks the section abstraction,
+;; the rendering primitives, the two opt-in sections, and that the whole
+;; package loads without any external library.
 ;;
 ;; Run it with:
 ;;
@@ -51,6 +50,13 @@
   (expand-file-name "../welkomscherm.el" welkomscherm-test--test-dir)
   "Absolute path of the package source under test.")
 
+(defun welkomscherm-test--body (thunk)
+  "Run THUNK in a temp buffer with centering off and return its contents."
+  (with-temp-buffer
+    (let ((welkomscherm/centered nil))
+      (funcall thunk))
+    (buffer-string)))
+
 
 ;;; Package surface
 
@@ -72,23 +78,29 @@ This guards the old bug where the inherit value was the quoted symbol
   (should (eq (face-attribute 'welkomscherm/muted-face :inherit)
               'font-lock-comment-face)))
 
-(ert-deftest welkomscherm-test/page-break-lines-is-optional ()
-  "The package does not force an external library on its users."
+(ert-deftest welkomscherm-test/no-external-libraries ()
+  "The package requires no external library, not even to draw rules."
   (let ((source (with-temp-buffer
                   (insert-file-contents welkomscherm-test--source)
                   (buffer-string))))
-    (should (string-match-p "(require 'page-break-lines nil t)" source))
-    (should-not (string-match-p "Package-Requires:.*page-break-lines" source))))
+    (should-not (string-match-p "page-break-lines" source))
+    (should (string-match-p "welkomscherm/separator-glyphs" source))))
 
 (ert-deftest welkomscherm-test/buffer-name-default ()
   "The default buffer name is the documented one."
   (should (equal welkomscherm/buffer-name "*welkomscherm*")))
 
+(ert-deftest welkomscherm-test/default-sections-are-composable ()
+  "Every default section is a section record or a plain function."
+  (should (cl-every (lambda (section)
+                      (or (welkomscherm/section-p section)
+                          (functionp section)))
+                    welkomscherm/sections)))
+
 (ert-deftest welkomscherm-test/default-sections-include-new-sections ()
   "The default section list includes the two new opt-in sections."
-  (should (member welkomscherm/system-details welkomscherm/sections))
-  (should (member welkomscherm/recent-files-section welkomscherm/sections))
-  (should (cl-every #'functionp welkomscherm/sections)))
+  (should (memq welkomscherm/system-details welkomscherm/sections))
+  (should (memq welkomscherm/recent-files-section welkomscherm/sections)))
 
 (ert-deftest welkomscherm-test/new-sections-are-opt-in ()
   "Both new sections default to off."
@@ -96,25 +108,143 @@ This guards the old bug where the inherit value was the quoted symbol
   (should-not welkomscherm/show-recent-files))
 
 
+;;; The section abstraction
+
+(ert-deftest welkomscherm-test/make-section-defaults ()
+  "A fresh section is visible, has no heading and renders nothing."
+  (let ((section (welkomscherm/make-section)))
+    (should (welkomscherm/section-p section))
+    (should (null (welkomscherm/section-name section)))
+    (should (null (welkomscherm/section-heading section)))
+    (should (welkomscherm/section-visible-p section))))
+
+(ert-deftest welkomscherm-test/section-heading-from-string ()
+  "A string heading is returned as-is."
+  (should (equal (welkomscherm/section-heading
+                  (welkomscherm/make-section :name "Links"))
+                 "Links")))
+
+(ert-deftest welkomscherm-test/section-heading-follows-function ()
+  "A function heading is resolved each time, tracking customization."
+  (let* ((title "One")
+         (section (welkomscherm/make-section :name (lambda () title))))
+    (should (equal (welkomscherm/section-heading section) "One"))
+    (setq title "Two")
+    (should (equal (welkomscherm/section-heading section) "Two"))))
+
+(ert-deftest welkomscherm-test/section-visibility-condition ()
+  "A condition hides a section when it returns nil."
+  (let ((shown nil))
+    (let ((section (welkomscherm/make-section
+                    :condition (lambda () shown))))
+      (should-not (welkomscherm/section-visible-p section))
+      (setq shown t)
+      (should (welkomscherm/section-visible-p section)))))
+
+(ert-deftest welkomscherm-test/render-section-frames-heading ()
+  "Rendering a section draws its heading and then its body."
+  (let ((text (welkomscherm-test--body
+               (lambda ()
+                 (let ((welkomscherm/use-section-title t)
+                       (welkomscherm/use-form-feed nil))
+                   (welkomscherm/render-section
+                    (welkomscherm/make-section
+                     :name "Heading"
+                     :render (lambda () (insert "body")))))))))
+    (should (string-match-p "Heading" text))
+    (should (string-match-p "body" text))))
+
+(ert-deftest welkomscherm-test/render-section-without-heading ()
+  "A section with no heading omits the heading block."
+  (let ((text (welkomscherm-test--body
+               (lambda ()
+                 (welkomscherm/render-section
+                  (welkomscherm/make-section
+                   :render (lambda () (insert "body"))))))))
+    (should (equal text "body"))))
+
+(ert-deftest welkomscherm-test/render-section-honors-condition ()
+  "A section hidden by its condition draws nothing at all."
+  (let ((text (welkomscherm-test--body
+               (lambda ()
+                 (welkomscherm/render-section
+                  (welkomscherm/make-section
+                   :name "Hidden"
+                   :condition (lambda () nil)
+                   :render (lambda () (insert "body"))))))))
+    (should (equal text ""))))
+
+(ert-deftest welkomscherm-test/render-section-accepts-plain-function ()
+  "A bare function is still accepted as a section."
+  (let ((text (welkomscherm-test--body
+               (lambda ()
+                 (welkomscherm/render-section
+                  (lambda () (insert "plain")))))))
+    (should (equal text "plain"))))
+
+(ert-deftest welkomscherm-test/render-section-rejects-garbage ()
+  "Rendering something that is not a section signals an error."
+  (should-error (with-temp-buffer (welkomscherm/render-section 42))))
+
+(ert-deftest welkomscherm-test/sections-can-be-reordered ()
+  "Reordering `welkomscherm/sections' reorders the screen."
+  (let ((text (welkomscherm-test--body
+               (lambda ()
+                 (let ((welkomscherm/use-section-title t)
+                       (welkomscherm/use-form-feed nil)
+                       (welkomscherm/sections
+                        (list (welkomscherm/make-section
+                               :name "Second"
+                               :render (lambda () (insert "2")))
+                              (welkomscherm/make-section
+                               :name "First"
+                               :render (lambda () (insert "1"))))))
+                   (welkomscherm/render-to-screen))))))
+    (should (< (string-match-p "Second" text)
+               (string-match-p "First" text)))))
+
+
 ;;; Rendering primitives
 
 (ert-deftest welkomscherm-test/insert-new-line ()
   "`welkomscherm/insert-new-line' inserts a single newline."
-  (with-temp-buffer
-    (welkomscherm/insert-new-line)
-    (should (equal (buffer-string) "\n"))))
+  (should (equal (welkomscherm-test--body #'welkomscherm/insert-new-line)
+                 "\n")))
 
-(ert-deftest welkomscherm-test/insert-form-feed ()
-  "`welkomscherm/insert-form-feed' inserts a form feed character."
-  (with-temp-buffer
-    (welkomscherm/insert-form-feed)
-    (should (equal (buffer-string) "\f"))))
+(ert-deftest welkomscherm-test/insert-separator ()
+  "`welkomscherm/insert-separator' inserts the marker and ends the line."
+  (should (equal (welkomscherm-test--body #'welkomscherm/insert-separator)
+                 "\f\n")))
+
+(ert-deftest welkomscherm-test/separator-columns ()
+  "The separator width honours the option and the content width."
+  (let ((welkomscherm/separator-width 12))
+    (should (= (welkomscherm/separator-columns) 12)))
+  (let ((welkomscherm/separator-width nil)
+        (fill-column 10))
+    (should (= (welkomscherm/separator-columns) 10))))
+
+(ert-deftest welkomscherm-test/separator-glyphs ()
+  "The separator draws as many glyphs as it has columns."
+  (let ((welkomscherm/separator-width 4))
+    (let ((entry (welkomscherm/separator-glyphs)))
+      (should (vectorp entry))
+      (should (= (length entry) 4))
+      (should (cl-every #'identity entry)))))
+
+(ert-deftest welkomscherm-test/obsolete-form-feed-names-still-work ()
+  "The old form-feed names remain as aliases, for a gentle migration."
+  (should (eq (indirect-variable 'welkomscherm/use-form-feed)
+              'welkomscherm/use-separator))
+  (should (equal (indirect-function 'welkomscherm/insert-form-feed)
+                 (indirect-function 'welkomscherm/insert-separator)))
+  (should (equal (indirect-function 'welkomscherm/maybe-form-feed)
+                 (indirect-function 'welkomscherm/maybe-separator))))
 
 (ert-deftest welkomscherm-test/insert-spacer ()
   "`welkomscherm/insert-spacer' inserts two spaces."
-  (with-temp-buffer
-    (welkomscherm/insert-spacer)
-    (should (equal (buffer-string) "  "))))
+  (should (equal (welkomscherm-test--body #'welkomscherm/insert-spacer)
+                 "  ")))
 
 (ert-deftest welkomscherm-test/insert-muted-adds-face ()
   "`welkomscherm/insert-muted' inserts text carrying the muted face."
@@ -125,15 +255,50 @@ This guards the old bug where the inherit value was the quoted symbol
     (should (eq (get-text-property (point-min) 'face)
                 'welkomscherm/muted-face))))
 
-(ert-deftest welkomscherm-test/maybe-form-feed-respects-option ()
-  "Form feeds are only inserted when the option is enabled."
+(ert-deftest welkomscherm-test/maybe-separator-respects-option ()
+  "The horizontal rule is only drawn when the option is enabled."
   (with-temp-buffer
-    (let ((welkomscherm/use-form-feed nil))
-      (welkomscherm/maybe-form-feed))
+    (let ((welkomscherm/use-separator nil))
+      (welkomscherm/maybe-separator))
     (should (equal (buffer-string) ""))
-    (let ((welkomscherm/use-form-feed t))
-      (welkomscherm/maybe-form-feed))
-    (should (equal (buffer-string) "\f"))))
+    (let ((welkomscherm/use-separator t))
+      (welkomscherm/maybe-separator))
+    (should (equal (buffer-string) "\f\n"))))
+
+(ert-deftest welkomscherm-test/render-section-draws-separator ()
+  "A section inserts the separator marker when separators are enabled."
+  (let ((text (welkomscherm-test--body
+               (lambda ()
+                 (let ((welkomscherm/use-separator t))
+                   (welkomscherm/render-section
+                    (welkomscherm/make-section
+                     :name "Heading"
+                     :render (lambda () (insert "body")))))))))
+    (should (string-match-p "\f" text))
+    (should (string-match-p "body" text))))
+
+(ert-deftest welkomscherm-test/separators-show-as-rules ()
+  "The welcome buffer maps its separator marker to a rule of glyphs."
+  (save-window-excursion
+    (unwind-protect
+        (let ((welkomscherm/use-separator t)
+              (welkomscherm/separator-width 7))
+          (welkomscherm)
+          (welkomscherm/update-separator-display)
+          (with-current-buffer welkomscherm/buffer-name
+            (should (string-match-p "\f" (buffer-string)))
+            (let ((entry (aref buffer-display-table ?\f)))
+              (should (vectorp entry))
+              (should (= (length entry) 7)))))
+      (when (buffer-live-p (get-buffer welkomscherm/buffer-name))
+        (kill-buffer welkomscherm/buffer-name)))))
+
+(ert-deftest welkomscherm-test/separators-reflow-on-resize-hooks ()
+  "The separator display is refreshed when windows change."
+  (should (memq 'welkomscherm/update-separator-display
+                window-size-change-functions))
+  (should (memq 'welkomscherm/update-separator-display
+                window-configuration-change-hook)))
 
 (ert-deftest welkomscherm-test/maybe-centered-respects-option ()
   "Centering is skipped when disabled and attempted when enabled."
@@ -224,21 +389,21 @@ This guards the old bug where the inherit value was the quoted symbol
 
 (ert-deftest welkomscherm-test/system-details-section-off-by-default ()
   "The system details section renders nothing when disabled."
-  (with-temp-buffer
-    (let ((welkomscherm/centered nil)
-          (welkomscherm/show-system-details nil))
-      (funcall welkomscherm/system-details))
-    (should (= (buffer-size) 0))))
+  (let ((text (welkomscherm-test--body
+               (lambda ()
+                 (let ((welkomscherm/show-system-details nil))
+                   (welkomscherm/render-section welkomscherm/system-details))))))
+    (should (equal text ""))))
 
 (ert-deftest welkomscherm-test/system-details-section-on ()
   "The system details section renders values when enabled."
-  (with-temp-buffer
-    (let ((welkomscherm/centered nil)
-          (welkomscherm/show-system-details t))
-      (funcall welkomscherm/system-details))
-    (should (string-match-p "Emacs: " (buffer-string)))
+  (let ((text (welkomscherm-test--body
+               (lambda ()
+                 (let ((welkomscherm/show-system-details t))
+                   (welkomscherm/render-section welkomscherm/system-details))))))
+    (should (string-match-p "Emacs: " text))
     (should (string-match-p (regexp-quote (welkomscherm/system-emacs-version))
-                            (buffer-string)))))
+                            text))))
 
 
 ;;; Recent files section
@@ -271,12 +436,13 @@ This guards the old bug where the inherit value was the quoted symbol
   "The recent files section renders nothing when disabled."
   (let ((file (make-temp-file "welkomscherm-recent")))
     (unwind-protect
-        (let ((recentf-list (list file)))
-          (with-temp-buffer
-            (let ((welkomscherm/centered nil)
-                  (welkomscherm/show-recent-files nil))
-              (funcall welkomscherm/recent-files-section))
-            (should (= (buffer-size) 0))))
+        (let ((recentf-list (list file))
+              (text (welkomscherm-test--body
+                     (lambda ()
+                       (let ((welkomscherm/show-recent-files nil))
+                         (welkomscherm/render-section
+                          welkomscherm/recent-files-section))))))
+          (should (equal text "")))
       (delete-file file))))
 
 (ert-deftest welkomscherm-test/recent-files-section-on ()
@@ -287,7 +453,7 @@ This guards the old bug where the inherit value was the quoted symbol
           (with-temp-buffer
             (let ((welkomscherm/centered nil)
                   (welkomscherm/show-recent-files t))
-              (funcall welkomscherm/recent-files-section))
+              (welkomscherm/render-section welkomscherm/recent-files-section))
             (should (string-match-p
                      (regexp-quote (file-name-nondirectory file))
                      (buffer-string)))

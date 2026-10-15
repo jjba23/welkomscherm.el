@@ -38,12 +38,6 @@
 (define compiled-files
   '("welkomscherm.elc" "test/welkomscherm-test.elc"))
 
-;; The checkdoc form, spelled without any inner double quote so that the
-;; shell quoting stays simple: (symbol-name (quote welkomscherm.el)) yields
-;; the file name.
-(define checkdoc-form
-  "'(progn (require (quote checkdoc)) (checkdoc-file (symbol-name (quote welkomscherm.el))))'")
-
 ;; ====== Maak tasks ======
 
 (define (compile)
@@ -57,12 +51,12 @@
            "-f" "ert-run-tests-batch-and-exit")))
 
 (define (lint)
-  "Compile with warnings turned into errors, and report checkdoc findings."
+  "Compile with warnings turned into errors, then enforce checkdoc."
   ($ (list emacs-command "-Q" "--batch" "-L" "." "-L" "test"
            "--eval" "'(setq byte-compile-error-on-warn t)'"
            "-f" "batch-byte-compile" source-file test-file))
   ($ (list emacs-command "-Q" "--batch" "-L" "."
-           "--eval" checkdoc-form)))
+           "-l" "test/welkomscherm-checkdoc.el")))
 
 (define (clean)
   "Remove the byte-compiled files."
