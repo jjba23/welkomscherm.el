@@ -3,7 +3,7 @@
 #+author: Josep Bigorra
 #+email: jjbigorra@gmail.com
 #+language: en
-#+options: toc:1 num:nil
+#+options: toc:nil num:nil
 
 [[https://jointhefreeworld.org/ggg/dist/emacs-lisp.svg]] [[https://jointhefreeworld.org/ggg/dist/license-gpl3+.svg]] [[https://jointhefreeworld.org/ggg/dist/license-fdl13+.svg]]
 
