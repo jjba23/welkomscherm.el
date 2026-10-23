@@ -132,6 +132,21 @@ An example installation with Elpaca, configured as a cosy home screen:
 Then simply call ~M-x welkomscherm~ whenever you want to come home. To make it
 the first thing you see, see [[* Welkomscherm at startup][Welkomscherm at startup]] below.
 
+It is also packaged with Nix. This repository carries the expression itself,
+~default.nix~ next to ~welkomscherm.el~, so ~nix-build~ in this checkout builds
+the package; and it is part of
+[[https://codeberg.org/jjba23/nix-jointhefreeworld][nix-jointhefreeworld]], the
+set of Nix packages for everything Jointhefreeworld. The set's ~emacsOverlay~
+adds it to ~emacsPackages~, byte-compiled and with its autoloads, so an Emacs
+that Nix builds gets it the way it gets any other package:
+
+#+begin_src nix
+  let
+    emacsPackages = pkgs.emacsPackages.overrideScope nix-jointhefreeworld.emacsOverlay;
+  in
+    emacsPackages.withPackages (epkgs: [ epkgs.welkomscherm ])
+  #+end_src
+
 
 * Sections: the building block
 
