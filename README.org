@@ -18,11 +18,13 @@ Extensible and configurable to your liking and following and respecting your the
 
 [[./screenshots/welkomscherm-demo.gif]]
 
-/One screen, two themes, every section: the demo alternates between the default
+#+begin_quote
+One screen, two themes, every section: the demo alternates between the default
 view and one with separators, recent files and system details enabled, in a
 dark and a light theme. The frames are drawn from the package's own buffer
 output — see [[#showcase-and-screenshots][Showcase and screenshots]] for how,
-and for more pictures./
+and for more pictures.
+#+end_quote
 
 -------------------------
 
