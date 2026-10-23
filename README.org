@@ -9,7 +9,7 @@
 
 /welkomscherm/ is Dutch for *welcome screen*.
 
-*welkomscherm.el is a small, calm dashboard for Emacs*: a centred handful of
+*welkomscherm.el is a small, calm, extensible welcome screen / dashboard for Emacs*: a centred handful of
 lines, the links you actually use, and nothing that gets in your way. It greets
 you in a graphical frame and in a plain terminal alike, on any Emacs from 25.1
 upwards, and it asks nothing of you that Emacs does not already provide.
