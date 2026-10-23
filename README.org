@@ -14,16 +14,7 @@ lines, the links you actually use, and nothing that gets in your way. It greets
 you in a graphical frame and in a plain terminal alike, on any Emacs from 25.1
 upwards, and it asks nothing of you that Emacs does not already provide.
 
-Think of it as the first thing you see when you sit down at your editor — a
-small, unhurried place that puts your files, your work and your next move one
-click away, and then steps aside.
-
-| Version | Requires            | Dependencies            | Quality gate              | License          |
-|---------+---------------------+-------------------------+---------------------------+------------------|
-|   1.2.1 | Emacs 25.1 or newer | *none* — built-ins only | ERT + checkdoc via ~maak~ | GPL-3.0-or-later |
-
-No MELPA, no ELPA, no icon fonts, no rendering library: a single ~.el~ file you
-can read in one sitting, plus this document.
+Extensible and configurable to your liking and following and respecting your themes out of the box and with customizable faces.
 
 [[./screenshots/welkomscherm-demo.gif]]
 
