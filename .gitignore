@@ -4,3 +4,6 @@
 
 # Editor backups.
 *~
+
+# Generated capture data for the screenshots.
+screenshots/out/

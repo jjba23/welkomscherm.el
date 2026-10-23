@@ -1,22 +1,37 @@
 #+title: welkomscherm.el
+#+subtitle: a quiet welcome screen for Emacs
 #+author: Josep Bigorra
 #+email: jjbigorra@gmail.com
 #+language: en
+#+options: toc:2 num:nil
 
-[[https://jointhefreeworld.org/ggg/dist/emacs-lisp.svg]] [[https://jointhefreeworld.org/ggg/dist/license-gpl3+.svg]]    [[https://jointhefreeworld.org/ggg/dist/license-fdl13+.svg]] 
+[[https://jointhefreeworld.org/ggg/dist/emacs-lisp.svg]] [[https://jointhefreeworld.org/ggg/dist/license-gpl3+.svg]] [[https://jointhefreeworld.org/ggg/dist/license-fdl13+.svg]]
 
-/welkomscherm/ means /welcome screen/ in the Dutch language.
+/welkomscherm/ is Dutch for *welcome screen*.
 
-A quiet, welcoming dashboard for Emacs: a centred handful of lines, your own
-links, and nothing that gets in your way. It works the same in a graphical
-frame and in a plain terminal, on any Emacs from 25.1 upwards, and it asks
-nothing of you that Emacs does not already provide.
+*welkomscherm.el is a small, calm dashboard for Emacs*: a centred handful of
+lines, the links you actually use, and nothing that gets in your way. It greets
+you in a graphical frame and in a plain terminal alike, on any Emacs from 25.1
+upwards, and it asks nothing of you that Emacs does not already provide.
 
-Think of it as the first thing you see when you sit down at your editor: a
-small, calm place that puts your files, your work and your next move one click
-away, and then gets out of the way.
+Think of it as the first thing you see when you sit down at your editor — a
+small, unhurried place that puts your files, your work and your next move one
+click away, and then steps aside.
 
-If you like my work, please support me by [[https://bmc.link/jjbigorra][buying me a cup of coffee ☕]] so I can continue with a lot of motivation.
+| Version | Requires            | Dependencies            | Quality gate              | License          |
+|---------+---------------------+-------------------------+---------------------------+------------------|
+|   1.2.1 | Emacs 25.1 or newer | *none* — built-ins only | ERT + checkdoc via ~maak~ | GPL-3.0-or-later |
+
+No MELPA, no ELPA, no icon fonts, no rendering library: a single ~.el~ file you
+can read in one sitting, plus this document.
+
+[[./screenshots/welkomscherm-demo.gif]]
+
+/One screen, two themes, every section: the demo alternates between the default
+view and one with separators, recent files and system details enabled, in a
+dark and a light theme. The frames are drawn from the package's own buffer
+output — see [[*Showcase and screenshots][Showcase and screenshots]] for how,
+and for more pictures./
 
 -------------------------
 
@@ -24,75 +39,70 @@ If you like my work, please support me by [[https://bmc.link/jjbigorra][buying m
 
 Every editor has a welcome screen; most of them try to be a cockpit. That is
 wonderful when you want a cockpit, and tiring when you only want to feel at
-home. welkomscherm makes one promise: a small, legible, beautifully centred
-screen that you can read in a second and trust to keep working for the next
-fifty years.
+home.
 
-Concretely, that promise is kept by four choices:
+welkomscherm makes one promise: *a small, legible, beautifully centred screen
+that you can read in a second and trust to keep working for the next fifty
+years.* Concretely, that promise is kept by four choices.
 
-- *No external libraries.* The whole package runs on Emacs built-ins alone.
+- *No external libraries.* :: The whole package runs on Emacs built-ins alone.
   There is nothing to install alongside it and nothing to break when another
-  package changes. The section separators are drawn by welkomscherm itself
-  and re-flow with the window, so there is not even a rendering library to
-  miss.
-- *Tiny and auditable.* The entire package is a single file of a few hundred
+  package changes. The section separators are drawn by welkomscherm itself and
+  re-flow with the window, so there is not even a rendering library to miss.
+- *Tiny and auditable.* :: The entire package is a single file of a few hundred
   lines. You can read all of it on a coffee break, and you will understand all
   of it.
-- *Composable sections.* Every block of the screen is a self-contained unit
+- *Composable sections.* :: Every block of the screen is a self-contained unit
   with its own heading, its own visibility rule and its own body. Adding,
-  removing or reordering a section means editing one list, and nothing else.
-- *One screen, two worlds.* The same buffer renders identically in GUI Emacs
+  removing or reordering a section means editing one list — the list
+  ~welkomscherm/sections~ — and nothing else.
+- *One screen, two worlds.* :: The same buffer renders identically in GUI Emacs
   and in terminal Emacs, local or over SSH, because it is plain text and
   ordinary Emacs buttons rather than images and widgets.
 
-* How welkomscherm compares
+* Features
 
-The Emacs dashboard space is friendly and varied; each of these packages is a
-good answer to a slightly different question. Read this table as a map rather
-than a scoreboard: any of them may be the right home for you.
+- *A welcome screen, not a cockpit.* :: Title, bookmarks, work links, action
+  buttons, optional recent files, optional system details. Nothing else asks
+  for your attention.
+- *Composable sections.* :: Add, remove or reorder blocks of the screen by
+  editing ~welkomscherm/sections~. A section can be one of the built-ins, a
+  record you build with ~welkomscherm/make-section~, or a plain function of no
+  arguments.
+- *Self-drawn separators.* :: Opt-in horizontal rules that follow the centring
+  axis of your text, re-flow on resize, and need no ~page-break-lines~ or any
+  other package. See ~welkomscherm/use-separator~.
+- *Clickable everything.* :: Bookmarks and actions are ordinary Emacs buttons,
+  so ~mouse-1~, ~TAB~ and ~RET~ all work, in a GUI frame and in a terminal.
+- *GUI and TUI parity.* :: No images, no widgets, no conditional code paths:
+  the same screen on a laptop, a workstation, or a server console over SSH.
+- *Opt-in extras.* :: Recent files (from the built-in ~recentf~) and system
+  details are one flag away, and stay out of the way until you ask for them.
+- *Startup honesty.* :: A small line tells you how long Emacs took to start,
+  handy while tuning your configuration and easy to switch off afterwards.
+- *Your private and work lives apart.* :: Separate bookmark lists for personal
+  and work links, each arranged in rows, the way you would arrange a shelf.
+- *Quiet by default.* :: The buffer is read-only, a little extra line spacing
+  keeps it airy, and point is left on the first line so you always see it from
+  the top.
+- *Free software, all the way.* :: GPL-3.0-or-later for the code, FDL-1.3+ for
+  the docs. No telemetry, no network, no surprises.
 
-| Package              | Hard requirements                     | What it gives you                                      | How you shape it                     |
-|----------------------+---------------------------------------+--------------------------------------------------------+--------------------------------------|
-| *welkomscherm.el*    | Emacs ≥ 25.1 (nothing else)           | centred links, bookmarks, work, actions, recent files, system details, startup time | composable sections in one list      |
-| emacs-dashboard      | Emacs ≥ 27.1                          | banner, recent files, bookmarks, projects, agenda, registers | ~dashboard-items~ and ~dashboard-startupify-list~ |
-| enlight              | Emacs ≥ 27.1 and ~compat~             | one fully custom string, plus optional text menus      | ~enlight-content~ and hooks          |
-| welcome.el           | Emacs ≥ 27.1 and ~nerd-icons~         | a banner header and a key-driven command menu          | ~welcome-menu-items~                 |
-| minimal-dashboard.el | Emacs ≥ 27.1                          | a centred image and a line of text                     | a handful of variables               |
+* Installation
 
-A few notes to keep the comparison honest (all read from the projects'
-repositories):
+** Requirements
 
-- [[https://github.com/emacs-dashboard/dashboard][emacs-dashboard]] is the richest of the group and the closest thing to a
-  batteries-included cockpit; it is also the largest, with roughly 2,400 lines
-  across ~dashboard.el~ and ~dashboard-widgets.el~. Its ~page-break-lines~,
-  ~projectile~ and icon dependencies are optional, not required.
-- [[https://github.com/ichernyshovvv/enlight][enlight]] is deliberately the opposite: a small framework (~330 lines) where
-  you supply the content as a string. Its only external dependency is ~compat~.
-- [[https://github.com/tomrss/welcome.el][welcome.el]] is a compact welcome buffer (~277 lines) built around a command
-  menu, and needs ~nerd-icons~ for its icons.
-- [[https://github.com/dheerajshenoy/minimal-dashboard.el][minimal-dashboard.el]] narrows the idea down to an image and a line of text
-  (~337 lines).
+- *GNU Emacs 25.1 or newer.* That is the whole list. welkomscherm has no
+  external dependencies and does not require any part of Emacs that is not
+  already there (no ~cl-lib~ beyond the bundled one, no icon package, no
+  rendering library).
+- *Optional:* ~recentf-mode~ if you want the recent files section to have
+  something to show.
 
-Against all of these, welkomscherm's distinguishing choices are its *zero
-external dependencies*, its *section abstraction* — every block is a reusable
-unit you can reorder or share — and its *strict equivalence between GUI and
-TUI*. When the package is measured against Emacs's image-display limits, this
-is what lets the very same screen greet you on a laptop, a workstation and a
-server console without a single conditional.
+** Install with Elpaca and use-package (recommended)
 
--------------------------
-
-
-* Using and Installing
-
-Feel free to dive a little into the source code and explore all the
-configuration options: every option is documented in its own docstring. Out of
-the box, welkomscherm shows its top title, then your work and personal
-bookmarks, your action buttons, and how long startup took.
-
-This package is not (yet) available in popular Emacs repositories such as MELPA or ELPA.
-
-An example installation with Elpaca, configured as a cosy home screen:
+The package is not (yet) available in popular Emacs repositories such as MELPA
+or ELPA, so fetch it straight from the source of truth:
 
 #+begin_src emacs-lisp
   (use-package welkomscherm
@@ -130,75 +140,99 @@ An example installation with Elpaca, configured as a cosy home screen:
 #+end_src
 
 Then simply call ~M-x welkomscherm~ whenever you want to come home. To make it
-the first thing you see, see [[* Welkomscherm at startup][Welkomscherm at startup]] below.
+the first thing you see, see [[*Welkomscherm at startup][Welkomscherm at startup]].
 
-It is also packaged with Nix. This repository carries the expression itself,
-~default.nix~ next to ~welkomscherm.el~, so ~nix-build~ in this checkout builds
-the package; and it is part of
-[[https://codeberg.org/jjba23/nix-jointhefreeworld][nix-jointhefreeworld]], the
-set of Nix packages for everything Jointhefreeworld. The set's ~emacsOverlay~
-adds it to ~emacsPackages~, byte-compiled and with its autoloads, so an Emacs
-that Nix builds gets it the way it gets any other package:
+#+begin_quote
+/A note on ~setopt~:/ it arrived in Emacs 29. If you run an older Emacs — and
+welkomscherm is happy all the way back to 25.1 — use ~setq~ in place of
+~setopt~ and everything else above stays the same.
+#+end_quote
+
+** Install by hand
+
+Two lines are enough if you keep the file somewhere on your ~load-path~:
+
+#+begin_src shell
+  git clone https://codeberg.org/jjba23/welkomscherm.el ~/.emacs.d/site-lisp/welkomscherm.el
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/welkomscherm.el")
+  (require 'welkomscherm)
+#+end_src
+
+** Install with package-vc (Emacs 29 and newer)
+
+If you run Emacs 29 or newer, the built-in ~package-vc~ can fetch, build and
+load it without any third-party package manager at all:
+
+#+begin_src emacs-lisp
+  (package-vc-install "https://codeberg.org/jjba23/welkomscherm.el")
+#+end_src
+
+Or interactively: ~M-x package-vc-install RET~ and paste the URL.
+
+** Install with Nix
+
+This repository carries the expression itself, ~default.nix~ next to
+~welkomscherm.el~, so ~nix-build~ in this checkout builds the package. It is
+also part of
+[[https://codeberg.org/jjba23/nix-jointhefreeworld][nix-jointhefreeworld]],
+the set of Nix packages for everything Jointhefreeworld. The set's
+~emacsOverlay~ adds it to ~emacsPackages~, byte-compiled and with its
+autoloads, so an Emacs that Nix builds gets it the way it gets any other
+package:
 
 #+begin_src nix
   let
     emacsPackages = pkgs.emacsPackages.overrideScope nix-jointhefreeworld.emacsOverlay;
   in
     emacsPackages.withPackages (epkgs: [ epkgs.welkomscherm ])
-  #+end_src
-
-
-* Sections: the building block
-
-Everything on the screen is a *section*. A section is a small record, built
-with ~welkomscherm/make-section~, that knows three things:
-
-- its *name* — the heading drawn above it. It can be a plain string, a
-  function returning a string (so the heading follows customization made
-  later), or ~nil~ for a section with no heading at all;
-- its *render* function — a function of no arguments that grows the buffer;
-- its *condition* — a function of no arguments; when it returns non-nil the
-  section is shown, otherwise it is skipped entirely. ~nil~ means "always
-  show".
-
-The shared framing — the blank line, the optional separator and the heading —
-is drawn for you by ~welkomscherm/render-section~, so a section body only ever
-draws its own content. That is what makes sections independent: to add,
-remove or reorder one, you never touch the rendering code.
-
-The screen itself is simply the list ~welkomscherm/sections~, rendered in
-order:
-
-#+begin_src emacs-lisp
-  welkomscherm/sections
-  ;; => (welkomscherm/top-title welkomscherm/work welkomscherm/bookmarks
-  ;;     welkomscherm/recent-files-section welkomscherm/actions
-  ;;     welkomscherm/system-details welkomscherm/init-time)
 #+end_src
 
-Reorder that list to reorder your home screen; drop an element to retire a
-section; add your own to make the screen truly yours. A section can even be a
-plain function of no arguments, if that is all you need:
+* Quick start
+
+Under a minute, start to finish:
+
+1. Put welkomscherm on your ~load-path~ and require it (see
+   [[*Installation][Installation]]).
+2. Point it at a directory or file you open all day:
+
+   #+begin_src emacs-lisp
+     (require 'welkomscherm)
+     (setq welkomscherm/bookmarks-list
+           '((("org" . "~/org/") ("notes" . "~/notes.org"))))
+   #+end_src
+
+3. Run ~M-x welkomscherm~.
+
+That is the whole tour. Everything below is refinement: what the screen shows,
+how it is built, and how to make it yours.
+
+* Welkomscherm at startup
+
+If you want the welcome screen to be your initial buffer whenever you start a
+new Emacs (a GUI frame or a terminal one), add this to your Emacs
+configuration:
 
 #+begin_src emacs-lisp
-  (setopt welkomscherm/sections
-          (list welkomscherm/top-title
-                ;; A section of your own, built as a record.
-                (welkomscherm/make-section
-                 :name "Today"
-                 :condition (lambda () (bound-and-true-p org-agenda-files))
-                 :render (lambda () (welkomscherm/insert-muted "Make it a good one.")))
-                ;; Or just a bare function.
-                (lambda () (welkomscherm/insert-muted "and a warm cup of coffee")))
-                welkomscherm/bookmarks
-                welkomscherm/actions)
-#+end_src)
+  (setq initial-buffer-choice
+        (lambda () (welkomscherm) (get-buffer welkomscherm/buffer-name)))
+#+end_src
 
+Note that if using ~use-package~ it's recommendable to apply this setting in
+your ~(use-package emacs)~ declaration.
 
-* All options, in detail
+* Configuration
+
+Feel free to dive a little into the source code and explore all the
+configuration options: every option is documented in its own docstring. Out of
+the box, welkomscherm shows its top title, then your work and personal
+bookmarks, your action buttons, and how long startup took.
 
 Every option below belongs to the ~welkomscherm~ customization group and can be
-set with ~setopt~ or through ~M-x customize-group RET welkomscherm~.
+set with ~setopt~, with ~setq~ on older Emacsen, or through
+~M-x customize-group RET welkomscherm~.
 
 ** Look, buffer and titles
 
@@ -216,9 +250,9 @@ set with ~setopt~ or through ~M-x customize-group RET welkomscherm~.
 
 - ~welkomscherm/use-separator~ (boolean, default ~nil~) ::
   Whether a horizontal rule separates sections. The buffer keeps a plain form
-  feed (the ~^L~ page break of a text file) and welkomscherm draws it as a
-  rule using nothing but Emacs, so no rendering library is involved, and the
-  rule re-flows by itself whenever the frame is resized. The old name
+  feed (the ~^L~ page break of a text file) and welkomscherm draws it as a rule
+  using nothing but Emacs, so no rendering library is involved, and the rule
+  re-flows by itself whenever the frame is resized. The old name
   ~welkomscherm/use-form-feed~ still works as an obsolete alias.
 
 - ~welkomscherm/separator~ (character, default ~?─~) ::
@@ -323,7 +357,8 @@ turns on with a single flag.
 
 - ~welkomscherm/sections~ (list) ::
   The ordered list of sections to render — a mix of the built-in section
-  records and any sections of your own. See [[* Sections: the building block][Sections: the building block]].
+  records and any sections of your own. See
+  [[*Sections: the building block][Sections: the building block]].
 
 - ~welkomscherm/top-title~, ~welkomscherm/work~, ~welkomscherm/bookmarks~,
   ~welkomscherm/recent-files-section~, ~welkomscherm/actions~,
@@ -342,47 +377,196 @@ turns on with a single flag.
 - ~welkomscherm/post-render-hook~ (hook) ::
   Run after the buffer is populated, with the welkomscherm buffer current.
 
-Both are described with examples in [[* Available hooks][Available hooks]].
+Both are described with examples in [[*Available hooks][Available hooks]].
 
+* Sections: the building block
 
-* Welkomscherm at startup
+Everything on the screen is a *section*. A section is a small record, built
+with ~welkomscherm/make-section~, that knows three things:
 
-If you want the welkomscherm to be your initial buffer when you start a new emacsclient (either GUI or terminal) then add this to your Emacs config:
+- its *name* — the heading drawn above it. It can be a plain string, a
+  function returning a string (so the heading follows customization made
+  later), or ~nil~ for a section with no heading at all;
+- its *render* function — a function of no arguments that grows the buffer;
+- its *condition* — a function of no arguments; when it returns non-nil the
+  section is shown, otherwise it is skipped entirely. ~nil~ means "always
+  show".
+
+The shared framing — the blank line, the optional separator and the heading —
+is drawn for you by ~welkomscherm/render-section~, so a section body only ever
+draws its own content. That is what makes sections independent: to add,
+remove or reorder one, you never touch the rendering code.
+
+The screen itself is simply the list ~welkomscherm/sections~, rendered in
+order:
+
 #+begin_src emacs-lisp
-  (setq initial-buffer-choice
-        (lambda () (welkomscherm) (get-buffer welkomscherm/buffer-name)))
+  welkomscherm/sections
+  ;; => (welkomscherm/top-title welkomscherm/work welkomscherm/bookmarks
+  ;;     welkomscherm/recent-files-section welkomscherm/actions
+  ;;     welkomscherm/system-details welkomscherm/init-time)
 #+end_src
 
-Note that if using ~use-package~ it's recommendable to apply this setting in your ~(use-package emacs)~ declaration.
+Reorder that list to reorder your home screen; drop an element to retire a
+section; add your own to make the screen truly yours. A section can even be a
+plain function of no arguments, if that is all you need:
 
-------------------
+#+begin_src emacs-lisp
+  (setopt welkomscherm/sections
+          (list welkomscherm/top-title
+                ;; A section of your own, built as a record.
+                (welkomscherm/make-section
+                 :name "Today"
+                 :condition (lambda () (bound-and-true-p org-agenda-files))
+                 :render (lambda () (welkomscherm/insert-muted "Make it a good one.")))
+                ;; Or just a bare function.
+                (lambda () (welkomscherm/insert-muted "and a warm cup of coffee"))
+                welkomscherm/bookmarks
+                welkomscherm/actions))
+#+end_src
+
+** The primitives you can draw with
+
+A section body is ordinary Emacs Lisp: you may ~insert~ whatever you like. To
+keep it looking like the rest of the screen, use welkomscherm's own helpers.
+
+| Helper                            | What it does                                           |
+|-----------------------------------+--------------------------------------------------------|
+| ~welkomscherm/insert-muted~       | insert text in the muted face and centre the line      |
+| ~welkomscherm/insert-new-line~    | end the current line                                   |
+| ~welkomscherm/insert-spacer~      | insert the two-space gap between two buttons           |
+| ~welkomscherm/insert-separator~   | insert a horizontal rule marker, followed by a newline |
+| ~welkomscherm/maybe-separator~    | the same, only when separators are enabled             |
+| ~welkomscherm/maybe-centered~     | centre the current line when ~welkomscherm/centered~   |
+| ~welkomscherm/render-rows~        | draw rows of ~(ALIAS . PATH)~ buttons                  |
+| ~welkomscherm/render-action-rows~ | draw rows of ~(LABEL . FUNCTION)~ buttons              |
+| ~welkomscherm/render-section~     | draw one section, framing and all                      |
+
+A slightly more ambitious section, with its own buttons:
+
+#+begin_src emacs-lisp
+  (welkomscherm/make-section
+   :name "Capture"
+   :render (lambda ()
+             (welkomscherm/render-action-rows
+              (list (list (cons "note" (lambda (btn) (find-file "~/org/inbox.org")))
+                          (cons "task" (lambda (btn) (find-file "~/org/tasks.org"))))))))
+#+end_src
 
 * Available hooks
 
-welkomscherm.el allows you to run code arbitrarily both before it renders, as well as after. You should feel free to customize this to your liking.
+welkomscherm.el allows you to run code arbitrarily both before it renders, as
+well as after. You should feel free to customize this to your liking.
 
-On the technical side, this means two hooks are made available, ~welkomscherm/pre-render-hook~ and ~welkomscherm/post-render-hook~. 
+On the technical side, this means two hooks are made available,
+~welkomscherm/pre-render-hook~ and ~welkomscherm/post-render-hook~.
 
-Find here an example where we adjust the ~fill-column~ in the welkomscherm buffer so that the dashboard gets centered properly according to the size of the frame.
+Find here an example where we adjust the ~fill-column~ in the welkomscherm
+buffer so that the dashboard gets centered properly according to the size of
+the frame.
 
-By default, without this, centering is based on your default ~fill-column~ (likely 70 char) due to ~(center-line)~.
+By default, without this, centering is based on your default ~fill-column~
+(likely 70 char) due to ~(center-line)~.
 
 #+begin_src emacs-lisp
-(add-hook 'welkomscherm/pre-render-hook
-          (lambda() (setq-local fill-column (frame-parameter nil 'width))))
+  (add-hook 'welkomscherm/pre-render-hook
+            (lambda () (setq-local fill-column (frame-parameter nil 'width))))
 #+end_src
 
 Find here an example of running arbitrary code after rendering:
+
 #+begin_src emacs-lisp
-(add-hook 'welkomscherm/post-render-hook
-          (lambda() (message "welkomscherm rendered successfully")))
+  (add-hook 'welkomscherm/post-render-hook
+            (lambda () (message "welkomscherm rendered successfully")))
 #+end_src
+
+* How welkomscherm compares
+
+The Emacs dashboard space is friendly and varied; each of these packages is a
+good answer to a slightly different question. Read this table as a map rather
+than a scoreboard: any of them may be the right home for you.
+
+| Package              | Hard requirements             | What it gives you                                                                   | How you shape it                                  |
+|----------------------+-------------------------------+-------------------------------------------------------------------------------------+---------------------------------------------------|
+| *welkomscherm.el*    | Emacs ≥ 25.1 (nothing else)   | centred links, bookmarks, work, actions, recent files, system details, startup time | composable sections in one list                   |
+| emacs-dashboard      | Emacs ≥ 27.1                  | banner, recent files, bookmarks, projects, agenda, registers                        | ~dashboard-items~ and ~dashboard-startupify-list~ |
+| enlight              | Emacs ≥ 27.1 and ~compat~     | one fully custom string, plus optional text menus                                   | ~enlight-content~ and hooks                       |
+| welcome.el           | Emacs ≥ 27.1 and ~nerd-icons~ | a banner header and a key-driven command menu                                       | ~welcome-menu-items~                              |
+| minimal-dashboard.el | Emacs ≥ 27.1                  | a centred image and a line of text                                                  | a handful of variables                            |
+
+A few notes to keep the comparison honest (all read from the projects'
+repositories):
+
+- [[https://github.com/emacs-dashboard/dashboard][emacs-dashboard]] is the richest of the group and the closest thing to a
+  batteries-included cockpit; it is also the largest, with roughly 2,400 lines
+  across ~dashboard.el~ and ~dashboard-widgets.el~. Its ~page-break-lines~,
+  ~projectile~ and icon dependencies are optional, not required.
+- [[https://github.com/ichernyshovvv/enlight][enlight]] is deliberately the opposite: a small framework (~330 lines) where
+  you supply the content as a string. Its only external dependency is ~compat~.
+- [[https://github.com/tomrss/welcome.el][welcome.el]] is a compact welcome buffer (~277 lines) built around a command
+  menu, and needs ~nerd-icons~ for its icons.
+- [[https://github.com/dheerajshenoy/minimal-dashboard.el][minimal-dashboard.el]] narrows the idea down to an image and a line of text
+  (~337 lines).
+
+Against all of these, welkomscherm's distinguishing choices are its *zero
+external dependencies*, its *section abstraction* — every block is a reusable
+unit you can reorder or share — and its *strict equivalence between GUI and
+TUI*. When the package is measured against Emacs's image-display limits, this
+is what lets the very same screen greet you on a laptop, a workstation and a
+server console without a single conditional.
+
+* Tips, recipes and troubleshooting
+
+** The screen is not centred the way I like it
+
+Centring follows ~fill-column~ (through ~center-line~), not the window. Set it
+per-buffer in a hook, as shown in [[*Available hooks][Available hooks]]:
+
+#+begin_src emacs-lisp
+  (add-hook 'welkomscherm/pre-render-hook
+            (lambda () (setq-local fill-column (frame-parameter nil 'width))))
+#+end_src
+
+** The recent files section is empty
+
+It reads the built-in ~recentf-list~. Enable ~recentf-mode~, visit a few
+files, and the section will fill up. Files that have since been deleted are
+skipped, and a section with nothing to show draws nothing at all.
+
+** A section disappeared
+
+Sections hide themselves when their condition says so. The work and bookmark
+sections vanish when their lists are empty, recent files when there is nothing
+recent, and system details when ~welkomscherm/show-system-details~ is off. That
+is the feature, not a bug: no empty headings, ever.
+
+** How do I make my own section look native?
+
+Yes — build it with ~welkomscherm/make-section~ and draw inside it with the
+helpers in [[*The primitives you can draw with][The primitives you can draw with]].
+You get the heading, the spacing and the separator for free.
+
+** How do I get back out?
+
+The welcome screen is an ordinary buffer, so ~C-x b~ switches away and ~C-x k~
+closes it. If you would like a single key to dismiss it, give yourself one in
+the post-render hook:
+
+#+begin_src emacs-lisp
+  (add-hook 'welkomscherm/post-render-hook
+            (lambda () (local-set-key (kbd "q") #'kill-buffer-and-window)))
+#+end_src
+
+** Does it work in a terminal?
+
+Yes, identically: it is plain text and ordinary Emacs buttons, so it works over
+SSH in ~emacs -nw~ with no images and no special fonts.
 
 * Testing and development
 
 The project ships with an ERT suite in ~test/welkomscherm-test.el~ and a
-[[https://codeberg.org/jjba23/maak][Maak]] file. With ~maak~ installed, a single command runs the whole quality
-gate from a clean tree.
+[[https://codeberg.org/jjba23/maak][Maak]] file. With ~maak~ installed, a single command runs the whole quality gate
+from a clean tree.
 
 #+begin_src shell
   maak
@@ -396,26 +580,84 @@ gate from a clean tree.
    style findings into a non-zero exit;
 3. runs the ERT suite.
 
-Other tasks: ~maak compile~, ~maak test~, ~maak lint~, ~maak clean~ and
+Other tasks: ~maak compile~, ~maak test~, ~maak lint~, ~maak clean~,
+~maak repl~ (an Emacs with the package loaded, ready for hacking) and
 ~maak tasks~ (to list them all).
 
-The package itself needs no external library at all. Even the horizontal
-rules that separate sections are drawn by welkomscherm itself, with no
-library: see ~welkomscherm/use-separator~ and ~welkomscherm/separator~.
+If you prefer plain Emacs, the suite runs on its own too:
 
----------------------------            
-            
-* Licensing
+#+begin_src shell
+  emacs -Q --batch -L . -L test -l test/welkomscherm-test.el \
+        -f ert-run-tests-batch-and-exit
+#+end_src
 
-welkomscherm.el and all of its source code are free software, licensed under the GNU General Public License v3 (or newer at your convenience).
+The package itself needs no external library at all. Even the horizontal rules
+that separate sections are drawn by welkomscherm itself, with no library: see
+~welkomscherm/use-separator~ and ~welkomscherm/separator~.
 
-https://www.gnu.org/licenses/gpl-3.0.html
+* Showcase and screenshots
 
-The documentation and examples, including this document, which are provided with welkomscherm.el, are all licensed under the GNU Free Documentation License v1.3 (or newer at your convenience).
+Default view, both themes:
 
-https://www.gnu.org/licenses/fdl-1.3.html
+[[./screenshots/welkomscherm-dark.png]]
 
----------
+[[./screenshots/welkomscherm-light.png]]
+
+Everything on, both themes:
+
+[[./screenshots/welkomscherm-full-dark.png]]
+
+[[./screenshots/welkomscherm-full-light.png]]
+
+These pictures are generated from the real thing, not mocked up:
+~screenshots/capture.el~ renders the package in a batch Emacs and dumps the
+buffer — text, styling runs and all — and ~screenshots/render.py~ paints that
+output with the Modus themes' own palette. (The mode line is drawn by the
+renderer, and the startup-time section is left out, because a batch render has
+no meaningful startup time to report.) Regenerate them with Emacs, and with
+Python 3 and [[https://python-pillow.org/][Pillow]]:
+
+#+begin_src shell
+  emacs -Q --batch -L . -l screenshots/capture.el screenshots/out
+  python3 screenshots/render.py
+#+end_src
+
+And here are two screenshots of the real thing in its natural habitat, taken
+from a live Emacs session:
+
+[[https://jointhefreeworld.org/static-assets/welkomscherm/2025-06-18-small-2.png]]
+
+[[https://jointhefreeworld.org/static-assets/welkomscherm/2025-06-18-small.png]]
+
+* Contributing
+
+Contributing to free software is a uniquely beautiful act because it embodies
+principles of generosity, collaboration, and empowerment.
+
+We welcome everyone to feel invited to the welkomscherm.el project, and
+encourage active contribution in all forms, to improve it and/or suggest
+improvements, brainstorm with me, make it more modular/flexible, etc, feel free
+to contact me <jjbigorra@gmail.com> to chat, discuss or report feedback.
+
+You do not need to write code to help. Any of these counts:
+
+- *Report a bug* :: a sentence, an Emacs version and, if you can, the contents
+  of the ~*welkomscherm*~ buffer is plenty.
+- *Suggest a section* :: send the ~welkomscherm/make-section~ form you wish
+  existed; it may land in the defaults.
+- *Improve the words* :: this README, the docstrings and the comments in the
+  source all count as code here, and are just as worth polishing.
+- *Send a patch* :: run ~maak~ first — it byte-compiles with warnings as
+  errors, enforces ~checkdoc~ and runs the tests — then open a pull request, or
+  mail the patch if you prefer.
+- *Spread the word* :: tell someone who has been meaning to try Emacs.
+
+Find here the Backlog and Kanban boards for my Emacs packages:
+https://lucidplan.jointhefreeworld.org/tickets/emacs-pkg
+
+If you like my work, please support me by
+[[https://bmc.link/jjbigorra][buying me a cup of coffee ☕]] so I can continue
+with a lot of motivation.
 
 * Code of conduct
 
@@ -423,24 +665,34 @@ This project adheres to the jointhefreeworld code of conduct. Find it here:
 
 https://jointhefreeworld.org/blog/articles/personal/jointhefreeworld-code-of-conduct/index.html
 
-In summary, we foster an inclusive, respectful, and cooperative environment for all contributors and users of this free software project. Inspired by the ideals of the GNU Project, we strive to uphold freedom, equality, and community as guiding principles. We believe that collaboration in a community of mutual respect is essential to creating excellent free software.
+In summary, we foster an inclusive, respectful, and cooperative environment for
+all contributors and users of this free software project. Inspired by the
+ideals of the GNU Project, we strive to uphold freedom, equality, and community
+as guiding principles. We believe that collaboration in a community of mutual
+respect is essential to creating excellent free software.
 
+* License
 
---------------
+welkomscherm.el and all of its source code are free software, licensed under
+the GNU General Public License v3 (or newer at your convenience).
 
-* welkomscherm.el project
+https://www.gnu.org/licenses/gpl-3.0.html
 
-Contributing to free software is a uniquely beautiful act because it embodies principles of generosity, collaboration, and empowerment.
+The documentation and examples, including this document, which are provided
+with welkomscherm.el, are all licensed under the GNU Free Documentation License
+v1.3 (or newer at your convenience).
 
-We welcome everyone to feel invited to the welkomscherm.el project, and encourage active contribution in all forms, to improve it and/or suggest improvements, brainstorm with me, make it more modular/flexible, etc, feel free to contact me <jjbigorra@gmail.com> to chat, discuss or report feedback.
+https://www.gnu.org/licenses/fdl-1.3.html
 
-Find here the Backlog and Kanban boards for my Emacs packages: https://lucidplan.jointhefreeworld.org/tickets/emacs-pkg
+* Acknowledgements
 
-
---------------------------
-
-* Showcase
-
-[[https://jointhefreeworld.org/static-assets/welkomscherm/2025-06-18-small-2.png]]
-
-[[https://jointhefreeworld.org/static-assets/welkomscherm/2025-06-18-small.png]]
+Thanks to the GNU Emacs maintainers, whose built-ins make a package this small
+possible; to the authors of
+[[https://github.com/emacs-dashboard/dashboard][emacs-dashboard]],
+[[https://github.com/ichernyshovvv/enlight][enlight]],
+[[https://github.com/tomrss/welcome.el][welcome.el]] and
+[[https://github.com/dheerajshenoy/minimal-dashboard.el][minimal-dashboard.el]],
+who each showed a different way to greet someone at their editor; and to
+Protesilaos Stavrou, whose
+[[https://protesilaos.com/emacs/modus-themes][Modus themes]] supply the colours
+used in the screenshots above.
