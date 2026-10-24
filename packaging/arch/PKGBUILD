@@ -27,7 +27,7 @@ depends=('emacs')
 makedepends=('emacs')
 checkdepends=('emacs')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
-sha256sums=('e8a841a6cf6aa7d27c3ededa911a4668eebdc7f897b9d70e5812675a2a63a2fd')
+sha256sums=('565b606dd8b10f32f720d0a13a45f21a8ad8de4ac973b5b9bb3c26316fe059e5')
 
 build() {
   cd "$srcdir/welkomscherm.el"
