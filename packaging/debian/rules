@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --with elpa
+
+# dh_elpa_test would run the suite a second time; run it once,
+# with the checkout's test directory on the load path.
+override_dh_elpa_test:
+	emacs -Q --batch -L . -L test -l test/welkomscherm-test.el -f ert-run-tests-batch-and-exit

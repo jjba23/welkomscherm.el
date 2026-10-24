@@ -1,0 +1,20 @@
+Source: elpa-welkomscherm
+Section: lisp
+Priority: optional
+Maintainer: Josep Bigorra <jjbigorra@gmail.com>
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-elpa,
+ emacs-nox
+Standards-Version: 4.6.2
+Homepage: https://codeberg.org/jjba23/welkomscherm.el
+Vcs-Git: https://codeberg.org/jjba23/welkomscherm.el.git
+Vcs-Browser: https://codeberg.org/jjba23/welkomscherm.el
+Rules-Requires-Root: no
+
+Package: elpa-welkomscherm
+Architecture: all
+Depends: ${misc:Depends}, ${elpa:Depends}, emacs
+Description: Simple welcome screen and dashboard for Emacs
+ Welkomscherm is a clean, extensible splash page for Emacs: a sectioned list
+ of links and commands, with no external library needed.

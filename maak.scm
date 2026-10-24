@@ -84,6 +84,20 @@
   "Run the full quality gate (lint and tests)."
   (check))
 
+;; ====== Container tasks ======
+
+(define (container-build)
+  "Build the container image for welkomscherm-el."
+  ($ '("podman build -t welkomscherm-el .")))
+
+(define (container-run)
+  "Run the container image for welkomscherm-el."
+  ($ '("podman run --rm -it welkomscherm-el:latest")))
+
+(define (package-docker)
+  "Build the container image for welkomscherm-el."
+  (container-build))
+
 ;; Local Variables:
 ;; mode: scheme
 ;; End:

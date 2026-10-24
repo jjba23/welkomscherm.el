@@ -1,0 +1,53 @@
+# emacs-welkomscherm
+
+# Copyright © 2026 Josep Bigorra <jjbigorra@gmail.com>
+
+# welkomscherm.el is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+#
+# welkomscherm.el is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+# for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with welkomscherm.el. If not, see <https://www.gnu.org/licenses/>.
+
+# Maintainer: Josep Bigorra <jjbigorra@gmail.com>
+pkgname=emacs-welkomscherm
+pkgver=1.2.2
+pkgrel=1
+pkgdesc="Simple welcome screen and dashboard for Emacs"
+arch=('any')
+url="https://codeberg.org/jjba23/welkomscherm.el"
+license=('GPL-3.0-or-later')
+depends=('emacs')
+makedepends=('emacs')
+checkdepends=('emacs')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
+sha256sums=('e8a841a6cf6aa7d27c3ededa911a4668eebdc7f897b9d70e5812675a2a63a2fd')
+
+build() {
+  cd "$srcdir/welkomscherm.el"
+
+  emacs -Q --batch -f batch-byte-compile welkomscherm.el
+}
+
+check() {
+  cd "$srcdir/welkomscherm.el"
+
+  emacs -Q --batch -L . -L test -l test/welkomscherm-test.el -f ert-run-tests-batch-and-exit
+}
+
+package() {
+  cd "$srcdir/welkomscherm.el"
+
+  install -Dm644 welkomscherm.el "$pkgdir/usr/share/emacs/site-lisp/welkomscherm.el"
+  install -Dm644 welkomscherm.elc "$pkgdir/usr/share/emacs/site-lisp/welkomscherm.elc"
+
+  install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+  install -Dm644 README.org "$pkgdir/usr/share/doc/$pkgname/README.org"
+  install -Dm644 NEWS.org "$pkgdir/usr/share/doc/$pkgname/NEWS.org"
+}
