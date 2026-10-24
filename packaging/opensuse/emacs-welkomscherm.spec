@@ -16,7 +16,7 @@
 #
 
 Name:           emacs-welkomscherm
-Version:        1.2.2
+Version:        1.2.3
 Release:        0
 Summary:        Simple welcome screen and dashboard for Emacs
 License:        GPL-3.0-or-later
