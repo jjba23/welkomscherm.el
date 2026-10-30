@@ -7,6 +7,22 @@ All notable changes to this project will be documented in this file. Changes are
 
 This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
 
+* 1.2.4
+
+*** Added
+
+- Now uses a custom major-mode, ~welkomscherm-mode~, based off of ~special-mode~, with a separate keymap derived from ~button-buffer-map~ and ~special-mode-map~. This automatically adds the following binds:
+  - ~q~ to ~quit-window~
+  - ~TAB~ to ~forward-button~
+  - ~S-TAB~ to ~backward-button~
+- Pressing ~g~ now refreshes the buffer instead of calling ~View-goto-line~.
+- Added new custom option ~welkomscherm/line-spacing~ allows users to control the amount of line-spacing in dashboard.
+- New tests added to support major-mode, keymap, and line-spacing option.
+
+*** Fixed
+
+- Pressing ~TAB~ on the first line of the dashboard used to error with ~buffer is read-only~. New ~welkomscherm-mode~ binds this to ~forward-button~ automatically matching user intent.
+
 * 1.2.1
 
 *** Fixed

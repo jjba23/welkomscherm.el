@@ -526,6 +526,56 @@ the freshly displayed window scrolled down to its last line."
           (kill-buffer welkomscherm/buffer-name))))
     (should (equal (nreverse calls) '(pre post)))))
 
+
+;;; Major mode
+(defun welkomscherm-test--in-dashboard (thunk)
+  "Render the dashboard, then call THUNK with its buffer current."
+  (save-window-excursion
+    (unwind-protect
+        (progn
+          (welkomscherm)
+          (with-current-buffer welkomscherm/buffer-name
+            (funcall thunk)))
+      (when (buffer-live-p (get-buffer welkomscherm/buffer-name))
+        (kill-buffer welkomscherm/buffer-name)))))
+
+
+(ert-deftest welkomscherm-test/tab-moves-to-the-first-button ()
+  "Pressing `TAB' on the first line of a new buffer moves the point to the first button."
+  (welkomscherm-test--in-dashboard
+   (lambda ()
+     (goto-char (point-min))
+     (should-not (button-at (point)))
+     (call-interactively (key-binding (kbd "TAB")))
+     (should (= (point) (button-start (next-button (point-min))))))))
+
+(ert-deftest welkomscherm-test/uses-the-major-mode ()
+  "The dashboard buffer runs `welkomscherm-mode', a `special-mode'."
+  (welkomscherm-test--in-dashboard
+   (lambda ()
+     (should (eq major-mode 'welkomscherm-mode))
+     (should (derived-mode-p 'special-mode)))))
+
+(ert-deftest welkomscherm-test/line-spacing-follows-the-option ()
+  "The buffer uses `welkomscherm/line-spacing' as its `line-spacing'."
+  (dolist (spacing '(4 0.5))
+    (let ((welkomscherm/line-spacing spacing))
+      (welkomscherm-test--in-dashboard
+       (lambda () (should (equal line-spacing spacing)))))))
+
+(ert-deftest welkomscherm-test/line-spacing-nil-keeps-the-default ()
+  "With `welkomscherm/line-spacing' nil the buffer keeps the default."
+  (let ((welkomscherm/line-spacing nil))
+    (welkomscherm-test--in-dashboard
+     (lambda () (should-not (local-variable-p 'line-spacing))))))
+
+(ert-deftest welkomscherm-test/pre-render-hook-locals-survive ()
+  "Buffer-local values set by the pre-render hook outlive the major mode."
+  (let ((welkomscherm/pre-render-hook
+         (list (lambda () (setq-local fill-column 42)))))
+    (welkomscherm-test--in-dashboard
+     (lambda () (should (= fill-column 42))))))
+
 (provide 'welkomscherm-test)
 
 ;;; welkomscherm-test.el ends here
