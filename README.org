@@ -348,6 +348,11 @@ set with ~setopt~, with ~setq~ on older Emacsen, or through
   Whether text lines are centred. When nil, everything is drawn flush left,
   which some people prefer in narrow terminals.
 
+- ~welkomscherm/line-spacing~ (integer, float, or nil, default ~10~) ::
+  How many pixels to use for ~line-spacing~. An integer is a number of pixels
+  and a float is a fraction of the current line height. When nil, the buffer
+  keeps the existing editor default ~line-spacing~.
+
 - ~welkomscherm/use-section-title~ (boolean, default ~t~) ::
   Whether section headings are drawn. Turning it off keeps the blank-line and
   rule separation but hides the titles, for a quieter screen.
