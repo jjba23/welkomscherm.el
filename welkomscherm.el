@@ -142,6 +142,16 @@ axis of the text, because centring is done within `fill-column' too."
   "Maximum number of recent files to show."
   :type 'integer :group 'welkomscherm)
 
+(defcustom welkomscherm/line-spacing 10
+  "Extra spacing between lines in the welkomscherm buffer.
+An integer is a number of pixels and a float is a fraction of the line
+height, as for `line-spacing'.  When nil the buffer keeps the existing
+editor default `line-spacing'."
+  :type '(choice (const :tag "Use the default `line-spacing'" nil)
+                 (integer :tag "Pixels")
+                 (float :tag "Fraction of the line height"))
+  :group 'welkomscherm)
+
 (defcustom welkomscherm/bookmarks-list
   '((("row0c0" . "~/Dev/row0c0")
      ("row0c1" . "~/Downloads/some-file.pdf"))
@@ -535,6 +545,22 @@ add your own."
   :group 'welkomscherm)
 
 
+;;; The major mode
+
+(defvar welkomscherm-mode-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map (make-composed-keymap button-buffer-map special-mode-map))
+    map)
+  "Keymap for `welkomscherm-mode'.")
+
+(define-derived-mode welkomscherm-mode special-mode "Welkomscherm"
+  "Major mode for welkomscherm buffers."
+  :group 'welkomscherm
+  (when welkomscherm/line-spacing
+    (setq-local line-spacing welkomscherm/line-spacing))
+  (setq-local fringe-indicator-alist '((truncation nil))
+              revert-buffer-function (lambda (_ _) (welkomscherm))))
+
 ;;; Rendering the screen
 
 (defun welkomscherm/render-to-screen ()
@@ -551,12 +577,11 @@ add your own."
 
   (let ((buf (get-buffer-create welkomscherm/buffer-name)))
     (with-current-buffer buf
+      (welkomscherm-mode)
       (run-hooks 'welkomscherm/pre-render-hook)
-      (read-only-mode -1)
-      (erase-buffer)
-      (setq-local line-spacing 10)
-      (welkomscherm/render-to-screen)
-      (read-only-mode 1)
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (welkomscherm/render-to-screen))
       ;; Rendering ends with point at the end of the buffer, so a freshly
       ;; displayed dashboard would already be scrolled down to its last line.
       ;; Put point back on the first line; the post-render hook still runs
@@ -564,7 +589,6 @@ add your own."
       (goto-char (point-min))
       (run-hooks 'welkomscherm/post-render-hook))
     (switch-to-buffer buf)
-    (setq-local fringe-indicator-alist '((truncation nil)))
     (welkomscherm/update-separator-display)))
 
 

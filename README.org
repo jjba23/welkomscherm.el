@@ -82,8 +82,8 @@ years.* Concretely, that promise is kept by four choices.
 - *Your private and work lives apart.* :: Separate bookmark lists for personal
   and work links, each arranged in rows, the way you would arrange a shelf.
 - *Quiet by default.* :: The buffer is read-only, a little extra line spacing
-  keeps it airy, and point is left on the first line so you always see it from
-  the top.
+  keeps it airy (user customizable via ~welkomscherm/line-spacing~), and point
+  is left on the first line so you always see it from the top.
 - *Free software, all the way.* :: GPL-3.0-or-later for the code, FDL-1.3+ for
   the docs. No telemetry, no network, no surprises.
 
@@ -347,6 +347,11 @@ set with ~setopt~, with ~setq~ on older Emacsen, or through
 - ~welkomscherm/centered~ (boolean, default ~t~) ::
   Whether text lines are centred. When nil, everything is drawn flush left,
   which some people prefer in narrow terminals.
+
+- ~welkomscherm/line-spacing~ (integer, float, or nil, default ~10~) ::
+  How many pixels to use for ~line-spacing~. An integer is a number of pixels
+  and a float is a fraction of the current line height. When nil, the buffer
+  keeps the existing editor default ~line-spacing~.
 
 - ~welkomscherm/use-section-title~ (boolean, default ~t~) ::
   Whether section headings are drawn. Turning it off keeps the blank-line and
