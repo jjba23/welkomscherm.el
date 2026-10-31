@@ -1,3 +1,13 @@
+elpa-welkomscherm (1.2.4-1) unstable; urgency=medium
+
+  * New `welkomscherm-mode', derived from `special-mode', with its own keymap
+    derived from `button-buffer-map' and `special-mode-map'.
+  * Refresh the dashboard with `g' instead of `View-goto-line'.
+  * New user option `welkomscherm/line-spacing'.
+  * Fix `buffer is read-only' error when pressing TAB on the first line.
+
+ -- Josep Bigorra <jjbigorra@gmail.com>  Sat, 31 Oct 2026 18:41:44 +0100
+
 elpa-welkomscherm (1.2.2-1) unstable; urgency=medium
 
   * Bump version for container and GNU/Linux packaging improvements.

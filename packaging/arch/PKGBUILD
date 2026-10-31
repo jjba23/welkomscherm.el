@@ -17,7 +17,7 @@
 
 # Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 pkgname=emacs-welkomscherm
-pkgver=1.2.2
+pkgver=1.2.4
 pkgrel=1
 pkgdesc="Simple welcome screen and dashboard for Emacs"
 arch=('any')
