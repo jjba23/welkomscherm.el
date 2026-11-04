@@ -7,6 +7,9 @@
 
 [[https://jointhefreeworld.org/ggg/dist/emacs-lisp.svg]] [[https://jointhefreeworld.org/ggg/dist/license-gpl3+.svg]] [[https://jointhefreeworld.org/ggg/dist/license-fdl13+.svg]]
 
+#+attr_html: :width 160 :alt welkomscherm.el logo
+[[file:logo.svg]]
+
 /welkomscherm/ is Dutch for *welcome screen*.
 
 *welkomscherm.el is a small, calm, extensible welcome screen / dashboard for Emacs*: a centred handful of
@@ -160,7 +163,6 @@ Each recipe carries its own dependency list, so a missing library fails the buil
 - *Nix* if the rest of your machine is already declarative; the flake pins nixpkgs and gives you a binary cache.
 - *Container* if you only want to try the release, or reproduce a report on a machine that has nothing installed.
 - *Distribution package* if you want the project managed by the same tool as the rest of your system, with its licence, manual page and launcher in the usual places.
-
 
 * Installation
 :PROPERTIES:
