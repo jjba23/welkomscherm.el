@@ -1,3 +1,14 @@
+elpa-welkomscherm (1.3.0-1) unstable; urgency=medium
+
+  * Relicense the project under the MIT license, code and documentation
+    alike; COPYING is replaced by LICENSE.
+  * Move to GitHub and update the URL header, the Nix expression, the
+    container labels and every packaging recipe.
+  * Run the quality gate and publish tagged releases with GitHub Actions.
+  * Bump the version to 1.3.0.
+
+ -- Josep Bigorra <jjbigorra@gmail.com>  Thu, 05 Nov 2026 14:45:00 +0100
+
 elpa-welkomscherm (1.2.4-1) unstable; urgency=medium
 
   * New `welkomscherm-mode', derived from `special-mode', with its own keymap

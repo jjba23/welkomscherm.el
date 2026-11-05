@@ -2,7 +2,7 @@
 
 ;;; Copyright © Josep Bigorra <jjbigorra@gmail.com>
 
-;;; Version: 1.2.5
+;;; Version: 1.3.0
 ;;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;;; URL: https://github.com/jjba23/welkomscherm.el

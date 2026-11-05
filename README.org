@@ -92,7 +92,7 @@ years.* Concretely, that promise is kept by four choices.
 :CUSTOM_ID: ways-to-install
 :END:
 
-/Four routes to the same 1.2.4, from the most automated to the most manual.  They all build the tag this README documents./
+/Four routes to the same 1.3.0, from the most automated to the most manual.  They all build the tag this README documents./
 
 ** From the Guix channel
 :PROPERTIES:
@@ -100,7 +100,7 @@ years.* Concretely, that promise is kept by four choices.
 :END:
 *GNU Guix* is the functional package manager this project is developed with: a build is a pure function of its inputs, so the same recipe gives the same result everywhere, and an upgrade that goes wrong can be rolled back.
 
-The jointhefreeworld channel carries ~emacs-welkomscherm~ at 1.2.4, so a checkout of the channel is enough — no package definition to write:
+The jointhefreeworld channel carries ~emacs-welkomscherm~ at 1.3.0, so a checkout of the channel is enough — no package definition to write:
 
 #+begin_src shell
 git clone https://github.com/jjba23/guix-jointhefreeworld.git

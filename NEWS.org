@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file. Changes are
 
 This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
 
-* Unreleased
+* 1.3.0 (2026-11-05)
 
 *** Changed
 
@@ -18,6 +18,10 @@ This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic 
 
 - GitHub Actions run the quality gate on every push and pull request: the ERT suite on Emacs 27.2, 28.2, 29.4 and 30.1, plus a lint job that byte-compiles with warnings turned into errors and enforces ~checkdoc~.
 - A release workflow runs the suite for a ~vX.Y.Z~ tag and attaches that tag's archive to the GitHub release, which is the tarball the packaging recipes download.
+
+*** Version
+
+- Bumped the version to 1.3.0.
 
 * 1.2.4
 
