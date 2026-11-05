@@ -7,6 +7,18 @@ All notable changes to this project will be documented in this file. Changes are
 
 This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
 
+* Unreleased
+
+*** Changed
+
+- Relicensed to the *MIT license*, code and documentation alike, replacing GPL-3.0-or-later and FDL-1.3-or-later. ~COPYING~ is gone; the full text is in ~LICENSE~, and every source file carries an ~SPDX-License-Identifier: MIT~ line. Releases up to and including 1.2.5 keep the terms they shipped with.
+- The project lives at [[https://github.com/jjba23/welkomscherm.el]]. The ~URL~ header, the Nix expression, the container labels, the Debian, openSUSE and Arch recipes, and the installation instructions all point there instead of Codeberg.
+
+*** Added
+
+- GitHub Actions run the quality gate on every push and pull request: the ERT suite on Emacs 27.2, 28.2, 29.4 and 30.1, plus a lint job that byte-compiles with warnings turned into errors and enforces ~checkdoc~.
+- A release workflow runs the suite for a ~vX.Y.Z~ tag and attaches that tag's archive to the GitHub release, which is the tarball the packaging recipes download.
+
 * 1.2.4
 
 *** Added

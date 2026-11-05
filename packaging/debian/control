@@ -7,9 +7,9 @@ Build-Depends:
  dh-elpa,
  emacs-nox
 Standards-Version: 4.6.2
-Homepage: https://codeberg.org/jjba23/welkomscherm.el
-Vcs-Git: https://codeberg.org/jjba23/welkomscherm.el.git
-Vcs-Browser: https://codeberg.org/jjba23/welkomscherm.el
+Homepage: https://github.com/jjba23/welkomscherm.el
+Vcs-Git: https://github.com/jjba23/welkomscherm.el.git
+Vcs-Browser: https://github.com/jjba23/welkomscherm.el
 Rules-Requires-Root: no
 
 Package: elpa-welkomscherm

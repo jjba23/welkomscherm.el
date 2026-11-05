@@ -5,7 +5,7 @@
 #+language: en
 #+options: toc:nil num:nil
 
-[[https://jointhefreeworld.org/ggg/dist/emacs-lisp.svg]] [[https://jointhefreeworld.org/ggg/dist/license-gpl3+.svg]] [[https://jointhefreeworld.org/ggg/dist/license-fdl13+.svg]]
+[[https://jointhefreeworld.org/ggg/dist/emacs-lisp.svg]] [[https://jointhefreeworld.org/ggg/dist/license-mit.svg]]
 
 /welkomscherm/ is Dutch for *welcome screen*.
 
@@ -84,8 +84,8 @@ years.* Concretely, that promise is kept by four choices.
 - *Quiet by default.* :: The buffer is read-only, a little extra line spacing
   keeps it airy (user customizable via ~welkomscherm/line-spacing~), and point
   is left on the first line so you always see it from the top.
-- *Free software, all the way.* :: GPL-3.0-or-later for the code, FDL-1.3+ for
-  the docs. No telemetry, no network, no surprises.
+- *Free software, all the way.* :: MIT, for the code and the documentation
+  alike. No telemetry, no network, no surprises.
 
 * Ways to install
 :PROPERTIES:
@@ -103,7 +103,7 @@ years.* Concretely, that promise is kept by four choices.
 The jointhefreeworld channel carries ~emacs-welkomscherm~ at 1.2.4, so a checkout of the channel is enough — no package definition to write:
 
 #+begin_src shell
-git clone https://codeberg.org/jjba23/guix-jointhefreeworld.git
+git clone https://github.com/jjba23/guix-jointhefreeworld.git
 guix install -L ./guix-jointhefreeworld emacs-welkomscherm
 #+end_src
 
@@ -188,7 +188,7 @@ or ELPA, so fetch it straight from the source of truth:
 
 #+begin_src emacs-lisp
   (use-package welkomscherm
-    :ensure (:host codeberg :repo "jjba23/welkomscherm.el" :branch "trunk")
+    :ensure (:host github :repo "jjba23/welkomscherm.el" :branch "trunk")
     :bind (("C-c SPC SPC" . welkomscherm))
     :init
     (setopt welkomscherm/centered t
@@ -238,7 +238,7 @@ welkomscherm is happy all the way back to 25.1 — use ~setq~ in place of
 Two lines are enough if you keep the file somewhere on your ~load-path~:
 
 #+begin_src shell
-  git clone https://codeberg.org/jjba23/welkomscherm.el ~/.emacs.d/site-lisp/welkomscherm.el
+  git clone https://github.com/jjba23/welkomscherm.el ~/.emacs.d/site-lisp/welkomscherm.el
 #+end_src
 
 #+begin_src emacs-lisp
@@ -255,7 +255,7 @@ If you run Emacs 29 or newer, the built-in ~package-vc~ can fetch, build and
 load it without any third-party package manager at all:
 
 #+begin_src emacs-lisp
-  (package-vc-install "https://codeberg.org/jjba23/welkomscherm.el")
+  (package-vc-install "https://github.com/jjba23/welkomscherm.el")
 #+end_src
 
 Or interactively: ~M-x package-vc-install RET~ and paste the URL.
@@ -268,7 +268,7 @@ Or interactively: ~M-x package-vc-install RET~ and paste the URL.
 This repository carries the expression itself, ~default.nix~ next to
 ~welkomscherm.el~, so ~nix-build~ in this checkout builds the package. It is
 also part of
-[[https://codeberg.org/jjba23/nix-jointhefreeworld][nix-jointhefreeworld]],
+[[https://github.com/jjba23/nix-jointhefreeworld][nix-jointhefreeworld]],
 the set of Nix packages for everything Jointhefreeworld. The set's
 ~emacsOverlay~ adds it to ~emacsPackages~, byte-compiled and with its
 autoloads, so an Emacs that Nix builds gets it the way it gets any other
@@ -743,6 +743,13 @@ Other tasks: ~maak compile~, ~maak test~, ~maak lint~, ~maak clean~,
 ~maak repl~ (an Emacs with the package loaded, ready for hacking) and
 ~maak tasks~ (to list them all).
 
+On GitHub, [[https://github.com/jjba23/welkomscherm.el/actions][GitHub Actions]]
+runs the same gate without ~maak~ installed: every push and pull request runs
+the ERT suite on Emacs 27.2, 28.2, 29.4 and 30.1, and one lint job compiles
+with warnings turned into errors and enforces ~checkdoc~. Pushing a ~vX.Y.Z~
+tag runs the suite for that commit and attaches its archive to the GitHub
+release, so a release asset is never built from an untested tree.
+
 If you prefer plain Emacs, the suite runs on its own too:
 
 #+begin_src shell
@@ -844,16 +851,17 @@ respect is essential to creating excellent free software.
 :CUSTOM_ID: license
 :END:
 
-welkomscherm.el and all of its source code are free software, licensed under
-the GNU General Public License v3 (or newer at your convenience).
+welkomscherm.el, its tests, its packaging and its documentation, including this
+document, are all free software under the MIT license: use it, change it and
+share it, keeping the copyright notice and the permission notice with every
+copy.
 
-https://www.gnu.org/licenses/gpl-3.0.html
+https://github.com/jjba23/welkomscherm.el/blob/trunk/LICENSE
 
-The documentation and examples, including this document, which are provided
-with welkomscherm.el, are all licensed under the GNU Free Documentation License
-v1.3 (or newer at your convenience).
-
-https://www.gnu.org/licenses/fdl-1.3.html
+Releases up to and including 1.2.5 shipped under the GNU General Public License
+v3 or newer for the code and the GNU Free Documentation License v1.3 or newer
+for the documentation. Those releases keep those terms; this repository, and
+everything after them, is MIT.
 
 * Acknowledgements
 :PROPERTIES:

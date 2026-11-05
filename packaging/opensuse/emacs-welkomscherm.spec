@@ -19,8 +19,8 @@ Name:           emacs-welkomscherm
 Version:        1.2.4
 Release:        0
 Summary:        Simple welcome screen and dashboard for Emacs
-License:        GPL-3.0-or-later
-URL:            https://codeberg.org/jjba23/welkomscherm.el
+License:        MIT
+URL:            https://github.com/jjba23/welkomscherm.el
 Source0:        welkomscherm.el-%{version}.tar.gz
 BuildRequires:  emacs
 Requires:       emacs
@@ -43,7 +43,7 @@ install -m 0644 welkomscherm.el welkomscherm.elc %{buildroot}%{_datadir}/emacs/s
 emacs -Q --batch -L . -L test -l test/welkomscherm-test.el -f ert-run-tests-batch-and-exit
 
 %files
-%license COPYING
+%license LICENSE
 %doc README.org NEWS.org
 %{_datadir}/emacs/site-lisp/welkomscherm.el
 %{_datadir}/emacs/site-lisp/welkomscherm.elc
