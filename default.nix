@@ -23,7 +23,7 @@ let
   # Emacs reads it.  Reading it here instead of repeating the literal is what
   # keeps a release to one edit: the derivation cannot fall behind the file.
   headerLines = builtins.filter
-    (line: lib.hasPrefix ";; Version:" line)
+    (line: lib.hasPrefix ";;; Version:" line)
     (lib.splitString "\n" (builtins.readFile ./welkomscherm.el));
 in
 melpaBuild {
@@ -31,11 +31,11 @@ melpaBuild {
   version =
     if headerLines == [ ] then
       throw ''
-        welkomscherm.el has no `;; Version:' header, which is where default.nix
+        welkomscherm.el has no `;;; Version:' header, which is where default.nix
         reads the version from.  Put it back, or set the version by hand here.
       ''
     else
-      lib.trim (lib.removePrefix ";; Version:" (builtins.head headerLines));
+      lib.trim (lib.removePrefix ";;; Version:" (builtins.head headerLines));
 
   # `cleanSource' because the name `melpaBuild' gives this path must not end in
   # `.el': its unpack hook reads that suffix as "a single .el file", and a
