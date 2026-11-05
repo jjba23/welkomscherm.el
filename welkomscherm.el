@@ -1,51 +1,51 @@
 ;;; welkomscherm.el --- Simple welcome screen / dashboard -*- lexical-binding: t -*-
 
-;; Copyright © Josep Bigorra <jjbigorra@gmail.com>
+;;; Copyright © Josep Bigorra <jjbigorra@gmail.com>
 
-;; Version: 1.2.4
-;; Author: Josep Bigorra <jjbigorra@gmail.com>
-;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
-;; URL: https://codeberg.org/jjba23/welkomscherm.el
-;; Keywords: splash dashboard faces
-;; Package: welkomscherm
-;; Package-Requires: ((emacs "25.1"))
+;;; Version: 1.2.5
+;;; Author: Josep Bigorra <jjbigorra@gmail.com>
+;;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
+;;; URL: https://codeberg.org/jjba23/welkomscherm.el
+;;; Keywords: splash dashboard faces
+;;; Package: welkomscherm
+;;; Package-Requires: ((emacs "25.1"))
 
-;; welkomscherm is free software: you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;;; welkomscherm is free software: you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation, either version 3 of the License, or
+;;; (at your option) any later version.
 
-;; welkomscherm is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+;;; welkomscherm is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
 
-;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.
+;;; You should have received a copy of the GNU General Public License
+;;; along with GNU Emacs.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
-;; welkomscherm.el is meant to be simple, extensible and performant.
-;;
-;; A big emphasis is put on being a clean and utilitarian splash page
-;; for when you start up Emacs and not be full of items and complexity.
-;;
-;; If you are looking for a zen dashboard / splash screen with
-;; a plain sectioned list of links, for Emacs, look no further.
-;;
-;; For more advanced dashboards, refer to `dashboard' or `enlight'.
-;;
-;; The package needs no external library to run, not even to draw the
-;; horizontal rules that separate sections: `welkomscherm/use-separator'
-;; draws them from ordinary Emacs text (see `welkomscherm/separator').
-;;
-;; Every part of the screen is a *section*: a self-contained, reusable
-;; unit built with `welkomscherm/make-section'.  A section knows its own
-;; heading, its own visibility condition and how to draw its body, so
-;; sections can be added, removed or reordered by only touching the
-;; `welkomscherm/sections' list; the shared framing lives in one place,
-;; `welkomscherm/render-section'.
-;;
+;;; welkomscherm.el is meant to be simple, extensible and performant.
+;;;
+;;; A big emphasis is put on being a clean and utilitarian splash page
+;;; for when you start up Emacs and not be full of items and complexity.
+;;;
+;;; If you are looking for a zen dashboard / splash screen with
+;;; a plain sectioned list of links, for Emacs, look no further.
+;;;
+;;; For more advanced dashboards, refer to `dashboard' or `enlight'.
+;;;
+;;; The package needs no external library to run, not even to draw the
+;;; horizontal rules that separate sections: `welkomscherm/use-separator'
+;;; draws them from ordinary Emacs text (see `welkomscherm/separator').
+;;;
+;;; Every part of the screen is a *section*: a self-contained, reusable
+;;; unit built with `welkomscherm/make-section'.  A section knows its own
+;;; heading, its own visibility condition and how to draw its body, so
+;;; sections can be added, removed or reordered by only touching the
+;;; `welkomscherm/sections' list; the shared framing lives in one place,
+;;; `welkomscherm/render-section'.
+;;;
 
 ;;; Code:
 
@@ -59,7 +59,6 @@
   '((t (:inherit font-lock-comment-face)))
   "Face used to draw headers and titles."
   :group 'welkomscherm)
-
 
 ;;; User options
 
@@ -104,7 +103,7 @@
   :type 'string :group 'welkomscherm)
 
 (define-obsolete-variable-alias 'welkomscherm/use-form-feed
-  'welkomscherm/use-separator "1.2.0")
+                                'welkomscherm/use-separator "1.2.0")
 
 (defcustom welkomscherm/use-separator nil
   "Whether to draw a horizontal rule between sections."
@@ -173,9 +172,9 @@ A list of rows; each row is a list of (ALIAS . PATH) pairs."
   :group 'welkomscherm)
 
 (defcustom welkomscherm/actions-list
-  '((("*scratch*" . (lambda(btn) (switch-to-buffer "*scratch*")))
-     ("*Messages*" . (lambda(btn) (switch-to-buffer "*Messages*")))
-     ("re-render me" . (lambda(btn) (welkomscherm)))))
+  '((("*scratch*" . (lambda (btn) (switch-to-buffer "*scratch*")))
+     ("*Messages*" . (lambda (btn) (switch-to-buffer "*Messages*")))
+     ("re-render me" . (lambda (btn) (welkomscherm)))))
   "Buttons and their actions.
 
 A list of rows; each row is a list of (LABEL . FUNCTION) pairs, where
@@ -205,7 +204,6 @@ either a string or a function of no arguments returning a string."
   "Hook run after the `welkomscherm' buffer is populated."
   :type 'hook
   :group 'welkomscherm)
-
 
 ;;; Sections
 
@@ -238,9 +236,9 @@ The name may be a string or a function returning a string, so that the
 heading follows customization made after the section was built."
   (let ((name (welkomscherm/section-name section)))
     (cond
-     ((null name) nil)
-     ((functionp name) (funcall name))
-     (t name))))
+      ((null name) nil)
+      ((functionp name) (funcall name))
+      (t name))))
 
 (defun welkomscherm/insert-section-heading (name)
   "Insert the heading block for a section named NAME.
@@ -262,15 +260,14 @@ is simply called.  A section hidden by its condition renders nothing.
 The shared framing (blank line, form feed, heading) is inserted here, so
 a section body only ever draws its own content."
   (cond
-   ((welkomscherm/section-p section)
-    (when (welkomscherm/section-visible-p section)
-      (welkomscherm/insert-section-heading
-       (welkomscherm/section-heading section))
-      (funcall (welkomscherm/section-render section))))
-   ((functionp section)
-    (funcall section))
-   (t (error "Not a welkomscherm section: %S" section))))
-
+    ((welkomscherm/section-p section)
+     (when (welkomscherm/section-visible-p section)
+       (welkomscherm/insert-section-heading
+        (welkomscherm/section-heading section))
+       (funcall (welkomscherm/section-render section))))
+    ((functionp section)
+     (funcall section))
+    (t (error "Not a welkomscherm section: %S" section))))
 
 ;;; Insertion primitives
 
@@ -338,11 +335,11 @@ re-flow to the window width with no library beyond Emacs itself."
       (welkomscherm/update-separator-display-window window))))
 
 (add-hook 'window-size-change-functions
-          #'welkomscherm/update-separator-display)
+  #'welkomscherm/update-separator-display)
 (add-hook 'window-configuration-change-hook
-          #'welkomscherm/update-separator-display)
+  #'welkomscherm/update-separator-display)
 (add-hook 'after-setting-font-hook
-          #'welkomscherm/update-separator-display)
+  #'welkomscherm/update-separator-display)
 
 (defun welkomscherm/insert-spacer ()
   "Insert a spacer into the welkomscherm buffer."
@@ -353,10 +350,9 @@ re-flow to the window width with no library beyond Emacs itself."
   (when welkomscherm/centered (center-line)))
 
 (define-obsolete-function-alias 'welkomscherm/insert-form-feed
-  'welkomscherm/insert-separator "1.2.0")
+                                'welkomscherm/insert-separator "1.2.0")
 (define-obsolete-function-alias 'welkomscherm/maybe-form-feed
-  'welkomscherm/maybe-separator "1.2.0")
-
+                                'welkomscherm/maybe-separator "1.2.0")
 
 ;;; Row rendering
 
@@ -388,7 +384,6 @@ ROWS is a list of rows; each row is a list of (LABEL . FUNCTION) pairs."
   "Open the file stored on bookmark button BTN."
   (find-file (button-get btn 'welkomscherm/path)))
 
-
 ;;; System details
 
 (defun welkomscherm/system-emacs-version ()
@@ -408,10 +403,9 @@ ROWS is a list of rows; each row is a list of (LABEL . FUNCTION) pairs."
   (dolist (entry welkomscherm/system-details-list)
     (let* ((label (car entry))
            (value (cdr entry))
-           (value (if (functionp value) (funcall value) value)))
-      (welkomscherm/insert-muted (format "%s: %s" label value))
+           (value* (if (functionp value) (funcall value) value)))
+      (welkomscherm/insert-muted (format "%s: %s" label value*))
       (welkomscherm/insert-new-line))))
-
 
 ;;; Recent files
 
@@ -424,15 +418,14 @@ path.  The result is nil when recentf is unavailable, empty, or when no
 recent file still exists on disk."
   (when (require 'recentf nil t)
     (let ((files (and (boundp 'recentf-list) recentf-list))
-          (n welkomscherm/recent-files-limit)
+          (recent-files-lim welkomscherm/recent-files-limit)
           result)
       (dolist (file files)
-        (when (and (> n 0) (stringp file) (file-exists-p file))
+        (when (and (> recent-files-lim 0) (stringp file) (file-exists-p file))
           (push (cons (file-name-nondirectory (directory-file-name file)) file)
                 result)
-          (setq n (1- n))))
+          (setq recent-files-lim (1- recent-files-lim))))
       (nreverse result))))
-
 
 ;;; Section bodies
 
@@ -461,7 +454,6 @@ recent file still exists on disk."
 (defun welkomscherm/render-init-time ()
   "Render how long Emacs startup took."
   (welkomscherm/insert-muted (emacs-init-time)))
-
 
 ;;; The default sections
 
@@ -544,12 +536,13 @@ add your own."
   :type '(repeat sexp)
   :group 'welkomscherm)
 
-
 ;;; The major mode
 
 (defvar welkomscherm-mode-map
   (let ((map (make-sparse-keymap)))
-    (set-keymap-parent map (make-composed-keymap button-buffer-map special-mode-map))
+    (set-keymap-parent map
+                       (make-composed-keymap button-buffer-map
+                                             special-mode-map))
     map)
   "Keymap for `welkomscherm-mode'.")
 
@@ -568,13 +561,12 @@ add your own."
   (dolist (section welkomscherm/sections)
     (welkomscherm/render-section section)))
 
-;;;###autoload
+;;; ###autoload
 (defun welkomscherm ()
   "Start a new Welkomscherm killing any live previous instances."
   (interactive)
   (when (buffer-live-p (get-buffer welkomscherm/buffer-name))
     (kill-buffer welkomscherm/buffer-name))
-
   (let ((buf (get-buffer-create welkomscherm/buffer-name)))
     (with-current-buffer buf
       (welkomscherm-mode)
@@ -590,7 +582,6 @@ add your own."
       (run-hooks 'welkomscherm/post-render-hook))
     (switch-to-buffer buf)
     (welkomscherm/update-separator-display)))
-
 
 (provide 'welkomscherm)
 
