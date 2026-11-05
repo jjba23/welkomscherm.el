@@ -7,9 +7,6 @@
 
 [[https://jointhefreeworld.org/ggg/dist/emacs-lisp.svg]] [[https://jointhefreeworld.org/ggg/dist/license-gpl3+.svg]] [[https://jointhefreeworld.org/ggg/dist/license-fdl13+.svg]]
 
-#+attr_html: :width 160 :alt welkomscherm.el logo
-[[file:logo.svg]]
-
 /welkomscherm/ is Dutch for *welcome screen*.
 
 *welkomscherm.el is a small, calm, extensible welcome screen / dashboard for Emacs*: a centred handful of
