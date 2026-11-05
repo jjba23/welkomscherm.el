@@ -2,13 +2,13 @@
 
 ;;; Copyright © Josep Bigorra <jjbigorra@gmail.com>
 
-;;; Version: 1.3.0
+;;; Version: 1.3.1
 ;;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;;; URL: https://github.com/jjba23/welkomscherm.el
 ;;; Keywords: splash dashboard faces
 ;;; Package: welkomscherm
-;;; Package-Requires: ((emacs "25.1"))
+;;; Package-Requires: ((emacs "28.1"))
 
 ;;; SPDX-License-Identifier: MIT
 
@@ -380,7 +380,7 @@ ROWS is a list of rows; each row is a list of (LABEL . FUNCTION) pairs."
   (format "%d.%d" emacs-major-version emacs-minor-version))
 
 (defun welkomscherm/system-description ()
-  "Return a short description of the system Emacs runs on."
+  "Return a short description of the Emacs system."
   (format "%s (%s)" system-type (or system-configuration "unknown")))
 
 (defun welkomscherm/system-user-name ()

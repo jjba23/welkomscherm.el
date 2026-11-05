@@ -11,7 +11,7 @@
 
 *welkomscherm.el is a small, calm, extensible welcome screen / dashboard for Emacs*: a centred handful of
 lines, the links you actually use, and nothing that gets in your way. It greets
-you in a graphical frame and in a plain terminal alike, on any Emacs from 25.1
+you in a graphical frame and in a plain terminal alike, on any Emacs from 28.1
 upwards, and it asks nothing of you that Emacs does not already provide.
 
 Extensible and configurable to your liking and following and respecting your themes out of the box and with customizable faces.
@@ -92,7 +92,7 @@ years.* Concretely, that promise is kept by four choices.
 :CUSTOM_ID: ways-to-install
 :END:
 
-/Four routes to the same 1.3.0, from the most automated to the most manual.  They all build the tag this README documents./
+/Four routes to the same 1.3.1, from the most automated to the most manual.  They all build the tag this README documents./
 
 ** From the Guix channel
 :PROPERTIES:
@@ -100,7 +100,7 @@ years.* Concretely, that promise is kept by four choices.
 :END:
 *GNU Guix* is the functional package manager this project is developed with: a build is a pure function of its inputs, so the same recipe gives the same result everywhere, and an upgrade that goes wrong can be rolled back.
 
-The jointhefreeworld channel carries ~emacs-welkomscherm~ at 1.3.0, so a checkout of the channel is enough — no package definition to write:
+The jointhefreeworld channel carries ~emacs-welkomscherm~ at 1.3.1, so a checkout of the channel is enough — no package definition to write:
 
 #+begin_src shell
 git clone https://github.com/jjba23/guix-jointhefreeworld.git
@@ -171,7 +171,7 @@ Each recipe carries its own dependency list, so a missing library fails the buil
 :CUSTOM_ID: requirements
 :END:
 
-- *GNU Emacs 25.1 or newer.* That is the whole list. welkomscherm has no
+- *GNU Emacs 28.1 or newer.* That is the whole list. welkomscherm has no
   external dependencies and does not require any part of Emacs that is not
   already there (no ~cl-lib~ beyond the bundled one, no icon package, no
   rendering library).
@@ -226,7 +226,7 @@ the first thing you see, see [[#welkomscherm-at-startup][Welkomscherm at startup
 
 #+begin_quote
 /A note on ~setopt~:/ it arrived in Emacs 29. If you run an older Emacs — and
-welkomscherm is happy all the way back to 25.1 — use ~setq~ in place of
+welkomscherm is happy all the way back to 28.1 — use ~setq~ in place of
 ~setopt~ and everything else above stays the same.
 #+end_quote
 
@@ -623,7 +623,7 @@ than a scoreboard: any of them may be the right home for you.
 
 | Package              | Hard requirements             | What it gives you                                                                   | How you shape it                                  |
 |----------------------+-------------------------------+-------------------------------------------------------------------------------------+---------------------------------------------------|
-| *welkomscherm.el*    | Emacs ≥ 25.1 (nothing else)   | centred links, bookmarks, work, actions, recent files, system details, startup time | composable sections in one list                   |
+| *welkomscherm.el*    | Emacs ≥ 28.1 (nothing else)   | centred links, bookmarks, work, actions, recent files, system details, startup time | composable sections in one list                   |
 | emacs-dashboard      | Emacs ≥ 27.1                  | banner, recent files, bookmarks, projects, agenda, registers                        | ~dashboard-items~ and ~dashboard-startupify-list~ |
 | enlight              | Emacs ≥ 27.1 and ~compat~     | one fully custom string, plus optional text menus                                   | ~enlight-content~ and hooks                       |
 | welcome.el           | Emacs ≥ 27.1 and ~nerd-icons~ | a banner header and a key-driven command menu                                       | ~welcome-menu-items~                              |
@@ -745,7 +745,7 @@ Other tasks: ~maak compile~, ~maak test~, ~maak lint~, ~maak clean~,
 
 On GitHub, [[https://github.com/jjba23/welkomscherm.el/actions][GitHub Actions]]
 runs the same gate without ~maak~ installed: every push and pull request runs
-the ERT suite on Emacs 27.2, 28.2, 29.4 and 30.1, and one lint job compiles
+the ERT suite on Emacs 28.2, 29.4 and 30.1, and one lint job compiles
 with warnings turned into errors and enforces ~checkdoc~. Pushing a ~vX.Y.Z~
 tag runs the suite for that commit and attaches its archive to the GitHub
 release, so a release asset is never built from an untested tree.
