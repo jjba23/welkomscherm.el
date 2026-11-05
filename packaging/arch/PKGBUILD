@@ -16,9 +16,7 @@ depends=('emacs')
 makedepends=('emacs')
 checkdepends=('emacs')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
-# GitHub generates this tag's archive on demand; the pin is filled in from it
-# right after the tag is published.
-sha256sums=('SKIP')
+sha256sums=('d3f0eb32016e91dd91484fe1be2a85aacdf8f623905685aaab44f2429d26f15b')
 
 build() {
   cd "$srcdir/welkomscherm.el-$pkgver"
