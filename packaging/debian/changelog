@@ -1,3 +1,14 @@
+elpa-welkomscherm (1.4.0-1) unstable; urgency=medium
+
+  * Add an opt-in Org agenda section: `welkomscherm/show-agenda',
+    `welkomscherm/agenda-days' and `welkomscherm/agenda-name'.
+  * Draw recent files one per line, with their directory muted beside them.
+  * Split the manual into short pages under docs/ and keep the README as the
+    front page.
+  * Bump the version to 1.4.0.
+
+ -- Josep Bigorra <jjbigorra@gmail.com>  Thu, 12 Nov 2026 12:00:00 +0100
+
 elpa-welkomscherm (1.3.1-1) unstable; urgency=medium
 
   * Require Emacs 28.1; the ERT suite does not pass on 27.2.

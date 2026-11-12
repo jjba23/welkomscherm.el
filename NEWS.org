@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file. Changes are
 
 This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
 
-* Unreleased
+* 1.4.0 (2026-11-12)
 
 *** Added
 
@@ -17,6 +17,10 @@ This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic 
 
 - The recent files section draws one file per line, with its directory muted beside it, so that two files of the same name can be told apart.
 - The manual moved out of the README into short per-subject pages under ~docs/~, with the README as the front page: ~docs/index.org~ is the way in.
+
+*** Version
+
+- Bumped the version to 1.4.0.
 
 *** Fixed
 
