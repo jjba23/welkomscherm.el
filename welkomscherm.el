@@ -603,11 +603,11 @@ is where its own splash logo lives."
 (defun welkomscherm/banner-image-object ()
   "Return the banner image when this frame can draw it, or nil.
 A build without support for the image's type gets nil, so that the ASCII
-banner is drawn instead of an error being signalled."
-  (let* ((file (and (display-images-p) (welkomscherm/banner-image-file)))
-         (type (and file (image-type-from-file-name file))))
-    (when (and type (image-type-available-p type))
-      (create-image file type))))
+banner is drawn instead of an error being signalled.  `create-image' both
+returns nil and signals for an unsupported type, depending on the version."
+  (let ((file (and (display-images-p) (welkomscherm/banner-image-file))))
+    (when file
+      (ignore-errors (create-image file)))))
 
 (defun welkomscherm/insert-banner-image (image)
   "Insert IMAGE centred within `fill-column', then end the line.
