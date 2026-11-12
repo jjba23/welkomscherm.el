@@ -1,3 +1,12 @@
+elpa-welkomscherm (1.5.2-1) unstable; urgency=medium
+
+  * Turn the banner off by default: `welkomscherm/show-banner' now defaults
+    to nil, so no frame draws a banner above the greeting until it is
+    enabled.
+  * Bump the version to 1.5.2.
+
+ -- Josep Bigorra <jjbigorra@gmail.com>  Thu, 12 Nov 2026 14:55:00 +0100
+
 elpa-welkomscherm (1.5.1-1) unstable; urgency=medium
 
   * Try the PNG splash logo Emacs installs when the build cannot draw the

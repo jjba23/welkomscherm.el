@@ -7,6 +7,16 @@ All notable changes to this project will be documented in this file. Changes are
 
 This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
 
+* 1.5.2 (2026-11-12)
+
+*** Changed
+
+- The banner is off by default: ~welkomscherm/show-banner~ now defaults to nil, so neither a GUI frame nor a terminal draws anything above the greeting until it is turned on. ~welkomscherm/banner-image~ and ~welkomscherm/banner-ascii~ keep their meanings once it is enabled.
+
+*** Version
+
+- Bumped the version to 1.5.2.
+
 * 1.5.1 (2026-11-12)
 
 *** Changed
