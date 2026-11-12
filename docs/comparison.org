@@ -37,10 +37,11 @@ Against all of these, welkomscherm's distinguishing choices are its *zero
 external dependencies*, its *section abstraction* — every block is a reusable
 unit you can reorder or share — and its *plain-text screen*.  The links, the
 optional icons and the whole layout are text and ordinary Emacs buttons; the
-one image, the banner, is the splash logo Emacs already installs, and where a
-frame cannot draw it the same place carries an ASCII banner instead.  That is
-what lets the very same configuration greet you on a laptop, a workstation and
-a server console, without an icon package and without a second setup.
+one image, the banner, is the splash logo Emacs already installs, and a frame
+that cannot draw it — a terminal, a batch Emacs — shows no banner, as vanilla
+Emacs does.  That is what lets the very same configuration greet you on a
+laptop, a workstation and a server console, without an icon package and without
+a second setup.
 
 The agenda is the one deliberate overlap with emacs-dashboard: if you want the
 week, registers, projects and a rich banner in one cockpit, that package is

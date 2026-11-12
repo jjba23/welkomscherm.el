@@ -115,8 +115,9 @@ buffer — text, styling runs and all — and ~screenshots/render.py~ paints tha
 output with the Modus themes' own palette.  (The mode line is drawn by the
 renderer, and the startup-time section is left out, because a batch render has
 no meaningful startup time to report.  A batch Emacs has no display either, so
-the pictures show the ASCII banner a terminal draws; a GUI frame puts Emacs's
-own splash logo there instead.)  Regenerate them with Emacs, and with
+the pictures show the screen as a terminal does, without the banner; a GUI
+frame puts Emacs's own splash logo there instead.)  Regenerate them with Emacs,
+and with
 Python 3 and [[https://python-pillow.org/][Pillow]]:
 
 #+begin_src shell

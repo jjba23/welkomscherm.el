@@ -74,9 +74,10 @@ sections; [[file:sections.org][Sections]] is the page for that.
 :CUSTOM_ID: the-banner
 :END:
 
-The screen opens with the GNU Emacs logo, the way vanilla Emacs does.  It is a
-section like any other, so it can be moved down the screen or dropped from
-~welkomscherm/sections~ entirely (see [[file:sections.org][Sections]]).
+The screen opens with the GNU Emacs logo in a frame that can draw images, the
+way vanilla Emacs does; a terminal gets no banner, again like vanilla Emacs.
+The banner is a section like any other, so it can be moved down the screen or
+dropped from ~welkomscherm/sections~ entirely (see [[file:sections.org][Sections]]).
 
 - ~welkomscherm/show-banner~ (boolean, default ~t~) ::
   Whether to draw the banner at all.
@@ -84,18 +85,20 @@ section like any other, so it can be moved down the screen or dropped from
 - ~welkomscherm/banner-image~ (file name or nil, default ~"splash.svg"~) ::
   The image to draw.  A relative name is looked up in the ~images~ directory of
   Emacs's own ~data-directory~, which is where the splash logo lives, so the
-  package ships no image of its own; give an absolute name to use a picture of
-  yours, or nil to keep the banner to ASCII.
+  package ships no image of its own; a build that cannot draw the SVG logo
+  tries the PNG logo Emacs installs beside it, and an absolute name is used as
+  it is, with no stand-in.  ~nil~ means no image.
 
-- ~welkomscherm/banner-ascii~ (list of strings) ::
-  The lines drawn when an image cannot be shown — in a terminal, in a batch
-  Emacs, or whenever ~banner-image~ is nil.  The default spells EMACS in plain
-  ASCII, so it survives any terminal, font or locale.  Replace it with your own
-  art, or with nil to leave only the blank line under the banner.
+- ~welkomscherm/banner-ascii~ (list of strings or nil, default ~nil~) ::
+  The lines to draw when no image can be shown — in a terminal, in a batch
+  Emacs, or whenever ~banner-image~ is nil.  ~nil~, the default, draws nothing
+  there, which is what vanilla Emacs does in a terminal.  Set it to a list of
+  lines for your own text banner on those frames.
 
 Only a frame that can actually display images gets the picture
-(~display-images-p~), which is what makes one configuration work on a laptop, a
-workstation and a server console without a second setup.
+(~display-images-p~).  There is no hidden text fallback: a frame that cannot
+draw the logo shows no banner unless ~banner-ascii~ asks for one, so one
+configuration still works on a laptop, a workstation and a server console.
 
 ** Your links and buttons
 :PROPERTIES:

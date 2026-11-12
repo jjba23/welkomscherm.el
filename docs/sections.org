@@ -35,9 +35,9 @@ order:
 #+end_src
 
 The first record is the banner: the GNU Emacs logo in a frame that can draw
-images, and `welkomscherm/banner-ascii' where it cannot.  It is a section like
-the rest — drop it, move it, or point `welkomscherm/banner-image' at a picture
-of your own.
+images, and nothing where it cannot unless `welkomscherm/banner-ascii' asks for
+a text banner.  It is a section like the rest — drop it, move it, or point
+`welkomscherm/banner-image' at a picture of your own.
 
 ** Composing the screen
 :PROPERTIES:
