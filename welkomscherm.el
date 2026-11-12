@@ -39,9 +39,11 @@
 ;;; Code:
 
 (require 'cl-lib)
-;; Emacs 30 and older leave `image-size' undeclared without this; image.el
-;; is built in, so the package still depends on Emacs alone.
+;; image.el is built in, so the package still depends on Emacs alone.  The
+;; `image-size' subr lives in image.c and an Emacs built without image support
+;; has no such function, so the compiler is told about it instead of a require.
 (require 'image)
+(declare-function image-size "image.c" (spec &optional pixels frame))
 
 ;; Org is only loaded when the agenda section is enabled, so the compiler
 ;; is told what it may call instead of carrying a requirement.
@@ -599,9 +601,13 @@ is where its own splash logo lives."
       (and (file-regular-p file) file))))
 
 (defun welkomscherm/banner-image-object ()
-  "Return the banner image when this frame can draw it, or nil."
-  (let ((file (and (display-images-p) (welkomscherm/banner-image-file))))
-    (when file (create-image file))))
+  "Return the banner image when this frame can draw it, or nil.
+A build without support for the image's type gets nil, so that the ASCII
+banner is drawn instead of an error being signalled."
+  (let* ((file (and (display-images-p) (welkomscherm/banner-image-file)))
+         (type (and file (image-type-from-file-name file))))
+    (when (and type (image-type-available-p type))
+      (create-image file type))))
 
 (defun welkomscherm/insert-banner-image (image)
   "Insert IMAGE centred within `fill-column', then end the line.
