@@ -16,7 +16,7 @@
 #
 
 Name:           emacs-welkomscherm
-Version:        1.4.1
+Version:        1.5.0
 Release:        0
 Summary:        Simple welcome screen and dashboard for Emacs
 License:        MIT
@@ -49,6 +49,10 @@ emacs -Q --batch -L . -L test -l test/welkomscherm-test.el -f ert-run-tests-batc
 %{_datadir}/emacs/site-lisp/welkomscherm.elc
 
 %changelog
+* Thu Nov 12 2026 Josep Bigorra <jjbigorra@gmail.com> - 1.5.0
+- Draw the GNU Emacs splash logo as a banner, with an ASCII fallback in
+  terminals, and add opt-in plain-text icons for links.
+
 * Thu Nov 12 2026 Josep Bigorra <jjbigorra@gmail.com> - 1.4.1
 - Keep Org's `org-agenda-buffer' to the agenda collection so a killed
   buffer cannot break the next render on Emacs 28.

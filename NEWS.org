@@ -7,6 +7,23 @@ All notable changes to this project will be documented in this file. Changes are
 
 This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
 
+* 1.5.0 (2026-11-12)
+
+*** Added
+
+- A *banner* at the top of the screen, on by default: the GNU Emacs splash logo in a frame that can display images, and an ASCII banner in a terminal or a batch Emacs. Options: ~welkomscherm/show-banner~ (default ~t~), ~welkomscherm/banner-image~ (default ~"splash.svg"~, looked up in Emacs's own images directory, so the package ships no image of its own) and ~welkomscherm/banner-ascii~ (the fallback lines). The banner is a section, ~welkomscherm/banner-section~, so it can be moved or dropped like any other.
+- Opt-in *icons* for bookmarks, work links and actions: ~welkomscherm/icons~ (default nil), ~welkomscherm/icon-list~ (a glyph per section) and ~welkomscherm/icon-fallback~ (drawn when the frame cannot display the configured glyph). Icons are plain text, so no icon font or icon package is involved.
+
+*** Changed
+
+- The default section list now begins with ~welkomscherm/banner-section~, followed by the greeting.
+- ~welkomscherm/render-rows~ and ~welkomscherm/render-action-rows~ take an optional ~ICON~ argument; existing calls keep working unchanged.
+- The configuration, sections, recipes and comparison pages document the banner and the icons, and the screenshots were regenerated with the ASCII banner a batch render draws.
+
+*** Version
+
+- Bumped the version to 1.5.0.
+
 * 1.4.1 (2026-11-12)
 
 *** Fixed

@@ -1,3 +1,16 @@
+elpa-welkomscherm (1.5.0-1) unstable; urgency=medium
+
+  * Add a banner at the top of the screen: the GNU Emacs splash logo in a
+    frame that can display images, `welkomscherm/banner-ascii' elsewhere.
+    It is on by default; disable it with `welkomscherm/show-banner'.
+  * Add opt-in plain-text icons for bookmarks, work links and actions:
+    `welkomscherm/icons', `welkomscherm/icon-list' and
+    `welkomscherm/icon-fallback'.
+  * The default section list now begins with `welkomscherm/banner-section'.
+  * Bump the version to 1.5.0.
+
+ -- Josep Bigorra <jjbigorra@gmail.com>  Thu, 12 Nov 2026 14:00:00 +0100
+
 elpa-welkomscherm (1.4.1-1) unstable; urgency=medium
 
   * Keep Org's `org-agenda-buffer' to the agenda collection, so a buffer
