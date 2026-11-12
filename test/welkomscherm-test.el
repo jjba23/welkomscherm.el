@@ -541,6 +541,30 @@ by the muted directory, and centring keeps that column aligned."
         (should (equal (welkomscherm-test--agenda-texts)
                        '("TODO Tagged thing")))))))
 
+(ert-deftest welkomscherm-test/agenda-collection-keeps-orgs-agenda-buffer ()
+  "Collecting entries leaves Org's own agenda buffer variable alone.
+Org records an agenda file buffer there, and selects it when it makes a
+marker, so a buffer killed since the last render broke the next one."
+  (welkomscherm-test--with-agenda
+   (format "* TODO Call the bank\n  SCHEDULED: <%s>\n"
+           (welkomscherm-test--org-day 0))
+   (let ((org-agenda-buffer nil)
+         (welkomscherm/agenda-days 1))
+     (welkomscherm/agenda-entries)
+     (should (null org-agenda-buffer)))))
+
+(ert-deftest welkomscherm-test/agenda-tolerates-a-killed-agenda-buffer ()
+  "A killed buffer in Org's agenda variable does not break a render."
+  (welkomscherm-test--with-agenda
+   (format "* TODO Call the bank\n  SCHEDULED: <%s>\n"
+           (welkomscherm-test--org-day 0))
+   (let ((dead (generate-new-buffer "welkomscherm-dead")))
+     (kill-buffer dead)
+     (let ((org-agenda-buffer dead)
+           (welkomscherm/agenda-days 1))
+       (should (equal (welkomscherm-test--agenda-texts)
+                      '("TODO Call the bank")))))))
+
 (ert-deftest welkomscherm-test/agenda-entries-empty-without-files ()
   "Without agenda files there is nothing to show."
   (let ((org-agenda-files nil))

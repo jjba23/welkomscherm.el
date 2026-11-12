@@ -48,6 +48,7 @@
 (declare-function org-today "org" ())
 (declare-function org-time-from-absolute "org" (abs))
 (declare-function calendar-gregorian-from-absolute "calendar" (date))
+(defvar org-agenda-buffer)
 (defvar org-agenda-remove-tags)
 
 (defgroup welkomscherm nil
@@ -460,7 +461,11 @@ out, and an entry only appears on the day it is due, so that a deadline
 also announced as an upcoming one is not listed twice.  Nil when Org is
 absent or `org-agenda-files' has nothing to read."
   (when (require 'org-agenda nil t)
-    (let ((files (cl-remove-if-not #'file-regular-p (org-agenda-files t)))
+    ;; Org records the agenda file buffer in `org-agenda-buffer' and selects
+    ;; it when it makes a marker.  Keeping that to this call means a buffer
+    ;; the user has since killed cannot break the next render.
+    (let ((org-agenda-buffer nil)
+          (files (cl-remove-if-not #'file-regular-p (org-agenda-files t)))
           (today (org-today))
           entries)
       (when files
