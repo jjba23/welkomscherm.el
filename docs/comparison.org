@@ -11,13 +11,13 @@ The Emacs dashboard space is friendly and varied; each of these packages is a
 good answer to a slightly different question.  Read this table as a map rather
 than a scoreboard: any of them may be the right home for you.
 
-| Package              | Hard requirements             | What it gives you                                                                               | How you shape it                                  |
-|----------------------+-------------------------------+-------------------------------------------------------------------------------------------------+---------------------------------------------------|
-| *welkomscherm.el*    | Emacs ≥ 28.1 (nothing else)   | centred links, bookmarks, work, actions, recent files, Org agenda, system details, startup time | composable sections in one list                   |
-| emacs-dashboard      | Emacs ≥ 27.1                  | banner, recent files, bookmarks, projects, agenda, registers                                    | ~dashboard-items~ and ~dashboard-startupify-list~ |
-| enlight              | Emacs ≥ 27.1 and ~compat~     | one fully custom string, plus optional text menus                                               | ~enlight-content~ and hooks                       |
-| welcome.el           | Emacs ≥ 27.1 and ~nerd-icons~ | a banner header and a key-driven command menu                                                   | ~welcome-menu-items~                              |
-| minimal-dashboard.el | Emacs ≥ 27.1                  | a centred image and a line of text                                                              | a handful of variables                            |
+| Package              | Hard requirements             | What it gives you                                                                                                                  | How you shape it                                  |
+|----------------------+-------------------------------+------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------|
+| *welkomscherm.el*    | Emacs ≥ 28.1 (nothing else)   | Emacs logo banner, centred links, bookmarks, work, actions, optional icons, recent files, Org agenda, system details, startup time | composable sections in one list                   |
+| emacs-dashboard      | Emacs ≥ 27.1                  | banner, recent files, bookmarks, projects, agenda, registers                                                                       | ~dashboard-items~ and ~dashboard-startupify-list~ |
+| enlight              | Emacs ≥ 27.1 and ~compat~     | one fully custom string, plus optional text menus                                                                                  | ~enlight-content~ and hooks                       |
+| welcome.el           | Emacs ≥ 27.1 and ~nerd-icons~ | a banner header and a key-driven command menu                                                                                      | ~welcome-menu-items~                              |
+| minimal-dashboard.el | Emacs ≥ 27.1                  | a centred image and a line of text                                                                                                 | a handful of variables                            |
 
 A few notes to keep the comparison honest (all read from the projects'
 repositories):
@@ -35,12 +35,14 @@ repositories):
 
 Against all of these, welkomscherm's distinguishing choices are its *zero
 external dependencies*, its *section abstraction* — every block is a reusable
-unit you can reorder or share — and its *strict equivalence between GUI and
-TUI*.  When the package is measured against Emacs's image-display limits, this
-is what lets the very same screen greet you on a laptop, a workstation and a
-server console without a single conditional.
+unit you can reorder or share — and its *plain-text screen*.  The links, the
+optional icons and the whole layout are text and ordinary Emacs buttons; the
+one image, the banner, is the splash logo Emacs already installs, and where a
+frame cannot draw it the same place carries an ASCII banner instead.  That is
+what lets the very same configuration greet you on a laptop, a workstation and
+a server console, without an icon package and without a second setup.
 
 The agenda is the one deliberate overlap with emacs-dashboard: if you want the
-week, registers, projects and a banner in one cockpit, that package is the
-better tool.  welkomscherm shows today, quietly, and leaves the rest to
+week, registers, projects and a rich banner in one cockpit, that package is
+the better tool.  welkomscherm shows today, quietly, and leaves the rest to
 ~org-agenda~.

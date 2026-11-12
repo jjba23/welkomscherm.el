@@ -91,8 +91,64 @@ in the post-render hook:
 :CUSTOM_ID: does-it-work-in-a-terminal
 :END:
 
-Yes, identically: it is plain text and ordinary Emacs buttons, so it works over
-SSH in ~emacs -nw~ with no images and no special fonts.
+Yes.  Everything but the banner is plain text and ordinary Emacs buttons, so
+the screen works over SSH in ~emacs -nw~ with no image support and no special
+fonts.  The banner is the one exception, and it handles itself: a terminal gets
+~welkomscherm/banner-ascii~ instead of the Emacs logo, so there is nothing to
+configure per machine.
+
+** The banner is not the picture I expected
+:PROPERTIES:
+:CUSTOM_ID: the-banner-is-not-the-picture-i-expected
+:END:
+
+In a terminal, in ~emacs -nw~, or in any frame without image support there is
+no picture to draw, so welkomscherm draws ~welkomscherm/banner-ascii~ instead;
+that is the intended fallback, not a failure.  In a GUI frame a missing or
+unreadable image is the usual cause: a relative ~welkomscherm/banner-image~ is
+looked up in the ~images~ directory of Emacs's own ~data-directory~, so a name
+that is not there quietly falls back to ASCII.  Ask Emacs which file it
+resolved:
+
+#+begin_src emacs-lisp
+  (welkomscherm/banner-image-file)
+  ;; => "/usr/share/emacs/30.1/etc/images/splash.svg"
+#+end_src
+
+Point the option at an absolute path to use your own picture, or set it to nil
+to keep the ASCII banner everywhere.
+
+** I want the screen without the banner, or without icons
+:PROPERTIES:
+:CUSTOM_ID: i-want-the-screen-without-the-banner-or-without-icons
+:END:
+
+Both are single options:
+
+#+begin_src emacs-lisp
+  (setopt welkomscherm/show-banner nil)   ; start with the greeting
+  (setopt welkomscherm/icons nil)         ; the default: no glyphs
+#+end_src
+
+The banner can also be dropped from ~welkomscherm/sections~, and the glyphs can
+be replaced rather than removed; see
+[[file:configuration.org::#the-banner][The banner]] and
+[[file:configuration.org::#icons][Icons]].
+
+** The icons show as boxes
+:PROPERTIES:
+:CUSTOM_ID: the-icons-show-as-boxes
+:END:
+
+welkomscherm draws a glyph only when Emacs says the frame can display it
+(~char-displayable-p~), and falls back to ~welkomscherm/icon-fallback~ (~*~ by
+default) otherwise; a box means the font claims the character and then renders
+it poorly.  Choose marks your font does have, ASCII being the safest:
+
+#+begin_src emacs-lisp
+  (setopt welkomscherm/icon-list
+          '((work . ">") (bookmarks . "*") (actions . "+")))
+#+end_src
 
 ** Available hooks
 :PROPERTIES:

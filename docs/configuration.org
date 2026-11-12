@@ -58,8 +58,9 @@ sections; [[file:sections.org][Sections]] is the page for that.
   when that is narrower.
 
 - ~welkomscherm/top-title-list~ (list of strings) ::
-  The lines of the top banner.  Default: "While any editor can save your files"
-  and "only Emacs can save your soul !".  Make it say whatever feels like home.
+  The greeting lines, drawn under the banner.  Default: "While any editor can
+  save your files" and "only Emacs can save your soul !".  Make it say
+  whatever feels like home.
 
 - The heading options — ~welkomscherm/bookmarks-name~, ~welkomscherm/work-name~,
   ~welkomscherm/actions-name~, ~welkomscherm/recent-files-name~,
@@ -67,6 +68,34 @@ sections; [[file:sections.org][Sections]] is the page for that.
   ~welkomscherm/init-time-name~ (all strings) :: Rename any section heading.
   The little suit, heart and sun glyphs in the defaults are just text; replace
   them with nothing, or with your own favourite marks.
+
+** The banner
+:PROPERTIES:
+:CUSTOM_ID: the-banner
+:END:
+
+The screen opens with the GNU Emacs logo, the way vanilla Emacs does.  It is a
+section like any other, so it can be moved down the screen or dropped from
+~welkomscherm/sections~ entirely (see [[file:sections.org][Sections]]).
+
+- ~welkomscherm/show-banner~ (boolean, default ~t~) ::
+  Whether to draw the banner at all.
+
+- ~welkomscherm/banner-image~ (file name or nil, default ~"splash.svg"~) ::
+  The image to draw.  A relative name is looked up in the ~images~ directory of
+  Emacs's own ~data-directory~, which is where the splash logo lives, so the
+  package ships no image of its own; give an absolute name to use a picture of
+  yours, or nil to keep the banner to ASCII.
+
+- ~welkomscherm/banner-ascii~ (list of strings) ::
+  The lines drawn when an image cannot be shown — in a terminal, in a batch
+  Emacs, or whenever ~banner-image~ is nil.  The default spells EMACS in plain
+  ASCII, so it survives any terminal, font or locale.  Replace it with your own
+  art, or with nil to leave only the blank line under the banner.
+
+Only a frame that can actually display images gets the picture
+(~display-images-p~), which is what makes one configuration work on a laptop, a
+workstation and a server console without a second setup.
 
 ** Your links and buttons
 :PROPERTIES:
@@ -99,6 +128,34 @@ sections; [[file:sections.org][Sections]] is the page for that.
             '((("new note" . (lambda (btn) (find-file "~/org/inbox.org")))
                ("scratch"  . (lambda (btn) (switch-to-buffer "*scratch*"))))))
   #+end_src
+
+** Icons
+:PROPERTIES:
+:CUSTOM_ID: icons
+:END:
+
+Icons are off by default: the screen is a quiet list of words, and a glyph is
+an opinion.  Turn them on and every bookmark, work link and action gets a small
+plain-text mark in front of it.
+
+- ~welkomscherm/icons~ (boolean, default ~nil~) ::
+  Whether to draw a glyph before each item.
+
+- ~welkomscherm/icon-list~ (alist of symbol to string) ::
+  The glyph per section, keyed ~work~, ~bookmarks~ and ~actions~ by default:
+  ~▸~, ~♥~ and ~◆~.  A section with no entry here is left bare, and nothing
+  stops you from spelling the marks in plain ASCII:
+
+  #+begin_src emacs-lisp
+    (setopt welkomscherm/icons t
+            welkomscherm/icon-list '((work . ">") (bookmarks . "*")))
+  #+end_src
+
+- ~welkomscherm/icon-fallback~ (string, default ~"*"~) ::
+  The glyph drawn when the configured one has no character on this frame.
+  welkomscherm asks Emacs (~char-displayable-p~) before drawing, so a glyph a
+  terminal's font lacks degrades to the fallback rather than to a box.  Icons
+  are plain text: no icon font, no ~nerd-icons~, nothing to install.
 
 ** Optional sections
 :PROPERTIES:
@@ -206,7 +263,8 @@ Both are described with examples in
   records and any sections of your own.  See
   [[file:sections.org][Sections: the building block]].
 
-- ~welkomscherm/top-title~, ~welkomscherm/agenda-section~, ~welkomscherm/work~,
+- ~welkomscherm/banner-section~, ~welkomscherm/top-title~,
+  ~welkomscherm/agenda-section~, ~welkomscherm/work~,
   ~welkomscherm/bookmarks~, ~welkomscherm/recent-files-section~,
   ~welkomscherm/actions~, ~welkomscherm/system-details~,
   ~welkomscherm/init-time~ :: These are the built-in section records

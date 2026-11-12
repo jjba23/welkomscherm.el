@@ -114,7 +114,9 @@ These pictures are generated from the real thing, not mocked up:
 buffer — text, styling runs and all — and ~screenshots/render.py~ paints that
 output with the Modus themes' own palette.  (The mode line is drawn by the
 renderer, and the startup-time section is left out, because a batch render has
-no meaningful startup time to report.)  Regenerate them with Emacs, and with
+no meaningful startup time to report.  A batch Emacs has no display either, so
+the pictures show the ASCII banner a terminal draws; a GUI frame puts Emacs's
+own splash logo there instead.)  Regenerate them with Emacs, and with
 Python 3 and [[https://python-pillow.org/][Pillow]]:
 
 #+begin_src shell

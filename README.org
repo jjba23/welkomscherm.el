@@ -21,7 +21,8 @@ does not already provide.
 One screen, two themes, every section: the demo alternates between the default
 view and one with separators, recent files and system details enabled, in a
 dark and a light theme.  The frames are drawn from the package's own buffer
-output — see
+output.  A batch Emacs cannot draw images, so the pictures show the ASCII banner
+that a terminal gets; a GUI frame puts Emacs's own logo there instead.  See
 [[file:docs/development.org::#showcase-and-screenshots][Showcase and screenshots]]
 for how, and for more pictures.
 #+end_quote
@@ -50,9 +51,12 @@ years.*  Concretely, that promise is kept by four choices.
   with its own heading, its own visibility rule and its own body.  Adding,
   removing or reordering a section means editing one list — the list
   ~welkomscherm/sections~ — and nothing else.
-- *One screen, two worlds.* :: The same buffer renders identically in GUI Emacs
-  and in terminal Emacs, local or over SSH, because it is plain text and
-  ordinary Emacs buttons rather than images and widgets.
+- *One screen, two worlds.* :: The same buffer greets you in GUI Emacs, in a
+  terminal and over SSH.  It is plain text and ordinary Emacs buttons, so it
+  asks nothing of the frame; the only image is the banner, and where a frame
+  cannot draw one — a terminal, a batch Emacs — the same place carries an ASCII
+  banner instead.  The icons for your links are plain text too, opt-in, and one
+  your font lacks falls back to a plain glyph.
 
 ** Quick start
 :PROPERTIES:
@@ -107,13 +111,13 @@ welkomscherm the first thing you see when Emacs starts.
 
 The [[file:docs/index.org][manual]] is a handful of short pages, one subject each:
 
-| Page                                                             | What it answers                                                   |
-|------------------------------------------------------------------+-------------------------------------------------------------------|
-| [[file:docs/installation.org][Installation]]                     | How do I get it running?                                          |
-| [[file:docs/configuration.org][Configuration]]                   | Which option changes what?                                        |
-| [[file:docs/sections.org][Sections]]                             | How is the screen built, and how do I add my own block?           |
-| [[file:docs/recipes.org][Recipes and troubleshooting]]           | Why is my screen off-centre, empty, or refusing to behave?        |
-| [[file:docs/comparison.org][How welkomscherm compares]]          | How is this different from dashboard, enlight and the others?     |
+| Page                              | What it answers                                                   |
+|-----------------------------------+-------------------------------------------------------------------|
+| [[file:docs/installation.org][Installation]]                      | How do I get it running?                                          |
+| [[file:docs/configuration.org][Configuration]]                     | Which option changes what?                                        |
+| [[file:docs/sections.org][Sections]]                          | How is the screen built, and how do I add my own block?           |
+| [[file:docs/recipes.org][Recipes and troubleshooting]]       | Why is my screen off-centre, empty, or refusing to behave?        |
+| [[file:docs/comparison.org][How welkomscherm compares]]         | How is this different from dashboard, enlight and the others?     |
 | [[file:docs/development.org][Testing, releases and screenshots]] | How do I run the gate, cut a release, or regenerate the pictures? |
 
 The [[file:NEWS.org][changelog]] is the release history, newest first.

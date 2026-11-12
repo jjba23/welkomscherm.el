@@ -28,10 +28,16 @@ order:
 
 #+begin_src emacs-lisp
   welkomscherm/sections
-  ;; => (welkomscherm/top-title welkomscherm/agenda-section welkomscherm/work
+  ;; => (welkomscherm/banner-section welkomscherm/top-title
+  ;;     welkomscherm/agenda-section welkomscherm/work
   ;;     welkomscherm/bookmarks welkomscherm/recent-files-section
   ;;     welkomscherm/actions welkomscherm/system-details welkomscherm/init-time)
 #+end_src
+
+The first record is the banner: the GNU Emacs logo in a frame that can draw
+images, and `welkomscherm/banner-ascii' where it cannot.  It is a section like
+the rest — drop it, move it, or point `welkomscherm/banner-image' at a picture
+of your own.
 
 ** Composing the screen
 :PROPERTIES:
@@ -64,17 +70,17 @@ plain function of no arguments, if that is all you need:
 A section body is ordinary Emacs Lisp: you may ~insert~ whatever you like.  To
 keep it looking like the rest of the screen, use welkomscherm's own helpers.
 
-| Helper                            | What it does                                           |
-|-----------------------------------+--------------------------------------------------------|
-| ~welkomscherm/insert-muted~       | insert text in the muted face and centre the line      |
-| ~welkomscherm/insert-new-line~    | end the current line                                   |
-| ~welkomscherm/insert-spacer~      | insert the two-space gap between two buttons           |
-| ~welkomscherm/insert-separator~   | insert a horizontal rule marker, followed by a newline |
-| ~welkomscherm/maybe-separator~    | the same, only when separators are enabled             |
-| ~welkomscherm/maybe-centered~     | centre the current line when ~welkomscherm/centered~   |
-| ~welkomscherm/render-rows~        | draw rows of ~(ALIAS . PATH)~ buttons                  |
-| ~welkomscherm/render-action-rows~ | draw rows of ~(LABEL . FUNCTION)~ buttons              |
-| ~welkomscherm/render-section~     | draw one section, framing and all                      |
+| Helper                            | What it does                                              |
+|-----------------------------------+-----------------------------------------------------------|
+| ~welkomscherm/insert-muted~       | insert text in the muted face and centre the line         |
+| ~welkomscherm/insert-new-line~    | end the current line                                      |
+| ~welkomscherm/insert-spacer~      | insert the two-space gap between two buttons              |
+| ~welkomscherm/insert-separator~   | insert a horizontal rule marker, followed by a newline    |
+| ~welkomscherm/maybe-separator~    | the same, only when separators are enabled                |
+| ~welkomscherm/maybe-centered~     | centre the current line when ~welkomscherm/centered~      |
+| ~welkomscherm/render-rows~        | draw rows of ~(ALIAS . PATH)~ buttons, optional glyph     |
+| ~welkomscherm/render-action-rows~ | draw rows of ~(LABEL . FUNCTION)~ buttons, optional glyph |
+| ~welkomscherm/render-section~     | draw one section, framing and all                         |
 
 A slightly more ambitious section, with its own buttons:
 

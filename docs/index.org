@@ -17,13 +17,13 @@ the shortest install.  These pages are the rest.
 :CUSTOM_ID: what-is-here
 :END:
 
-| Page                                                        | What it answers                                                    |
-|-------------------------------------------------------------+--------------------------------------------------------------------|
-| [[file:installation.org][Installation]]                     | How do I get it running, from Guix, Nix, a container or a package? |
-| [[file:configuration.org][Configuration]]                   | Which option changes what, including the opt-in sections?          |
-| [[file:sections.org][Sections]]                             | How is the screen built, and how do I add a block of my own?       |
-| [[file:recipes.org][Recipes and troubleshooting]]           | Why is my screen off-centre, empty, or refusing to behave?         |
-| [[file:comparison.org][How welkomscherm compares]]          | How is this different from dashboard, enlight and the others?      |
+| Page                              | What it answers                                                    |
+|-----------------------------------+--------------------------------------------------------------------|
+| [[file:installation.org][Installation]]                      | How do I get it running, from Guix, Nix, a container or a package? |
+| [[file:configuration.org][Configuration]]                     | Which option changes what, including the opt-in sections?          |
+| [[file:sections.org][Sections]]                          | How is the screen built, and how do I add a block of my own?       |
+| [[file:recipes.org][Recipes and troubleshooting]]       | Why is my screen off-centre, empty, or refusing to behave?         |
+| [[file:comparison.org][How welkomscherm compares]]         | How is this different from dashboard, enlight and the others?      |
 | [[file:development.org][Testing, releases and screenshots]] | How do I run the gate, cut a release, or regenerate the pictures?  |
 
 ** The thirty-second tour
