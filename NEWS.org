@@ -9,6 +9,15 @@ This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic 
 
 * Unreleased
 
+*** Added
+
+- An opt-in Org agenda section, off by default: ~welkomscherm/show-agenda~, ~welkomscherm/agenda-days~ and ~welkomscherm/agenda-name~. It lists the entries of the coming days from ~org-agenda-files~, leaves finished tasks out, draws each entry on the day it is due, and opens the entry's heading when clicked. Org is loaded only when the section is enabled.
+
+*** Changed
+
+- The recent files section draws one file per line, with its directory muted beside it, so that two files of the same name can be told apart.
+- The manual moved out of the README into short per-subject pages under ~docs/~, with the README as the front page: ~docs/index.org~ is the way in.
+
 *** Fixed
 
 - ~default.nix~ reads the version from the header the package actually has, ~;;; Version:~, so the Nix package builds again. It had been filtering for a two-semicolon ~;; Version:~ line that never existed.

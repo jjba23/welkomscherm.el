@@ -40,6 +40,16 @@
 
 (require 'cl-lib)
 
+;; Org is only loaded when the agenda section is enabled, so the compiler
+;; is told what it may call instead of carrying a requirement.
+(declare-function org-agenda-files "org" (&optional unrestricted))
+(declare-function org-agenda-get-day-entries "org-agenda"
+                  (file date &rest args))
+(declare-function org-today "org" ())
+(declare-function org-time-from-absolute "org" (abs))
+(declare-function calendar-gregorian-from-absolute "calendar" (date))
+(defvar org-agenda-remove-tags)
+
 (defgroup welkomscherm nil
   "Simple welcome screen / dashboard for Emacs."
   :group 'tools)
@@ -91,6 +101,10 @@
   "Title shown above the startup time value."
   :type 'string :group 'welkomscherm)
 
+(defcustom welkomscherm/agenda-name "Agenda ☀"
+  "Title shown above the Org agenda section."
+  :type 'string :group 'welkomscherm)
+
 (define-obsolete-variable-alias 'welkomscherm/use-form-feed
                                 'welkomscherm/use-separator "1.2.0")
 
@@ -125,6 +139,18 @@ axis of the text, because centring is done within `fill-column' too."
 (defcustom welkomscherm/show-recent-files nil
   "Whether to display the recent files section."
   :type 'boolean :group 'welkomscherm)
+
+(defcustom welkomscherm/show-agenda nil
+  "Whether to display the Org agenda section.
+It reads the entries of `org-agenda-files' and needs Org, which ships with
+Emacs.  Nothing is loaded until the section is enabled."
+  :type 'boolean :group 'welkomscherm)
+
+(defcustom welkomscherm/agenda-days 1
+  "How many days of Org agenda to show, starting today.
+Every extra day is another scan of `org-agenda-files', so today alone is
+the cheapest and a whole week is a good deal heavier."
+  :type 'integer :group 'welkomscherm)
 
 (defcustom welkomscherm/recent-files-limit 5
   "Maximum number of recent files to show."
@@ -416,6 +442,77 @@ recent file still exists on disk."
           (setq recent-files-lim (1- recent-files-lim))))
       (nreverse result))))
 
+;;; Agenda
+
+(defun welkomscherm/agenda-done-p (entry)
+  "Return non-nil when agenda ENTRY is a finished task."
+  (let ((state (get-text-property 0 'todo-state entry))
+        (marker (get-text-property 0 'org-marker entry)))
+    (and state marker (marker-buffer marker)
+         (with-current-buffer (marker-buffer marker)
+           (member state (bound-and-true-p org-done-keywords))))))
+
+(defun welkomscherm/agenda-entries ()
+  "Return the agenda entries of the coming `welkomscherm/agenda-days' days.
+Each entry is a plist with :day (a time), :text (one line) and :marker,
+where it lives.  The entries come in day order, finished tasks are left
+out, and an entry only appears on the day it is due, so that a deadline
+also announced as an upcoming one is not listed twice.  Nil when Org is
+absent or `org-agenda-files' has nothing to read."
+  (when (require 'org-agenda nil t)
+    (let ((files (cl-remove-if-not #'file-regular-p (org-agenda-files t)))
+          (today (org-today))
+          entries)
+      (when files
+        (dotimes (offset welkomscherm/agenda-days)
+          (let ((day (+ today offset)))
+            (dolist (file files)
+              (dolist (entry (let ((org-agenda-remove-tags t))
+                               (org-agenda-get-day-entries
+                                file (calendar-gregorian-from-absolute day))))
+                (when (and (equal (or (get-text-property 0 'ts-date entry)
+                                      day)
+                                  day)
+                           (not (welkomscherm/agenda-done-p entry)))
+                  (push (list :day (org-time-from-absolute day)
+                              :text (replace-regexp-in-string
+                                     "[ \t]+\\'" ""
+                                     (substring-no-properties entry))
+                              :marker (or (get-text-property 0 'org-hd-marker
+                                                             entry)
+                                          (get-text-property 0 'org-marker
+                                                             entry)))
+                        entries)))))))
+      (nreverse entries))))
+
+(defun welkomscherm/agenda-day-label (day)
+  "Return the short label shown above the agenda entries of DAY."
+  (let ((offset (- (time-to-days day) (org-today))))
+    (cond ((zerop offset) "Today")
+          ((= offset 1) "Tomorrow")
+          (t (format-time-string "%a %e %b" day)))))
+
+(defun welkomscherm/render-agenda ()
+  "Render the agenda entries, each day under its own muted label."
+  (let ((day nil))
+    (dolist (entry (welkomscherm/agenda-entries))
+      (unless (equal day (plist-get entry :day))
+        (setq day (plist-get entry :day))
+        (welkomscherm/insert-muted (welkomscherm/agenda-day-label day))
+        (welkomscherm/insert-new-line))
+      (insert-button (plist-get entry :text)
+                     'welkomscherm/marker (plist-get entry :marker)
+                     'action 'welkomscherm/on-agenda-click)
+      (welkomscherm/maybe-centered)
+      (welkomscherm/insert-new-line))))
+
+(defun welkomscherm/on-agenda-click (btn)
+  "Visit the Org heading behind agenda button BTN."
+  (let ((marker (button-get btn 'welkomscherm/marker)))
+    (when (markerp marker)
+      (switch-to-buffer (marker-buffer marker))
+      (goto-char marker))))
+
 ;;; Section bodies
 
 (defun welkomscherm/render-top-title ()
@@ -436,9 +533,39 @@ recent file still exists on disk."
   "Render the action buttons."
   (welkomscherm/render-action-rows welkomscherm/actions-list))
 
+(defun welkomscherm/directory-label (path)
+  "Return the abbreviated directory of PATH, without its trailing slash."
+  (abbreviate-file-name (directory-file-name (file-name-directory path))))
+
 (defun welkomscherm/render-recent-files ()
-  "Render the recently visited files as clickable rows."
-  (welkomscherm/render-rows (list (welkomscherm/recent-files))))
+  "Render the recently visited files, one per line, with their directory.
+The muted directory is what tells two files of the same name apart.  The
+rows are padded to one width, so centring them keeps the name and the
+directory in columns."
+  (let* ((files (welkomscherm/recent-files))
+         (name-width (apply #'max 0 (mapcar (lambda (file)
+                                              (string-width (car file)))
+                                            files)))
+         (row-width (apply #'max 0 (mapcar (lambda (file)
+                                             (+ name-width 2
+                                                (string-width
+                                                 (welkomscherm/directory-label
+                                                  (cdr file)))))
+                                           files))))
+    (dolist (file files)
+      (insert-button (car file)
+                     'welkomscherm/alias (car file)
+                     'welkomscherm/path (cdr file)
+                     'action 'welkomscherm/on-bookmark-click)
+      (insert (make-string (- name-width (string-width (car file))) ?\s))
+      (welkomscherm/insert-spacer)
+      (let ((directory (welkomscherm/directory-label (cdr file))))
+        (insert (propertize directory 'face 'welkomscherm/muted-face))
+        (insert (make-string (- row-width (+ name-width 2
+                                             (string-width directory)))
+                             ?\s)))
+      (welkomscherm/maybe-centered)
+      (welkomscherm/insert-new-line))))
 
 (defun welkomscherm/render-init-time ()
   "Render how long Emacs startup took."
@@ -449,6 +576,17 @@ recent file still exists on disk."
 (defcustom welkomscherm/top-title
   (welkomscherm/make-section :render #'welkomscherm/render-top-title)
   "The top title banner section."
+  :type 'sexp
+  :group 'welkomscherm)
+
+(defcustom welkomscherm/agenda-section
+  (welkomscherm/make-section
+   :name (lambda () welkomscherm/agenda-name)
+   :condition (lambda ()
+                (and welkomscherm/show-agenda
+                     (welkomscherm/agenda-entries)))
+   :render #'welkomscherm/render-agenda)
+  "The Org agenda section."
   :type 'sexp
   :group 'welkomscherm)
 
@@ -510,6 +648,7 @@ recent file still exists on disk."
 
 (defcustom welkomscherm/sections
   (list welkomscherm/top-title
+        welkomscherm/agenda-section
         welkomscherm/work
         welkomscherm/bookmarks
         welkomscherm/recent-files-section

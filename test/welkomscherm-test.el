@@ -87,9 +87,10 @@ This guards the old bug where the inherit value was the quoted symbol
                     welkomscherm/sections)))
 
 (ert-deftest welkomscherm-test/default-sections-include-new-sections ()
-  "The default section list includes the two new opt-in sections."
+  "The default section list includes the opt-in sections."
   (should (memq welkomscherm/system-details welkomscherm/sections))
-  (should (memq welkomscherm/recent-files-section welkomscherm/sections)))
+  (should (memq welkomscherm/recent-files-section welkomscherm/sections))
+  (should (memq welkomscherm/agenda-section welkomscherm/sections)))
 
 (ert-deftest welkomscherm-test/new-sections-are-opt-in ()
   "Both new sections default to off."
@@ -448,6 +449,149 @@ This guards the old bug where the inherit value was the quoted symbol
                      (buffer-string)))
             (should (next-button (point-min)))))
       (delete-file file))))
+
+
+;;; Recent files layout
+
+(ert-deftest welkomscherm-test/recent-files-one-per-line-with-directory ()
+  "Each recent file gets its own line, with the directory it lives in.
+Two files called the same name in different directories are told apart
+by the muted directory, and centring keeps that column aligned."
+  (let* ((dir-a (make-temp-file "welkomscherm-dir-a" t))
+         (dir-b (make-temp-file "welkomscherm-dir-b" t))
+         (file-a (expand-file-name "a.org" dir-a))
+         (file-b (expand-file-name "much-longer.org" dir-b)))
+    (unwind-protect
+        (progn
+          (write-region "" nil file-a)
+          (write-region "" nil file-b)
+          (let ((recentf-list (list file-a file-b)))
+            (with-temp-buffer
+              (let ((welkomscherm/centered t)
+                    (fill-column 72))
+                (welkomscherm/render-recent-files))
+              (let ((lines (split-string (buffer-string) "\n" t)))
+                (should (= (length lines) 2))
+                (should (string-match-p (regexp-quote dir-a) (nth 0 lines)))
+                (should (string-match-p (regexp-quote dir-b) (nth 1 lines)))
+                (should (= (string-match (regexp-quote dir-a) (nth 0 lines))
+                           (string-match (regexp-quote dir-b)
+                                         (nth 1 lines))))))))
+      (delete-directory dir-a t)
+      (delete-directory dir-b t))))
+
+
+;;; Agenda section
+
+(require 'org)
+(require 'org-agenda)
+
+(defmacro welkomscherm-test--with-agenda (contents &rest body)
+  "Evaluate BODY with `org-agenda-files' on a temp file holding CONTENTS."
+  (declare (indent 1))
+  `(let ((welkomscherm-test--agenda-file
+          (make-temp-file "welkomscherm-agenda" nil ".org")))
+     (unwind-protect
+         (progn
+           (with-temp-file welkomscherm-test--agenda-file
+             (insert ,contents))
+           (let ((org-agenda-files (list welkomscherm-test--agenda-file)))
+             ,@body))
+       (when-let* ((buffer (find-buffer-visiting
+                            welkomscherm-test--agenda-file)))
+         (kill-buffer buffer))
+       (delete-file welkomscherm-test--agenda-file))))
+
+(defun welkomscherm-test--org-day (offset)
+  "Return the YYYY-MM-DD date OFFSET days from today."
+  (format-time-string "%Y-%m-%d" (time-add nil (days-to-time offset))))
+
+(defun welkomscherm-test--agenda-texts ()
+  "Return the text of every entry the agenda currently has."
+  (mapcar (lambda (entry) (plist-get entry :text))
+          (welkomscherm/agenda-entries)))
+
+(ert-deftest welkomscherm-test/agenda-entries-follow-the-days-option ()
+  "The agenda collects today's entries and the days ahead, no further."
+  (let ((contents (format "* TODO Call the bank\n  SCHEDULED: <%s>\n* TODO File the taxes\n  DEADLINE: <%s>\n"
+                          (welkomscherm-test--org-day 0)
+                          (welkomscherm-test--org-day 2))))
+    (welkomscherm-test--with-agenda contents
+      (let ((welkomscherm/agenda-days 7))
+        (should (equal (welkomscherm-test--agenda-texts)
+                       '("TODO Call the bank" "TODO File the taxes"))))
+      (let ((welkomscherm/agenda-days 2))
+        (should (equal (welkomscherm-test--agenda-texts)
+                       '("TODO Call the bank")))))))
+
+(ert-deftest welkomscherm-test/agenda-entries-skip-done-and-strip-tags ()
+  "Finished tasks stay out of the agenda and tags stay out of the text."
+  (let ((contents (format "* DONE Old thing\n  SCHEDULED: <%s>\n* TODO Tagged thing :work:urgent:\n  SCHEDULED: <%s>\n"
+                          (welkomscherm-test--org-day 0)
+                          (welkomscherm-test--org-day 0))))
+    (welkomscherm-test--with-agenda contents
+      (let ((welkomscherm/agenda-days 1))
+        (should (equal (welkomscherm-test--agenda-texts)
+                       '("TODO Tagged thing")))))))
+
+(ert-deftest welkomscherm-test/agenda-entries-empty-without-files ()
+  "Without agenda files there is nothing to show."
+  (let ((org-agenda-files nil))
+    (should (null (welkomscherm/agenda-entries)))))
+
+(ert-deftest welkomscherm-test/agenda-section-is-opt-in ()
+  "The agenda section is off by default and draws nothing when off."
+  (should-not welkomscherm/show-agenda)
+  (welkomscherm-test--with-agenda (format "* TODO Call the bank\n  SCHEDULED: <%s>\n"
+                                          (welkomscherm-test--org-day 0))
+    (let ((text (welkomscherm-test--body
+                 (lambda ()
+                   (let ((welkomscherm/show-agenda nil))
+                     (welkomscherm/render-section
+                      welkomscherm/agenda-section))))))
+      (should (equal text "")))))
+
+(ert-deftest welkomscherm-test/agenda-section-groups-by-day ()
+  "The agenda section labels each day and offers a button per entry."
+  (let ((contents (format "* TODO Call the bank\n  SCHEDULED: <%s>\n* TODO File the taxes\n  DEADLINE: <%s>\n"
+                          (welkomscherm-test--org-day 0)
+                          (welkomscherm-test--org-day 1))))
+    (welkomscherm-test--with-agenda contents
+      (with-temp-buffer
+        (let ((welkomscherm/centered nil)
+              (welkomscherm/show-agenda t)
+              (welkomscherm/agenda-days 7))
+          (welkomscherm/render-section welkomscherm/agenda-section))
+        (should (string-match-p "Today" (buffer-string)))
+        (should (string-match-p "Tomorrow" (buffer-string)))
+        (let ((button (next-button (point-min))))
+          (should button)
+          (should (equal (button-label button) "TODO Call the bank"))
+          (should (markerp (button-get button 'welkomscherm/marker))))))))
+
+(ert-deftest welkomscherm-test/agenda-section-hides-when-empty ()
+  "An enabled agenda with no entries leaves no empty heading behind."
+  (welkomscherm-test--with-agenda "* A plain heading with no date\n"
+    (let ((text (welkomscherm-test--body
+                 (lambda ()
+                   (let ((welkomscherm/show-agenda t))
+                     (welkomscherm/render-section
+                      welkomscherm/agenda-section))))))
+      (should (equal text "")))))
+
+(ert-deftest welkomscherm-test/agenda-click-visits-the-heading ()
+  "Clicking an agenda button visits the Org heading it came from."
+  (welkomscherm-test--with-agenda (format "* TODO Call the bank\n  SCHEDULED: <%s>\n"
+                                          (welkomscherm-test--org-day 0))
+    (save-window-excursion
+      (with-temp-buffer
+        (let ((welkomscherm/centered nil)
+              (welkomscherm/agenda-days 1))
+          (welkomscherm/render-agenda)
+          (welkomscherm/on-agenda-click (next-button (point-min))))
+        (should (equal (buffer-substring-no-properties
+                        (line-beginning-position) (line-end-position))
+                       "* TODO Call the bank"))))))
 
 
 ;;; Whole-buffer rendering
