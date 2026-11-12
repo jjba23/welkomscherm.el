@@ -641,15 +641,32 @@ marker, so a buffer killed since the last render broke the next one."
       ;; The banner separates itself from the title that follows it.
       (should (equal (buffer-string) "first line\nsecond line\n\n")))))
 
-(ert-deftest welkomscherm-test/banner-draws-the-emacs-logo-when-it-can ()
-  "On a display that shows images the banner is Emacs's own splash logo."
+(ert-deftest welkomscherm-test/banner-draws-the-image-the-frame-can-make ()
+  "When the frame can produce the logo, the banner is that image, not ASCII.
+A build without support for the image type gets the ASCII banner instead,
+which is the fallback the option promises."
   (let ((welkomscherm/banner-ascii '("ascii")))
+    (cl-letf (((symbol-function 'display-images-p) (lambda (&optional _) t)))
+      (let ((image (welkomscherm/banner-image-object)))
+        (with-temp-buffer
+          (let ((welkomscherm/centered nil))
+            (welkomscherm/render-banner))
+          (if image
+              (progn
+                (should-not (string-match-p "ascii" (buffer-string)))
+                (should (text-property-not-all (point-min) (point-max)
+                                               'display nil)))
+            (should (equal (buffer-string) "ascii\n\n"))))))))
+
+(ert-deftest welkomscherm-test/banner-falls-back-when-the-image-is-missing ()
+  "A banner image that is not there leaves the ASCII banner in place."
+  (let ((welkomscherm/banner-ascii '("ascii"))
+        (welkomscherm/banner-image "no-such-image.svg"))
     (cl-letf (((symbol-function 'display-images-p) (lambda (&optional _) t)))
       (with-temp-buffer
         (let ((welkomscherm/centered nil))
           (welkomscherm/render-banner))
-        (should-not (string-match-p "ascii" (buffer-string)))
-        (should (text-property-not-all (point-min) (point-max) 'display nil))))))
+        (should (equal (buffer-string) "ascii\n\n"))))))
 
 (ert-deftest welkomscherm-test/banner-image-file-resolution ()
   "The image is found in Emacs's own images directory, or used as given."

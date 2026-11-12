@@ -39,6 +39,9 @@
 ;;; Code:
 
 (require 'cl-lib)
+;; Emacs 30 and older leave `image-size' undeclared without this; image.el
+;; is built in, so the package still depends on Emacs alone.
+(require 'image)
 
 ;; Org is only loaded when the agenda section is enabled, so the compiler
 ;; is told what it may call instead of carrying a requirement.
