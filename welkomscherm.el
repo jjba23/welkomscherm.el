@@ -78,6 +78,33 @@
   :type '(repeat string)
   :group 'welkomscherm)
 
+(defcustom welkomscherm/show-banner t
+  "Whether to draw the banner at the top of the screen.
+The banner is the GNU Emacs logo in a frame that can show images, and
+`welkomscherm/banner-ascii' everywhere else, terminal Emacs included."
+  :type 'boolean :group 'welkomscherm)
+
+(defcustom welkomscherm/banner-image "splash.svg"
+  "Image drawn as the banner, looked up in Emacs's own images directory.
+The default is the splash logo vanilla Emacs draws, so the welcome screen
+opens the way Emacs itself does.  An absolute name is used as it is, a
+relative one is looked up in the `images' directory of `data-directory',
+and nil keeps the banner to `welkomscherm/banner-ascii'."
+  :type '(choice (const :tag "No image" nil) file)
+  :group 'welkomscherm)
+
+(defcustom welkomscherm/banner-ascii
+  '(" _____ __  __    _    ____ ____"
+    "| ____|  \\/  |  / \\  / ___/ ___|"
+    "|  _| | |\\/| | / _ \\| |   \\___ \\"
+    "| |___| |  | |/ ___ \\ |___ ___) |"
+    "|_____|_|  |_/_/   \\_\\____|____/")
+  "Lines drawn as the banner when an image cannot be shown.
+The default spells EMACS in plain ASCII, so it survives any terminal, font
+or locale; replace it with your own art, or with nil for no banner at all."
+  :type '(repeat string)
+  :group 'welkomscherm)
+
 (defcustom welkomscherm/bookmarks-name "Bookmarks ♥"
   "Title shown above the personal bookmark section."
   :type 'string :group 'welkomscherm)
@@ -166,6 +193,24 @@ editor default `line-spacing'."
                  (integer :tag "Pixels")
                  (float :tag "Fraction of the line height"))
   :group 'welkomscherm)
+
+(defcustom welkomscherm/icons nil
+  "Whether to draw a glyph before every bookmark, work link and action.
+The glyphs are plain text, and one the frame cannot display falls back to
+`welkomscherm/icon-fallback', so the same screen works in a GUI frame and
+in a terminal.  See `welkomscherm/icon-list' for the glyphs."
+  :type 'boolean :group 'welkomscherm)
+
+(defcustom welkomscherm/icon-list
+  '((work . "▸") (bookmarks . "♥") (actions . "◆"))
+  "Glyph drawn before each item, keyed by section.
+A section with no entry here is drawn without a glyph."
+  :type '(alist :key-type symbol :value-type string)
+  :group 'welkomscherm)
+
+(defcustom welkomscherm/icon-fallback "*"
+  "Glyph used when the configured one cannot be displayed."
+  :type 'string :group 'welkomscherm)
 
 (defcustom welkomscherm/bookmarks-list
   '((("row0c0" . "~/Dev/row0c0")
@@ -372,11 +417,28 @@ re-flow to the window width with no library beyond Emacs itself."
 
 ;;; Row rendering
 
-(defun welkomscherm/render-rows (rows)
-  "Render ROWS of bookmark buttons.
+(defun welkomscherm/icon (section)
+  "Return the glyph to draw before SECTION's items, or nil when icons are off.
+A glyph this frame cannot display is replaced by
+`welkomscherm/icon-fallback'."
+  (when welkomscherm/icons
+    (let ((glyph (alist-get section welkomscherm/icon-list)))
+      (when (and (stringp glyph) (> (length glyph) 0))
+        (if (char-displayable-p (aref glyph 0))
+            glyph
+          welkomscherm/icon-fallback)))))
+
+(defun welkomscherm/insert-icon (icon)
+  "Insert ICON and a space before an item, when ICON is non-nil."
+  (when icon
+    (insert (propertize (concat icon " ") 'face 'welkomscherm/muted-face))))
+
+(defun welkomscherm/render-rows (rows &optional icon)
+  "Render ROWS of bookmark buttons, each prefixed by ICON when non-nil.
 ROWS is a list of rows; each row is a list of (ALIAS . PATH) pairs."
   (dolist (row rows)
     (dolist (x row)
+      (welkomscherm/insert-icon icon)
       (insert-button (car x)
                      'welkomscherm/alias (car x)
                      'welkomscherm/path (cdr x)
@@ -385,11 +447,12 @@ ROWS is a list of rows; each row is a list of (ALIAS . PATH) pairs."
     (welkomscherm/maybe-centered)
     (welkomscherm/insert-new-line)))
 
-(defun welkomscherm/render-action-rows (rows)
-  "Render ROWS of action buttons.
+(defun welkomscherm/render-action-rows (rows &optional icon)
+  "Render ROWS of action buttons, each prefixed by ICON when non-nil.
 ROWS is a list of rows; each row is a list of (LABEL . FUNCTION) pairs."
   (dolist (row rows)
     (dolist (x row)
+      (welkomscherm/insert-icon icon)
       (insert-button (car x)
                      'action (cdr x))
       (welkomscherm/insert-spacer))
@@ -518,6 +581,51 @@ absent or `org-agenda-files' has nothing to read."
       (switch-to-buffer (marker-buffer marker))
       (goto-char marker))))
 
+;;; Banner
+
+(defun welkomscherm/banner-image-file ()
+  "Return the file named by `welkomscherm/banner-image', or nil if none.
+A relative name is looked up in the images directory Emacs installs, which
+is where its own splash logo lives."
+  (when welkomscherm/banner-image
+    (let ((file (if (file-name-absolute-p welkomscherm/banner-image)
+                    welkomscherm/banner-image
+                  (expand-file-name welkomscherm/banner-image
+                                    (expand-file-name "images"
+                                                      data-directory)))))
+      (and (file-regular-p file) file))))
+
+(defun welkomscherm/banner-image-object ()
+  "Return the banner image when this frame can draw it, or nil."
+  (let ((file (and (display-images-p) (welkomscherm/banner-image-file))))
+    (when file (create-image file))))
+
+(defun welkomscherm/insert-banner-image (image)
+  "Insert IMAGE centred within `fill-column', then end the line.
+The banner draws a blank line under itself; see `welkomscherm/render-banner'."
+  ;; A frame that cannot measure the image (a batch frame, for one) still
+  ;; draws it, just without the indent.
+  (let* ((size (ignore-errors (image-size image t)))
+         (columns (and size
+                       (ceiling (/ (float (car size)) (frame-char-width))))))
+    (when columns
+      (indent-to (max 0 (/ (- fill-column columns) 2))))
+    (insert-image image)
+    (insert "\n")))
+
+(defun welkomscherm/render-banner ()
+  "Draw the banner: the Emacs logo when images work, ASCII otherwise.
+Vanilla Emacs draws its splash logo in a graphical frame and nothing in a
+terminal; the ASCII fallback is what makes one screen work in both."
+  (let ((image (welkomscherm/banner-image-object)))
+    (if image
+        (welkomscherm/insert-banner-image image)
+      (dolist (line welkomscherm/banner-ascii)
+        (welkomscherm/insert-muted line)
+        (welkomscherm/insert-new-line)))
+    ;; The banner has no heading to separate it from the title below.
+    (welkomscherm/insert-new-line)))
+
 ;;; Section bodies
 
 (defun welkomscherm/render-top-title ()
@@ -528,15 +636,18 @@ absent or `org-agenda-files' has nothing to read."
 
 (defun welkomscherm/render-bookmarks ()
   "Render the personal bookmarks."
-  (welkomscherm/render-rows welkomscherm/bookmarks-list))
+  (welkomscherm/render-rows welkomscherm/bookmarks-list
+                            (welkomscherm/icon 'bookmarks)))
 
 (defun welkomscherm/render-work ()
   "Render the work bookmarks."
-  (welkomscherm/render-rows welkomscherm/work-list))
+  (welkomscherm/render-rows welkomscherm/work-list
+                            (welkomscherm/icon 'work)))
 
 (defun welkomscherm/render-actions ()
   "Render the action buttons."
-  (welkomscherm/render-action-rows welkomscherm/actions-list))
+  (welkomscherm/render-action-rows welkomscherm/actions-list
+                                   (welkomscherm/icon 'actions)))
 
 (defun welkomscherm/directory-label (path)
   "Return the abbreviated directory of PATH, without its trailing slash."
@@ -577,6 +688,14 @@ directory in columns."
   (welkomscherm/insert-muted (emacs-init-time)))
 
 ;;; The default sections
+
+(defcustom welkomscherm/banner-section
+  (welkomscherm/make-section
+   :condition (lambda () welkomscherm/show-banner)
+   :render #'welkomscherm/render-banner)
+  "The banner section: the Emacs logo, or an ASCII banner."
+  :type 'sexp
+  :group 'welkomscherm)
 
 (defcustom welkomscherm/top-title
   (welkomscherm/make-section :render #'welkomscherm/render-top-title)
@@ -652,7 +771,8 @@ directory in columns."
   :group 'welkomscherm)
 
 (defcustom welkomscherm/sections
-  (list welkomscherm/top-title
+  (list welkomscherm/banner-section
+        welkomscherm/top-title
         welkomscherm/agenda-section
         welkomscherm/work
         welkomscherm/bookmarks

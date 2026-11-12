@@ -625,6 +625,101 @@ marker, so a buffer killed since the last render broke the next one."
                        "* TODO Call the bank"))))))
 
 
+;;; Banner
+
+(ert-deftest welkomscherm-test/banner-is-on-by-default ()
+  "The banner is the first section and is drawn unless it is turned off."
+  (should welkomscherm/show-banner)
+  (should (eq (car welkomscherm/sections) welkomscherm/banner-section)))
+
+(ert-deftest welkomscherm-test/banner-draws-ascii-without-a-display ()
+  "With no image support the ASCII banner is drawn, one line each."
+  (let ((welkomscherm/banner-ascii '("first line" "second line")))
+    (with-temp-buffer
+      (let ((welkomscherm/centered nil))
+        (welkomscherm/render-banner))
+      ;; The banner separates itself from the title that follows it.
+      (should (equal (buffer-string) "first line\nsecond line\n\n")))))
+
+(ert-deftest welkomscherm-test/banner-draws-the-emacs-logo-when-it-can ()
+  "On a display that shows images the banner is Emacs's own splash logo."
+  (let ((welkomscherm/banner-ascii '("ascii")))
+    (cl-letf (((symbol-function 'display-images-p) (lambda (&optional _) t)))
+      (with-temp-buffer
+        (let ((welkomscherm/centered nil))
+          (welkomscherm/render-banner))
+        (should-not (string-match-p "ascii" (buffer-string)))
+        (should (text-property-not-all (point-min) (point-max) 'display nil))))))
+
+(ert-deftest welkomscherm-test/banner-image-file-resolution ()
+  "The image is found in Emacs's own images directory, or used as given."
+  (should (file-readable-p (welkomscherm/banner-image-file)))
+  (let ((welkomscherm/banner-image nil))
+    (should-not (welkomscherm/banner-image-file)))
+  (let ((welkomscherm/banner-image "no-such-image.svg"))
+    (should-not (welkomscherm/banner-image-file)))
+  (let ((file (make-temp-file "welkomscherm-banner" nil ".svg")))
+    (unwind-protect
+        (let ((welkomscherm/banner-image file))
+          (should (equal (welkomscherm/banner-image-file) file)))
+      (delete-file file))))
+
+(ert-deftest welkomscherm-test/banner-can-be-turned-off ()
+  "A hidden banner section renders nothing at all."
+  (let ((text (welkomscherm-test--body
+               (lambda ()
+                 (let ((welkomscherm/show-banner nil))
+                   (welkomscherm/render-section
+                    welkomscherm/banner-section))))))
+    (should (equal text ""))))
+
+
+;;; Icons
+
+(ert-deftest welkomscherm-test/icons-are-off-by-default ()
+  "Icons are opt-in, so a fresh screen has no glyphs on its links."
+  (should-not welkomscherm/icons)
+  (should-not (welkomscherm/icon 'bookmarks)))
+
+(ert-deftest welkomscherm-test/icons-draw-before-bookmarks-and-work ()
+  "Each bookmark and work link gets its section's glyph, then its label."
+  (let ((welkomscherm/icons t)
+        (welkomscherm/centered nil)
+        (welkomscherm/bookmarks-list '((("a" . "/tmp/a"))))
+        (welkomscherm/work-list '((("w" . "/tmp/w")))))
+    (with-temp-buffer
+      (welkomscherm/render-bookmarks)
+      (should (string-prefix-p "♥ " (buffer-string)))
+      (should (equal (button-label (next-button (point-min))) "a")))
+    (with-temp-buffer
+      (welkomscherm/render-work)
+      (should (string-prefix-p "▸ " (buffer-string))))))
+
+(ert-deftest welkomscherm-test/icons-draw-before-actions ()
+  "Action buttons get their glyph too, and keep their action."
+  (let ((welkomscherm/icons t)
+        (welkomscherm/centered nil)
+        (welkomscherm/actions-list '((("go" . ignore)))))
+    (with-temp-buffer
+      (welkomscherm/render-actions)
+      (should (string-prefix-p "◆ " (buffer-string)))
+      (should (equal (button-label (next-button (point-min))) "go")))))
+
+(ert-deftest welkomscherm-test/icons-fall-back-to-a-plain-glyph ()
+  "A glyph the frame cannot display is replaced by the plain fallback."
+  (let ((welkomscherm/icons t))
+    (cl-letf (((symbol-function 'char-displayable-p) (lambda (&rest _) nil)))
+      (should (equal (welkomscherm/icon 'bookmarks)
+                     welkomscherm/icon-fallback)))))
+
+(ert-deftest welkomscherm-test/icons-follow-the-icon-list ()
+  "The glyphs are an alist a user can replace; unknown sections stay bare."
+  (let ((welkomscherm/icons t)
+        (welkomscherm/icon-list '((bookmarks . "#"))))
+    (should (equal (welkomscherm/icon 'bookmarks) "#"))
+    (should-not (welkomscherm/icon 'work))))
+
+
 ;;; Whole-buffer rendering
 
 (ert-deftest welkomscherm-test/renders-a-read-only-buffer ()
@@ -651,7 +746,8 @@ the freshly displayed window scrolled down to its last line."
   (save-window-excursion
     (unwind-protect
         (progn
-          (welkomscherm)
+          (let ((welkomscherm/show-banner nil))
+            (welkomscherm))
           (with-current-buffer welkomscherm/buffer-name
             ;; Point is on the first line, and that line is the top title
             ;; (possibly indented, since centring is on by default).
