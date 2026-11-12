@@ -34,9 +34,10 @@ order:
   ;;     welkomscherm/actions welkomscherm/system-details welkomscherm/init-time)
 #+end_src
 
-The first record is the banner: the GNU Emacs logo in a frame that can draw
-images, and nothing where it cannot unless `welkomscherm/banner-ascii' asks for
-a text banner.  It is a section like the rest — drop it, move it, or point
+The first record is the banner, off by default (`welkomscherm/show-banner'):
+when it is on, a frame that can draw images gets the GNU Emacs logo, and a
+frame that cannot gets nothing unless `welkomscherm/banner-ascii' asks for a
+text banner.  It is a section like the rest — drop it, move it, or point
 `welkomscherm/banner-image' at a picture of your own.
 
 ** Composing the screen

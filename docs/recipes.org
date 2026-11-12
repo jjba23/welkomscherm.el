@@ -102,14 +102,15 @@ configure per machine.
 :CUSTOM_ID: the-banner-is-not-the-picture-i-expected
 :END:
 
-In a terminal, in ~emacs -nw~, or in any frame without image support there is
-no picture to draw, so the default is no banner at all — the way vanilla Emacs
-shows no splash image in a terminal.  Set ~welkomscherm/banner-ascii~ if you
-want a text banner on those frames.  In a GUI frame a missing or unreadable
-image is the usual cause: a relative ~welkomscherm/banner-image~ is looked up
-in the ~images~ directory of Emacs's own ~data-directory~; a build that cannot
-draw the SVG logo tries the PNG logo Emacs installs beside it, and only then
-shows nothing.  Ask Emacs which file it resolved:
+The banner is off by default; turn it on with ~welkomscherm/show-banner~.
+Once it is on, a terminal, ~emacs -nw~, or any frame without image support has
+no picture to draw and shows nothing there — the way vanilla Emacs shows no
+splash image in a terminal.  Set ~welkomscherm/banner-ascii~ if you want a text
+banner on those frames.  In a GUI frame a missing or unreadable image is the
+usual cause: a relative ~welkomscherm/banner-image~ is looked up in the ~images~
+directory of Emacs's own ~data-directory~; a build that cannot draw the SVG
+logo tries the PNG logo Emacs installs beside it, and only then shows nothing.
+Ask Emacs which file it resolved:
 
 #+begin_src emacs-lisp
   (welkomscherm/banner-image-file)
@@ -118,24 +119,6 @@ shows nothing.  Ask Emacs which file it resolved:
 
 Point the option at an absolute path to use your own picture, or set it to nil
 for no image anywhere.
-
-** I want the screen without the banner, or without icons
-:PROPERTIES:
-:CUSTOM_ID: i-want-the-screen-without-the-banner-or-without-icons
-:END:
-
-Both are single options:
-
-#+begin_src emacs-lisp
-  (setopt welkomscherm/show-banner nil)   ; no logo, even in a GUI frame
-  (setopt welkomscherm/icons nil)         ; the default: no glyphs
-#+end_src
-
-A terminal shows no banner by default anyway; ~welkomscherm/banner-ascii~ is
-what puts text there.  The banner can also be dropped from
-~welkomscherm/sections~, and the glyphs can be replaced rather than removed; see
-[[file:configuration.org::#the-banner][The banner]] and
-[[file:configuration.org::#icons][Icons]].
 
 ** The icons show as boxes
 :PROPERTIES:

@@ -74,13 +74,16 @@ sections; [[file:sections.org][Sections]] is the page for that.
 :CUSTOM_ID: the-banner
 :END:
 
-The screen opens with the GNU Emacs logo in a frame that can draw images, the
-way vanilla Emacs does; a terminal gets no banner, again like vanilla Emacs.
-The banner is a section like any other, so it can be moved down the screen or
-dropped from ~welkomscherm/sections~ entirely (see [[file:sections.org][Sections]]).
+The banner is off by default.  Turn it on and the screen opens with the GNU
+Emacs logo in a frame that can draw images, the way vanilla Emacs does; a
+terminal still gets no banner, again like vanilla Emacs, unless you ask for
+text art.  The banner is a section like any other, so it can be moved down the
+screen or dropped from ~welkomscherm/sections~ entirely (see
+[[file:sections.org][Sections]]).
 
-- ~welkomscherm/show-banner~ (boolean, default ~t~) ::
-  Whether to draw the banner at all.
+- ~welkomscherm/show-banner~ (boolean, default ~nil~) ::
+  Whether to draw the banner at all.  It is off by default, so a fresh screen
+  starts with the greeting.
 
 - ~welkomscherm/banner-image~ (file name or nil, default ~"splash.svg"~) ::
   The image to draw.  A relative name is looked up in the ~images~ directory of
@@ -95,8 +98,8 @@ dropped from ~welkomscherm/sections~ entirely (see [[file:sections.org][Sections
   there, which is what vanilla Emacs does in a terminal.  Set it to a list of
   lines for your own text banner on those frames.
 
-Only a frame that can actually display images gets the picture
-(~display-images-p~).  There is no hidden text fallback: a frame that cannot
+With the banner on, only a frame that can actually display images gets the
+picture (~display-images-p~).  There is no hidden text fallback: a frame that cannot
 draw the logo shows no banner unless ~banner-ascii~ asks for one, so one
 configuration still works on a laptop, a workstation and a server console.
 
