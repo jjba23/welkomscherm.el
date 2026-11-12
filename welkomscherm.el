@@ -2,7 +2,7 @@
 
 ;;; Copyright © Josep Bigorra <jjbigorra@gmail.com>
 
-;;; Version: 1.5.1
+;;; Version: 1.5.2
 ;;; Author: Josep Bigorra <jjbigorra@gmail.com>
 ;;; Maintainer: Josep Bigorra <jjbigorra@gmail.com>
 ;;; URL: https://github.com/jjba23/welkomscherm.el
@@ -83,9 +83,10 @@
   :type '(repeat string)
   :group 'welkomscherm)
 
-(defcustom welkomscherm/show-banner t
+(defcustom welkomscherm/show-banner nil
   "Whether to draw the banner at the top of the screen.
-The banner is the GNU Emacs logo in a frame that can show images, and
+It is off by default, so a fresh screen starts with the greeting.  Turn it on
+for the GNU Emacs logo in a frame that can show images, and for
 `welkomscherm/banner-ascii' everywhere else, terminal Emacs included."
   :type 'boolean :group 'welkomscherm)
 

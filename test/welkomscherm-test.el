@@ -627,10 +627,16 @@ marker, so a buffer killed since the last render broke the next one."
 
 ;;; Banner
 
-(ert-deftest welkomscherm-test/banner-is-on-by-default ()
-  "The banner is the first section and is drawn unless it is turned off."
-  (should welkomscherm/show-banner)
-  (should (eq (car welkomscherm/sections) welkomscherm/banner-section)))
+(ert-deftest welkomscherm-test/banner-is-off-by-default ()
+  "The banner is opt-in, and still the first section when it is enabled."
+  (should-not welkomscherm/show-banner)
+  (should (eq (car welkomscherm/sections) welkomscherm/banner-section))
+  (should-not (welkomscherm/section-visible-p welkomscherm/banner-section)))
+
+(ert-deftest welkomscherm-test/banner-can-be-turned-on ()
+  "Enabling the banner makes its section visible."
+  (let ((welkomscherm/show-banner t))
+    (should (welkomscherm/section-visible-p welkomscherm/banner-section))))
 
 (ert-deftest welkomscherm-test/banner-draws-ascii-without-a-display ()
   "With no image support the ASCII banner is drawn, one line each."
@@ -791,8 +797,7 @@ the freshly displayed window scrolled down to its last line."
   (save-window-excursion
     (unwind-protect
         (progn
-          (let ((welkomscherm/show-banner nil))
-            (welkomscherm))
+          (welkomscherm)
           (with-current-buffer welkomscherm/buffer-name
             ;; Point is on the first line, and that line is the top title
             ;; (possibly indented, since centring is on by default).
