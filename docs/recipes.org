@@ -1,0 +1,125 @@
+#+title: Recipes and troubleshooting
+#+email: jjbigorra@gmail.com
+#+language: en
+#+options: toc:nil num:nil
+
+* Recipes and troubleshooting
+
+Part of the [[file:index.org][welkomscherm manual]].
+
+** The screen is not centred the way I like it
+:PROPERTIES:
+:CUSTOM_ID: the-screen-is-not-centred-the-way-i-like-it
+:END:
+
+Centring follows ~fill-column~ (through ~center-line~), not the window.  Set it
+per-buffer in a hook, as shown in [[#available-hooks][Available hooks]]:
+
+#+begin_src emacs-lisp
+  (add-hook 'welkomscherm/pre-render-hook
+            (lambda () (setq-local fill-column (frame-parameter nil 'width))))
+#+end_src
+
+** The recent files section is empty
+:PROPERTIES:
+:CUSTOM_ID: the-recent-files-section-is-empty
+:END:
+
+It reads the built-in ~recentf-list~.  Enable ~recentf-mode~, visit a few
+files, and the section will fill up.  Files that have since been deleted are
+skipped, and a section with nothing to show draws nothing at all.
+
+** The agenda is empty
+:PROPERTIES:
+:CUSTOM_ID: the-agenda-is-empty
+:END:
+
+The section reads ~org-agenda-files~, so it is only as full as your Org agenda
+is.  Check that the variable lists the files you expect (~C-h v
+org-agenda-files~), that the entries are scheduled or have a timestamp, and
+that they fall inside the coming ~welkomscherm/agenda-days~ days.  Finished
+tasks are left out on purpose.
+
+** The agenda makes start-up slower
+:PROPERTIES:
+:CUSTOM_ID: the-agenda-makes-start-up-slower
+:END:
+
+The first agenda render loads Org and reads every agenda file, which costs a
+fraction of a second; after that a day of agenda is milliseconds.  Leave
+~welkomscherm/agenda-days~ at ~1~ if you only want today, keep your agenda
+files small, or set ~welkomscherm/show-agenda~ back to nil and let
+~org-agenda~ be the place you look at the week.
+
+** A section disappeared
+:PROPERTIES:
+:CUSTOM_ID: a-section-disappeared
+:END:
+
+Sections hide themselves when their condition says so.  The work and bookmark
+sections vanish when their lists are empty, recent files when there is nothing
+recent, the agenda when nothing is due, and system details when
+~welkomscherm/show-system-details~ is off.  That is the feature, not a bug: no
+empty headings, ever.
+
+** How do I make my own section look native?
+:PROPERTIES:
+:CUSTOM_ID: how-do-i-make-my-own-section-look-native
+:END:
+
+Yes — build it with ~welkomscherm/make-section~ and draw inside it with the
+helpers in
+[[file:sections.org::#the-primitives-you-can-draw-with][The primitives you can draw with]].
+You get the heading, the spacing and the separator for free.
+
+** How do I get back out?
+:PROPERTIES:
+:CUSTOM_ID: how-do-i-get-back-out
+:END:
+
+The welcome screen is an ordinary buffer, so ~q~ leaves the window and ~C-x b~
+switches away.  If you would like another key to dismiss it, give yourself one
+in the post-render hook:
+
+#+begin_src emacs-lisp
+  (add-hook 'welkomscherm/post-render-hook
+            (lambda () (local-set-key (kbd "q") #'kill-buffer-and-window)))
+#+end_src
+
+** Does it work in a terminal?
+:PROPERTIES:
+:CUSTOM_ID: does-it-work-in-a-terminal
+:END:
+
+Yes, identically: it is plain text and ordinary Emacs buttons, so it works over
+SSH in ~emacs -nw~ with no images and no special fonts.
+
+** Available hooks
+:PROPERTIES:
+:CUSTOM_ID: available-hooks
+:END:
+
+welkomscherm.el allows you to run code arbitrarily both before it renders, as
+well as after.  You should feel free to customize this to your liking.
+
+On the technical side, this means two hooks are made available,
+~welkomscherm/pre-render-hook~ and ~welkomscherm/post-render-hook~.
+
+Find here an example where we adjust the ~fill-column~ in the welkomscherm
+buffer so that the dashboard gets centered properly according to the size of
+the frame.
+
+By default, without this, centering is based on your default ~fill-column~
+(likely 70 char) due to ~(center-line)~.
+
+#+begin_src emacs-lisp
+  (add-hook 'welkomscherm/pre-render-hook
+            (lambda () (setq-local fill-column (frame-parameter nil 'width))))
+#+end_src
+
+Find here an example of running arbitrary code after rendering:
+
+#+begin_src emacs-lisp
+  (add-hook 'welkomscherm/post-render-hook
+            (lambda () (message "welkomscherm rendered successfully")))
+#+end_src

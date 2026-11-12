@@ -1,0 +1,215 @@
+#+title: Configuring the screen
+#+email: jjbigorra@gmail.com
+#+language: en
+#+options: toc:nil num:nil
+
+* Configuring the screen
+
+Part of the [[file:index.org][welkomscherm manual]].
+
+Feel free to dive a little into the source code and explore all the
+configuration options: every option is documented in its own docstring.  Out of
+the box, welkomscherm shows its top title, then your work and personal
+bookmarks, your action buttons, and how long startup took.
+
+Every option below belongs to the ~welkomscherm~ customization group and can be
+set with ~setopt~, with ~setq~ on older Emacsen, or through
+~M-x customize-group RET welkomscherm~.
+
+The screen's *order and composition* is not an option list but a single list of
+sections; [[file:sections.org][Sections]] is the page for that.
+
+** Look, buffer and titles
+:PROPERTIES:
+:CUSTOM_ID: look-buffer-and-titles
+:END:
+
+- ~welkomscherm/buffer-name~ (string, default ~"*welkomscherm*"~) ::
+  The name of the buffer welkomscherm renders into.  Change it only if another
+  package wants that name.
+
+- ~welkomscherm/centered~ (boolean, default ~t~) ::
+  Whether text lines are centred.  When nil, everything is drawn flush left,
+  which some people prefer in narrow terminals.
+
+- ~welkomscherm/line-spacing~ (integer, float, or nil, default ~10~) ::
+  How many pixels to use for ~line-spacing~.  An integer is a number of pixels
+  and a float is a fraction of the current line height.  When nil, the buffer
+  keeps the existing editor default ~line-spacing~.
+
+- ~welkomscherm/use-section-title~ (boolean, default ~t~) ::
+  Whether section headings are drawn.  Turning it off keeps the blank-line and
+  rule separation but hides the titles, for a quieter screen.
+
+- ~welkomscherm/use-separator~ (boolean, default ~nil~) ::
+  Whether a horizontal rule separates sections.  The buffer keeps a plain form
+  feed (the ~^L~ page break of a text file) and welkomscherm draws it as a rule
+  using nothing but Emacs, so no rendering library is involved, and the rule
+  re-flows by itself whenever the frame is resized.  The old name
+  ~welkomscherm/use-form-feed~ still works as an obsolete alias.
+
+- ~welkomscherm/separator~ (character, default ~?─~) ::
+  The character the rule is made of; try ~?=~, ~?*~ or ~?·~ for another
+  texture.
+
+- ~welkomscherm/separator-width~ (integer or nil, default ~nil~) ::
+  How wide the rule is, in columns.  ~nil~ follows the content and shares the
+  text's centring axis: the rule spans ~fill-column~ columns, or the window
+  when that is narrower.
+
+- ~welkomscherm/top-title-list~ (list of strings) ::
+  The lines of the top banner.  Default: "While any editor can save your files"
+  and "only Emacs can save your soul !".  Make it say whatever feels like home.
+
+- The heading options — ~welkomscherm/bookmarks-name~, ~welkomscherm/work-name~,
+  ~welkomscherm/actions-name~, ~welkomscherm/recent-files-name~,
+  ~welkomscherm/agenda-name~, ~welkomscherm/system-details-name~ and
+  ~welkomscherm/init-time-name~ (all strings) :: Rename any section heading.
+  The little suit, heart and sun glyphs in the defaults are just text; replace
+  them with nothing, or with your own favourite marks.
+
+** Your links and buttons
+:PROPERTIES:
+:CUSTOM_ID: your-links-and-buttons
+:END:
+
+- ~welkomscherm/bookmarks-list~ (alist) ::
+  The personal bookmarks.  It is a list of *rows*; each row is a list of
+  ~(ALIAS . PATH)~ pairs, and each alias becomes a button that opens its path.
+  Rows let you put several links on one line, the way you would arrange a
+  shelf:
+
+  #+begin_src emacs-lisp
+    (setopt welkomscherm/bookmarks-list
+            '((("blog" . "~/org/blog.org") ("inbox" . "~/org/inbox.org"))
+              (("photos" . "~/Pictures/"))))
+  #+end_src
+
+- ~welkomscherm/work-list~ (alist) ::
+  The work bookmarks, in exactly the same shape as ~bookmarks-list~.  Keeping
+  personal and work links apart is a small kindness you do your future self.
+
+- ~welkomscherm/actions-list~ (alist) ::
+  Buttons that *do* something.  It is a list of rows; each row is a list of
+  ~(LABEL . FUNCTION)~ pairs, where the function is called with the clicked
+  button as its only argument:
+
+  #+begin_src emacs-lisp
+    (setopt welkomscherm/actions-list
+            '((("new note" . (lambda (btn) (find-file "~/org/inbox.org")))
+               ("scratch"  . (lambda (btn) (switch-to-buffer "*scratch*"))))))
+  #+end_src
+
+** Optional sections
+:PROPERTIES:
+:CUSTOM_ID: optional-sections
+:END:
+
+Three sections are off by default, so that they never surprise you, and each
+turns on with a single flag.
+
+- ~welkomscherm/show-system-details~ (boolean, default ~nil~) ::
+  When non-nil, a small section reports the running Emacs version, the
+  operating system, the host and the user.  Its rows come from
+  ~welkomscherm/system-details-list~.
+
+- ~welkomscherm/system-details-list~ (alist) ::
+  Each entry is ~(LABEL . VALUE)~, where VALUE is either a string or a
+  function of no arguments returning a string.  The default rows are built from
+  Emacs's own variables.  Add your own, for instance to greet you by name:
+
+  #+begin_src emacs-lisp
+    (setopt welkomscherm/show-system-details t)
+    (setopt welkomscherm/system-details-list
+            '((("Emacs"  . welkomscherm/system-emacs-version)
+              ("System" . welkomscherm/system-description)
+              ("Host"   . system-name)
+              ("User"   . welkomscherm/system-user-name)
+              ("Mood"   . "ready to write"))))
+  #+end_src
+
+- ~welkomscherm/show-recent-files~ (boolean, default ~nil~) ::
+  When non-nil, lists the files you visited recently.  The list is read from
+  the built-in ~recentf-list~, so enable ~recentf-mode~ for it to fill up.
+  Files that no longer exist on disk are skipped, so the section never offers
+  you something that is gone.  Each file gets its own line, with the directory
+  it lives in muted beside it, so two files of the same name are told apart.
+
+- ~welkomscherm/recent-files-limit~ (integer, default ~5~) ::
+  How many recent files to show.  The section stays quiet when there is nothing
+  to show, so it never leaves an empty heading behind.
+
+#+begin_src emacs-lisp
+  (setopt welkomscherm/show-recent-files t
+          welkomscherm/recent-files-limit 5)
+#+end_src
+
+- ~welkomscherm/show-agenda~ (boolean, default ~nil~) ::
+  When non-nil, shows your Org agenda: the entries of the coming days, read
+  from ~org-agenda-files~.  Finished tasks are left out, every entry is drawn
+  on the day it is due (so a deadline is not listed twice), and clicking an
+  entry opens the heading it came from.  Org ships with Emacs and is loaded
+  only when this section is on.
+
+- ~welkomscherm/agenda-days~ (integer, default ~1~) ::
+  How many days of agenda to show, starting today.  Each extra day is another
+  scan of your agenda files, so ~1~ is the cheapest; set it to ~7~ for the week
+  ahead.
+
+- ~welkomscherm/agenda-name~ (string, default ~"Agenda ☀"~) ::
+  The heading of the agenda section, spelled the way the other headings are.
+
+#+begin_src emacs-lisp
+  (setopt welkomscherm/show-agenda t
+          welkomscherm/agenda-days 7)
+#+end_src
+
+The agenda is the one section that can take a moment, because Org has to read
+your agenda files and the first scan loads Org itself.  With the section off,
+welkomscherm never touches Org at all.
+
+** Startup time
+:PROPERTIES:
+:CUSTOM_ID: startup-time
+:END:
+
+- ~welkomscherm/show-init-time~ (boolean, default ~t~) ::
+  Whether to show how long Emacs took to start.  Handy while you are tuning
+  your configuration; turn it off once you are happy.
+
+- ~welkomscherm/init-time-name~ (string, default ~"Emacs startup took τ"~) ::
+  The heading for that value.
+
+** Hooks
+:PROPERTIES:
+:CUSTOM_ID: hooks
+:END:
+
+- ~welkomscherm/pre-render-hook~ (hook) ::
+  Run before the buffer is populated, with the welkomscherm buffer current.
+  A natural place to adjust ~fill-column~ so that centring matches the width
+  of your frame.
+
+- ~welkomscherm/post-render-hook~ (hook) ::
+  Run after the buffer is populated, with the welkomscherm buffer current.
+
+Both are described with examples in
+[[file:recipes.org::#available-hooks][Available hooks]].
+
+** The screen itself
+:PROPERTIES:
+:CUSTOM_ID: the-screen-itself
+:END:
+
+- ~welkomscherm/sections~ (list) ::
+  The ordered list of sections to render — a mix of the built-in section
+  records and any sections of your own.  See
+  [[file:sections.org][Sections: the building block]].
+
+- ~welkomscherm/top-title~, ~welkomscherm/agenda-section~, ~welkomscherm/work~,
+  ~welkomscherm/bookmarks~, ~welkomscherm/recent-files-section~,
+  ~welkomscherm/actions~, ~welkomscherm/system-details~,
+  ~welkomscherm/init-time~ :: These are the built-in section records
+  themselves.  You rarely set them directly; you reference them when you
+  compose ~welkomscherm/sections~, or when you want to reuse one of them next
+  to a section of your own.

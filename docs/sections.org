@@ -1,0 +1,118 @@
+#+title: Sections: the building block
+#+email: jjbigorra@gmail.com
+#+language: en
+#+options: toc:nil num:nil
+
+* Sections: the building block
+
+Part of the [[file:index.org][welkomscherm manual]].
+
+Everything on the screen is a *section*.  A section is a small record, built
+with ~welkomscherm/make-section~, that knows three things:
+
+- its *name* — the heading drawn above it.  It can be a plain string, a
+  function returning a string (so the heading follows customization made
+  later), or ~nil~ for a section with no heading at all;
+- its *render* function — a function of no arguments that grows the buffer;
+- its *condition* — a function of no arguments; when it returns non-nil the
+  section is shown, otherwise it is skipped entirely.  ~nil~ means "always
+  show".
+
+The shared framing — the blank line, the optional separator and the heading —
+is drawn for you by ~welkomscherm/render-section~, so a section body only ever
+draws its own content.  That is what makes sections independent: to add,
+remove or reorder one, you never touch the rendering code.
+
+The screen itself is simply the list ~welkomscherm/sections~, rendered in
+order:
+
+#+begin_src emacs-lisp
+  welkomscherm/sections
+  ;; => (welkomscherm/top-title welkomscherm/agenda-section welkomscherm/work
+  ;;     welkomscherm/bookmarks welkomscherm/recent-files-section
+  ;;     welkomscherm/actions welkomscherm/system-details welkomscherm/init-time)
+#+end_src
+
+** Composing the screen
+:PROPERTIES:
+:CUSTOM_ID: composing-the-screen
+:END:
+
+Reorder that list to reorder your home screen; drop an element to retire a
+section; add your own to make the screen truly yours.  A section can even be a
+plain function of no arguments, if that is all you need:
+
+#+begin_src emacs-lisp
+  (setopt welkomscherm/sections
+          (list welkomscherm/top-title
+                ;; A section of your own, built as a record.
+                (welkomscherm/make-section
+                 :name "Today"
+                 :condition (lambda () (bound-and-true-p org-agenda-files))
+                 :render (lambda () (welkomscherm/insert-muted "Make it a good one.")))
+                ;; Or just a bare function.
+                (lambda () (welkomscherm/insert-muted "and a warm cup of coffee"))
+                welkomscherm/bookmarks
+                welkomscherm/actions))
+#+end_src
+
+** The primitives you can draw with
+:PROPERTIES:
+:CUSTOM_ID: the-primitives-you-can-draw-with
+:END:
+
+A section body is ordinary Emacs Lisp: you may ~insert~ whatever you like.  To
+keep it looking like the rest of the screen, use welkomscherm's own helpers.
+
+| Helper                            | What it does                                           |
+|-----------------------------------+--------------------------------------------------------|
+| ~welkomscherm/insert-muted~       | insert text in the muted face and centre the line      |
+| ~welkomscherm/insert-new-line~    | end the current line                                   |
+| ~welkomscherm/insert-spacer~      | insert the two-space gap between two buttons           |
+| ~welkomscherm/insert-separator~   | insert a horizontal rule marker, followed by a newline |
+| ~welkomscherm/maybe-separator~    | the same, only when separators are enabled             |
+| ~welkomscherm/maybe-centered~     | centre the current line when ~welkomscherm/centered~   |
+| ~welkomscherm/render-rows~        | draw rows of ~(ALIAS . PATH)~ buttons                  |
+| ~welkomscherm/render-action-rows~ | draw rows of ~(LABEL . FUNCTION)~ buttons              |
+| ~welkomscherm/render-section~     | draw one section, framing and all                      |
+
+A slightly more ambitious section, with its own buttons:
+
+#+begin_src emacs-lisp
+  (welkomscherm/make-section
+   :name "Capture"
+   :render (lambda ()
+             (welkomscherm/render-action-rows
+              (list (list (cons "note" (lambda (btn) (find-file "~/org/inbox.org")))
+                          (cons "task" (lambda (btn) (find-file "~/org/tasks.org"))))))))
+#+end_src
+
+** A section that changes with the clock
+:PROPERTIES:
+:CUSTOM_ID: a-section-that-changes-with-the-clock
+:END:
+
+A section body runs with the welkomscherm buffer current, so it draws into the
+screen directly.  Anything that needs another buffer — reading a file, asking
+Org — has to do that work and then come back:
+
+#+begin_src emacs-lisp
+  (welkomscherm/make-section
+   :name "Today"
+   :render (lambda ()
+             (welkomscherm/insert-muted (format-time-string "%A %e %B"))))
+#+end_src
+
+Because the body runs on every render, keep it plain: a long scan of a file or
+the network belongs in a variable the body reads, not in the body.
+
+** Why sections instead of an items list
+:PROPERTIES:
+:CUSTOM_ID: why-sections-instead-of-an-items-list
+:END:
+
+Dashboards usually offer a fixed menu of widgets with a count per widget
+(~dashboard-items~ and friends).  welkomscherm offers the thing the widgets are
+made of instead, so the built-in sections and your own are the same kind of
+object, and a section you write can be reordered, shared, or dropped into
+someone else's screen without touching the package.

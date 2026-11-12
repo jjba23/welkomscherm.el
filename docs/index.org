@@ -1,0 +1,58 @@
+#+title: The welkomscherm manual
+#+email: jjbigorra@gmail.com
+#+language: en
+#+options: toc:nil num:nil
+
+* The welkomscherm manual
+
+/welkomscherm/ is Dutch for *welcome screen*.  This is the manual for
+welkomscherm.el, a small, calm, extensible welcome screen for Emacs 28.1 and
+newer, built from nothing but Emacs itself.
+
+The [[file:../README.org][README]] is the front page: what the package is for, a picture of it, and
+the shortest install.  These pages are the rest.
+
+** What is here
+:PROPERTIES:
+:CUSTOM_ID: what-is-here
+:END:
+
+| Page                                                        | What it answers                                                    |
+|-------------------------------------------------------------+--------------------------------------------------------------------|
+| [[file:installation.org][Installation]]                     | How do I get it running, from Guix, Nix, a container or a package? |
+| [[file:configuration.org][Configuration]]                   | Which option changes what, including the opt-in sections?          |
+| [[file:sections.org][Sections]]                             | How is the screen built, and how do I add a block of my own?       |
+| [[file:recipes.org][Recipes and troubleshooting]]           | Why is my screen off-centre, empty, or refusing to behave?         |
+| [[file:comparison.org][How welkomscherm compares]]          | How is this different from dashboard, enlight and the others?      |
+| [[file:development.org][Testing, releases and screenshots]] | How do I run the gate, cut a release, or regenerate the pictures?  |
+
+** The thirty-second tour
+:PROPERTIES:
+:CUSTOM_ID: the-thirty-second-tour
+:END:
+
+1. Put welkomscherm on your ~load-path~ and require it, or install it the way
+   [[file:installation.org][Installation]] describes.
+2. Point it at a directory or file you open all day:
+
+   #+begin_src emacs-lisp
+     (require 'welkomscherm)
+     (setq welkomscherm/bookmarks-list
+           '((("org" . "~/org/") ("notes" . "~/notes.org"))))
+   #+end_src
+
+3. Run ~M-x welkomscherm~.
+
+To make it the first thing you see, set ~initial-buffer-choice~ as
+[[file:installation.org::#welkomscherm-at-startup][Welkomscherm at startup]] shows.
+
+** Where the rest lives
+:PROPERTIES:
+:CUSTOM_ID: where-the-rest-lives
+:END:
+
+- The [[file:../NEWS.org][changelog]] is the release history, newest first.
+- The [[file:../LICENSE][license]] is MIT, for the code and the documentation alike.
+- Questions, bugs and ideas go to
+  [[https://github.com/jjba23/welkomscherm.el/issues][the issue tracker]]; the
+  [[file:development.org::#contributing][contributing notes]] say what helps most.

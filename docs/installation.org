@@ -1,0 +1,239 @@
+#+title: Installing welkomscherm
+#+email: jjbigorra@gmail.com
+#+language: en
+#+options: toc:nil num:nil
+
+* Installing welkomscherm
+
+Part of the [[file:index.org][welkomscherm manual]].
+
+** Requirements
+:PROPERTIES:
+:CUSTOM_ID: requirements
+:END:
+
+- *GNU Emacs 28.1 or newer.*  That is the whole list.  welkomscherm has no
+  external dependencies and does not require any part of Emacs that is not
+  already there (no ~cl-lib~ beyond the bundled one, no icon package, no
+  rendering library).
+- *Optional:* ~recentf-mode~ if you want the recent files section to have
+  something to show, and Org (which ships with Emacs) for the agenda section.
+  welkomscherm loads Org only when that section is enabled.
+
+** From the Guix channel
+:PROPERTIES:
+:CUSTOM_ID: from-the-guix-channel
+:END:
+
+*GNU Guix* is the functional package manager this project is developed with: a
+build is a pure function of its inputs, so the same recipe gives the same
+result everywhere, and an upgrade that goes wrong can be rolled back.
+
+The jointhefreeworld channel carries ~emacs-welkomscherm~ at the current
+release, so a checkout of the channel is enough — no package definition to
+write:
+
+#+begin_src shell
+git clone https://github.com/jjba23/guix-jointhefreeworld.git
+guix install -L ./guix-jointhefreeworld emacs-welkomscherm
+#+end_src
+
+Add the channel to ~$HOME/.config/guix/channels.scm~ (the channel's README has
+the four lines) and a plain ~guix install emacs-welkomscherm~ keeps working on
+every later ~guix pull~.
+
+** From the Nix flake
+:PROPERTIES:
+:CUSTOM_ID: from-the-nix-flake
+:END:
+
+*Nix* offers the same declarative, reproducible model with its own language,
+its own store and a binary cache, and it is a natural fit if the rest of your
+machine is already described in Nix.
+
+The jointhefreeworld flake builds this project with this repository's own
+expression, so the package cannot drift from the source:
+
+#+begin_src shell
+nix build github:jjba23/nix-jointhefreeworld#emacs-welkomscherm
+#+end_src
+
+The same attribute is available as an overlay, so
+~pkgs.jointhefreeworld.emacs-welkomscherm~ works inside a NixOS or home-manager
+configuration too.
+
+** As a container image
+:PROPERTIES:
+:CUSTOM_ID: as-a-container-image
+:END:
+
+*Podman or Docker* is the route that puts nothing on the host: the ~Dockerfile~
+in this repository builds the project in a builder stage and copies only what
+it installed into a runtime stage, so the image is small and the host keeps its
+own toolchain untouched.
+
+#+begin_src shell
+podman build -t welkomscherm-el .   # docker build -t welkomscherm-el . also works
+podman run --rm -it welkomscherm-el
+#+end_src
+
+The image's entry point is Emacs, with welkomscherm.el installed and
+byte-compiled, which makes it useful for a quick try and for reproducing a bug
+on a clean system.
+
+** As a distribution package
+:PROPERTIES:
+:CUSTOM_ID: as-a-distribution-package
+:END:
+
+*Debian, openSUSE and Arch* each get the project through their own package
+manager.  Packaging lives in this repository under ~packaging/~ and is pinned to
+the same release tag, so the recipes and the sources they build are versioned
+together.
+
+None of the three archives ships welkomscherm.el yet, so these are recipes to
+build rather than packages to install from a mirror:
+
+| Distribution   | Package              | How to build it                                                                     |
+|----------------+----------------------+-------------------------------------------------------------------------------------|
+| Debian, Ubuntu | ~elpa-welkomscherm~  | copy ~packaging/debian~ to the repository root, then ~dpkg-buildpackage -us -uc -b~ |
+| openSUSE       | ~emacs-welkomscherm~ | ~osc build~ with ~packaging/opensuse~                                               |
+| Arch           | ~emacs-welkomscherm~ | ~makepkg -si~ in ~packaging/arch~                                                   |
+
+Each recipe carries its own dependency list, so a missing library fails the
+build with its name rather than producing a package that cannot load.
+
+** Which one?
+:PROPERTIES:
+:CUSTOM_ID: which-one
+:END:
+
+- *Guix* if you want the toolchain the project is tested with, and the ability
+  to roll back a bad upgrade.
+- *Nix* if the rest of your machine is already declarative; the flake pins
+  nixpkgs and gives you a binary cache.
+- *Container* if you only want to try the release, or reproduce a report on a
+  machine that has nothing installed.
+- *Distribution package* if you want the project managed by the same tool as
+  the rest of your system, with its licence, manual page and launcher in the
+  usual places.
+
+** Install with Elpaca and use-package (recommended)
+:PROPERTIES:
+:CUSTOM_ID: install-elpaca
+:END:
+
+The package is not (yet) available in popular Emacs repositories such as MELPA
+or ELPA, so fetch it straight from the source of truth:
+
+#+begin_src emacs-lisp
+  (use-package welkomscherm
+    :ensure (:host github :repo "jjba23/welkomscherm.el" :branch "trunk")
+    :bind (("C-c SPC SPC" . welkomscherm))
+    :init
+    (setopt welkomscherm/centered t
+            welkomscherm/use-section-title t
+            welkomscherm/use-separator nil)
+
+    ;; A quiet two-line greeting.
+    (setopt welkomscherm/top-title-list
+          '("Make yourself comfortable."
+            "Your files are right here."))
+
+    (setopt welkomscherm/bookmarks-list
+          '((("dotfiles" . "~/Dev/Personal/dotfiles/")
+             ("notes" . "~/Dev/Personal/private-notes/")
+             ("emacs config" . "~/Dev/Personal/dotfiles/users/joe/emacs/init.el"))
+            (("second-row-api" . "~/Dev/Personal/second-row-api/README.md")
+             ("second-row-ssr" . "~/Dev/Personal/second-row-ssr/"))))
+
+    (setopt welkomscherm/work-list
+          '((("my-work" . "~/Dev/Work/my-work/")
+             ("hem-wiki" . "~/Dev/Work/hem-wiki/"))))
+
+    (setopt welkomscherm/actions-list
+          '((("*scratch*" . (lambda (btn) (switch-to-buffer "*scratch*")))
+             ("*Messages*" . (lambda (btn) (switch-to-buffer "*Messages*")))
+             ("re-render me" . (lambda (btn) (welkomscherm))))))
+
+    ;; Offer a hand, only if you want it.
+    (setopt welkomscherm/show-recent-files t
+            welkomscherm/show-system-details nil))
+#+end_src
+
+Then simply call ~M-x welkomscherm~ whenever you want to come home.  To make it
+the first thing you see, see [[#welkomscherm-at-startup][Welkomscherm at startup]].
+
+#+begin_quote
+/A note on ~setopt~:/ it arrived in Emacs 29.  If you run an older Emacs — and
+welkomscherm is happy all the way back to 28.1 — use ~setq~ in place of
+~setopt~ and everything else above stays the same.
+#+end_quote
+
+** Install by hand
+:PROPERTIES:
+:CUSTOM_ID: install-by-hand
+:END:
+
+Two lines are enough if you keep the file somewhere on your ~load-path~:
+
+#+begin_src shell
+  git clone https://github.com/jjba23/welkomscherm.el ~/.emacs.d/site-lisp/welkomscherm.el
+#+end_src
+
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/welkomscherm.el")
+  (require 'welkomscherm)
+#+end_src
+
+** Install with package-vc (Emacs 29 and newer)
+:PROPERTIES:
+:CUSTOM_ID: install-package-vc
+:END:
+
+If you run Emacs 29 or newer, the built-in ~package-vc~ can fetch, build and
+load it without any third-party package manager at all:
+
+#+begin_src emacs-lisp
+  (package-vc-install "https://github.com/jjba23/welkomscherm.el")
+#+end_src
+
+Or interactively: ~M-x package-vc-install RET~ and paste the URL.
+
+** Install with Nix
+:PROPERTIES:
+:CUSTOM_ID: install-with-nix
+:END:
+
+This repository carries the expression itself, ~default.nix~ next to
+~welkomscherm.el~, so ~nix-build~ in this checkout builds the package.  It is
+also part of
+[[https://github.com/jjba23/nix-jointhefreeworld][nix-jointhefreeworld]],
+the set of Nix packages for everything Jointhefreeworld.  The set's
+~emacsOverlay~ adds it to ~emacsPackages~, byte-compiled and with its
+autoloads, so an Emacs that Nix builds gets it the way it gets any other
+package:
+
+#+begin_src nix
+  let
+    emacsPackages = pkgs.emacsPackages.overrideScope nix-jointhefreeworld.emacsOverlay;
+  in
+    emacsPackages.withPackages (epkgs: [ epkgs.welkomscherm ])
+#+end_src
+
+** Welkomscherm at startup
+:PROPERTIES:
+:CUSTOM_ID: welkomscherm-at-startup
+:END:
+
+If you want the welcome screen to be your initial buffer whenever you start a
+new Emacs (a GUI frame or a terminal one), add this to your Emacs
+configuration:
+
+#+begin_src emacs-lisp
+  (setq initial-buffer-choice
+        (lambda () (welkomscherm) (get-buffer welkomscherm/buffer-name)))
+#+end_src
+
+Note that if using ~use-package~ it's recommendable to apply this setting in
+your ~(use-package emacs)~ declaration.

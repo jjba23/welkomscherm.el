@@ -1,0 +1,46 @@
+#+title: How welkomscherm compares
+#+email: jjbigorra@gmail.com
+#+language: en
+#+options: toc:nil num:nil
+
+* How welkomscherm compares
+
+Part of the [[file:index.org][welkomscherm manual]].
+
+The Emacs dashboard space is friendly and varied; each of these packages is a
+good answer to a slightly different question.  Read this table as a map rather
+than a scoreboard: any of them may be the right home for you.
+
+| Package              | Hard requirements             | What it gives you                                                                               | How you shape it                                  |
+|----------------------+-------------------------------+-------------------------------------------------------------------------------------------------+---------------------------------------------------|
+| *welkomscherm.el*    | Emacs ≥ 28.1 (nothing else)   | centred links, bookmarks, work, actions, recent files, Org agenda, system details, startup time | composable sections in one list                   |
+| emacs-dashboard      | Emacs ≥ 27.1                  | banner, recent files, bookmarks, projects, agenda, registers                                    | ~dashboard-items~ and ~dashboard-startupify-list~ |
+| enlight              | Emacs ≥ 27.1 and ~compat~     | one fully custom string, plus optional text menus                                               | ~enlight-content~ and hooks                       |
+| welcome.el           | Emacs ≥ 27.1 and ~nerd-icons~ | a banner header and a key-driven command menu                                                   | ~welcome-menu-items~                              |
+| minimal-dashboard.el | Emacs ≥ 27.1                  | a centred image and a line of text                                                              | a handful of variables                            |
+
+A few notes to keep the comparison honest (all read from the projects'
+repositories):
+
+- [[https://github.com/emacs-dashboard/dashboard][emacs-dashboard]] is the richest of the group and the closest thing to a
+  batteries-included cockpit; it is also the largest, with roughly 2,400 lines
+  across ~dashboard.el~ and ~dashboard-widgets.el~.  Its ~page-break-lines~,
+  ~projectile~ and icon dependencies are optional, not required.
+- [[https://github.com/ichernyshovvv/enlight][enlight]] is deliberately the opposite: a small framework (~330 lines) where
+  you supply the content as a string.  Its only external dependency is ~compat~.
+- [[https://github.com/tomrss/welcome.el][welcome.el]] is a compact welcome buffer (~277 lines) built around a command
+  menu, and needs ~nerd-icons~ for its icons.
+- [[https://github.com/dheerajshenoy/minimal-dashboard.el][minimal-dashboard.el]] narrows the idea down to an image and a line of text
+  (~337 lines).
+
+Against all of these, welkomscherm's distinguishing choices are its *zero
+external dependencies*, its *section abstraction* — every block is a reusable
+unit you can reorder or share — and its *strict equivalence between GUI and
+TUI*.  When the package is measured against Emacs's image-display limits, this
+is what lets the very same screen greet you on a laptop, a workstation and a
+server console without a single conditional.
+
+The agenda is the one deliberate overlap with emacs-dashboard: if you want the
+week, registers, projects and a banner in one cockpit, that package is the
+better tool.  welkomscherm shows today, quietly, and leaves the rest to
+~org-agenda~.
