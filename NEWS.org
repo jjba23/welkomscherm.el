@@ -7,6 +7,20 @@ All notable changes to this project will be documented in this file. Changes are
 
 This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
 
+* 1.5.1 (2026-11-12)
+
+*** Changed
+
+- The text banner is now opt-in: ~welkomscherm/banner-ascii~ defaults to nil, so a terminal, a batch render and the screenshots draw no banner, the way vanilla Emacs draws none in a terminal. The image banner is still on by default wherever a frame can draw it.
+
+*** Fixed
+
+- When an Emacs build cannot draw the SVG splash logo, the banner now tries the PNG logo Emacs installs beside it before giving up, instead of dropping straight to the ASCII art.
+
+*** Version
+
+- Bumped the version to 1.5.1.
+
 * 1.5.0 (2026-11-12)
 
 *** Added

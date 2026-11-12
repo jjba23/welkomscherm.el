@@ -1,3 +1,13 @@
+elpa-welkomscherm (1.5.1-1) unstable; urgency=medium
+
+  * Try the PNG splash logo Emacs installs when the build cannot draw the
+    SVG one, before dropping the banner image at all.
+  * Make the ASCII banner opt-in: `welkomscherm/banner-ascii' now defaults
+    to nil, so terminals, batch renders and the screenshots show no banner.
+  * Bump the version to 1.5.1.
+
+ -- Josep Bigorra <jjbigorra@gmail.com>  Thu, 12 Nov 2026 14:40:00 +0100
+
 elpa-welkomscherm (1.5.0-1) unstable; urgency=medium
 
   * Add a banner at the top of the screen: the GNU Emacs splash logo in a

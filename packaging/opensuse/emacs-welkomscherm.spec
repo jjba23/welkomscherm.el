@@ -16,7 +16,7 @@
 #
 
 Name:           emacs-welkomscherm
-Version:        1.5.0
+Version:        1.5.1
 Release:        0
 Summary:        Simple welcome screen and dashboard for Emacs
 License:        MIT
@@ -49,6 +49,10 @@ emacs -Q --batch -L . -L test -l test/welkomscherm-test.el -f ert-run-tests-batc
 %{_datadir}/emacs/site-lisp/welkomscherm.elc
 
 %changelog
+* Thu Nov 12 2026 Josep Bigorra <jjbigorra@gmail.com> - 1.5.1
+- Try Emacs's PNG splash logo when the build cannot draw the SVG one, and
+  make the ASCII banner opt-in (no banner in terminals by default).
+
 * Thu Nov 12 2026 Josep Bigorra <jjbigorra@gmail.com> - 1.5.0
 - Draw the GNU Emacs splash logo as a banner, with an ASCII fallback in
   terminals, and add opt-in plain-text icons for links.
