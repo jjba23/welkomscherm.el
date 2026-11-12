@@ -1,3 +1,12 @@
+elpa-welkomscherm (1.5.3-1) unstable; urgency=medium
+
+  * Pass the test suite in an Emacs that can display no glyph: the icon tests
+    pin `char-displayable-p' instead of asking a batch Emacs with no fonts,
+    which made `icons-draw-before-*' fail in a sandbox.
+  * Bump the version to 1.5.3.
+
+ -- Josep Bigorra <jjbigorra@gmail.com>  Thu, 12 Nov 2026 16:20:00 +0100
+
 elpa-welkomscherm (1.5.2-1) unstable; urgency=medium
 
   * Turn the banner off by default: `welkomscherm/show-banner' now defaults

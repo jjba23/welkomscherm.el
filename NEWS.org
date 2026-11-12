@@ -7,6 +7,16 @@ All notable changes to this project will be documented in this file. Changes are
 
 This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
 
+* 1.5.3 (2026-11-12)
+
+*** Fixed
+
+- The ERT suite passes in an Emacs that can display no glyph at all: the three icon tests now pin ~char-displayable-p~ instead of asking a batch Emacs with no fonts, which answers no and made ~icons-draw-before-*~ fail in a Nix sandbox.
+
+*** Version
+
+- Bumped the version to 1.5.3.
+
 * 1.5.2 (2026-11-12)
 
 *** Changed

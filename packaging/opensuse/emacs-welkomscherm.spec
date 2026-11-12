@@ -16,7 +16,7 @@
 #
 
 Name:           emacs-welkomscherm
-Version:        1.5.2
+Version:        1.5.3
 Release:        0
 Summary:        Simple welcome screen and dashboard for Emacs
 License:        MIT
@@ -49,6 +49,10 @@ emacs -Q --batch -L . -L test -l test/welkomscherm-test.el -f ert-run-tests-batc
 %{_datadir}/emacs/site-lisp/welkomscherm.elc
 
 %changelog
+* Thu Nov 12 2026 Josep Bigorra <jjbigorra@gmail.com> - 1.5.3
+- Pass the test suite in an Emacs that can display no glyph, where the icon
+  tests used to fail on a font the frame never had.
+
 * Thu Nov 12 2026 Josep Bigorra <jjbigorra@gmail.com> - 1.5.2
 - Turn the banner off by default; enable it with `welkomscherm/show-banner'.
 
