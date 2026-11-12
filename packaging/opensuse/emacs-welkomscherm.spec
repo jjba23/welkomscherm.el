@@ -16,7 +16,7 @@
 #
 
 Name:           emacs-welkomscherm
-Version:        1.4.0
+Version:        1.4.1
 Release:        0
 Summary:        Simple welcome screen and dashboard for Emacs
 License:        MIT
@@ -49,6 +49,10 @@ emacs -Q --batch -L . -L test -l test/welkomscherm-test.el -f ert-run-tests-batc
 %{_datadir}/emacs/site-lisp/welkomscherm.elc
 
 %changelog
+* Thu Nov 12 2026 Josep Bigorra <jjbigorra@gmail.com> - 1.4.1
+- Keep Org's `org-agenda-buffer' to the agenda collection so a killed
+  buffer cannot break the next render on Emacs 28.
+
 * Thu Nov 12 2026 Josep Bigorra <jjbigorra@gmail.com> - 1.4.0
 - Add an opt-in Org agenda section and list recent files one per line.
 - Split the manual into short pages under docs/.

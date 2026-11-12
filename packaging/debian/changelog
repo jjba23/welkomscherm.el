@@ -1,3 +1,11 @@
+elpa-welkomscherm (1.4.1-1) unstable; urgency=medium
+
+  * Keep Org's `org-agenda-buffer' to the agenda collection, so a buffer
+    killed since the last render no longer breaks the next one on Emacs 28.
+  * Bump the version to 1.4.1.
+
+ -- Josep Bigorra <jjbigorra@gmail.com>  Thu, 12 Nov 2026 13:10:00 +0100
+
 elpa-welkomscherm (1.4.0-1) unstable; urgency=medium
 
   * Add an opt-in Org agenda section: `welkomscherm/show-agenda',

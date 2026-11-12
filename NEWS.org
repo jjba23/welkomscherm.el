@@ -7,6 +7,16 @@ All notable changes to this project will be documented in this file. Changes are
 
 This project adheres loosely to [[https://semver.org/spec/v2.0.0.html][Semantic Versioning]].
 
+* 1.4.1 (2026-11-12)
+
+*** Fixed
+
+- The agenda no longer leaves a killed buffer in Org's `org-agenda-buffer' variable. Org 9.5, the one Emacs 28 ships, records the agenda file buffer there and selects it when it makes a marker, so closing that buffer and rendering again signalled "Selecting deleted buffer". The collection now keeps that variable to itself, which also stops the section depending on org's own fix for it.
+
+*** Version
+
+- Bumped the version to 1.4.1.
+
 * 1.4.0 (2026-11-12)
 
 *** Added
