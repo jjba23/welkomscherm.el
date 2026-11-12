@@ -734,27 +734,31 @@ which is the fallback the option promises."
 
 (ert-deftest welkomscherm-test/icons-draw-before-bookmarks-and-work ()
   "Each bookmark and work link gets its section's glyph, then its label."
-  (let ((welkomscherm/icons t)
-        (welkomscherm/centered nil)
-        (welkomscherm/bookmarks-list '((("a" . "/tmp/a"))))
-        (welkomscherm/work-list '((("w" . "/tmp/w")))))
-    (with-temp-buffer
-      (welkomscherm/render-bookmarks)
-      (should (string-prefix-p "♥ " (buffer-string)))
-      (should (equal (button-label (next-button (point-min))) "a")))
-    (with-temp-buffer
-      (welkomscherm/render-work)
-      (should (string-prefix-p "▸ " (buffer-string))))))
+  ;; The glyph, not the frame's fonts, is what this test is about: a batch
+  ;; Emacs in a sandbox reports every glyph as undisplayable.
+  (cl-letf (((symbol-function 'char-displayable-p) (lambda (&rest _) t)))
+    (let ((welkomscherm/icons t)
+          (welkomscherm/centered nil)
+          (welkomscherm/bookmarks-list '((("a" . "/tmp/a"))))
+          (welkomscherm/work-list '((("w" . "/tmp/w")))))
+      (with-temp-buffer
+        (welkomscherm/render-bookmarks)
+        (should (string-prefix-p "♥ " (buffer-string)))
+        (should (equal (button-label (next-button (point-min))) "a")))
+      (with-temp-buffer
+        (welkomscherm/render-work)
+        (should (string-prefix-p "▸ " (buffer-string)))))))
 
 (ert-deftest welkomscherm-test/icons-draw-before-actions ()
   "Action buttons get their glyph too, and keep their action."
-  (let ((welkomscherm/icons t)
-        (welkomscherm/centered nil)
-        (welkomscherm/actions-list '((("go" . ignore)))))
-    (with-temp-buffer
-      (welkomscherm/render-actions)
-      (should (string-prefix-p "◆ " (buffer-string)))
-      (should (equal (button-label (next-button (point-min))) "go")))))
+  (cl-letf (((symbol-function 'char-displayable-p) (lambda (&rest _) t)))
+    (let ((welkomscherm/icons t)
+          (welkomscherm/centered nil)
+          (welkomscherm/actions-list '((("go" . ignore)))))
+      (with-temp-buffer
+        (welkomscherm/render-actions)
+        (should (string-prefix-p "◆ " (buffer-string)))
+        (should (equal (button-label (next-button (point-min))) "go"))))))
 
 (ert-deftest welkomscherm-test/icons-fall-back-to-a-plain-glyph ()
   "A glyph the frame cannot display is replaced by the plain fallback."
@@ -765,10 +769,11 @@ which is the fallback the option promises."
 
 (ert-deftest welkomscherm-test/icons-follow-the-icon-list ()
   "The glyphs are an alist a user can replace; unknown sections stay bare."
-  (let ((welkomscherm/icons t)
-        (welkomscherm/icon-list '((bookmarks . "#"))))
-    (should (equal (welkomscherm/icon 'bookmarks) "#"))
-    (should-not (welkomscherm/icon 'work))))
+  (cl-letf (((symbol-function 'char-displayable-p) (lambda (&rest _) t)))
+    (let ((welkomscherm/icons t)
+          (welkomscherm/icon-list '((bookmarks . "#"))))
+      (should (equal (welkomscherm/icon 'bookmarks) "#"))
+      (should-not (welkomscherm/icon 'work)))))
 
 
 ;;; Whole-buffer rendering
