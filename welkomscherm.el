@@ -93,20 +93,17 @@ The banner is the GNU Emacs logo in a frame that can show images, and
   "Image drawn as the banner, looked up in Emacs's own images directory.
 The default is the splash logo vanilla Emacs draws, so the welcome screen
 opens the way Emacs itself does.  An absolute name is used as it is, a
-relative one is looked up in the `images' directory of `data-directory',
-and nil keeps the banner to `welkomscherm/banner-ascii'."
+relative one is looked up in the `images' directory of `data-directory';
+a build that cannot draw it tries the PNG logo Emacs installs beside it.
+A nil value keeps the banner to `welkomscherm/banner-ascii'."
   :type '(choice (const :tag "No image" nil) file)
   :group 'welkomscherm)
 
-(defcustom welkomscherm/banner-ascii
-  '(" _____ __  __    _    ____ ____"
-    "| ____|  \\/  |  / \\  / ___/ ___|"
-    "|  _| | |\\/| | / _ \\| |   \\___ \\"
-    "| |___| |  | |/ ___ \\ |___ ___) |"
-    "|_____|_|  |_/_/   \\_\\____|____/")
+(defcustom welkomscherm/banner-ascii nil
   "Lines drawn as the banner when an image cannot be shown.
-The default spells EMACS in plain ASCII, so it survives any terminal, font
-or locale; replace it with your own art, or with nil for no banner at all."
+The default is nil, so a terminal and a batch Emacs draw no banner at all,
+the way vanilla Emacs draws none there either.  Set it to a list of lines
+for your own text banner, for instance the EMACS wordmark the manual shows."
   :type '(repeat string)
   :group 'welkomscherm)
 
@@ -588,26 +585,36 @@ absent or `org-agenda-files' has nothing to read."
 
 ;;; Banner
 
-(defun welkomscherm/banner-image-file ()
-  "Return the file named by `welkomscherm/banner-image', or nil if none.
+(defun welkomscherm/banner-image-files ()
+  "Return the files to try for the banner, in order.
 A relative name is looked up in the images directory Emacs installs, which
-is where its own splash logo lives."
+is where its own splash logo lives, and the PNG logo beside it is tried
+next: a build without SVG support can still draw that one.  An absolute
+name is used alone, so a picture of your own is never second-guessed."
   (when welkomscherm/banner-image
-    (let ((file (if (file-name-absolute-p welkomscherm/banner-image)
-                    welkomscherm/banner-image
-                  (expand-file-name welkomscherm/banner-image
-                                    (expand-file-name "images"
-                                                      data-directory)))))
-      (and (file-regular-p file) file))))
+    (if (file-name-absolute-p welkomscherm/banner-image)
+        (list welkomscherm/banner-image)
+      (let* ((file (expand-file-name welkomscherm/banner-image
+                                     (expand-file-name "images"
+                                                       data-directory)))
+             (png (concat (file-name-sans-extension file) ".png")))
+        (if (equal png file) (list file) (list file png))))))
+
+(defun welkomscherm/banner-image-file ()
+  "Return the first banner image file that exists, or nil."
+  (cl-find-if #'file-regular-p (welkomscherm/banner-image-files)))
 
 (defun welkomscherm/banner-image-object ()
   "Return the banner image when this frame can draw it, or nil.
-A build without support for the image's type gets nil, so that the ASCII
-banner is drawn instead of an error being signalled.  `create-image' both
-returns nil and signals for an unsupported type, depending on the version."
-  (let ((file (and (display-images-p) (welkomscherm/banner-image-file))))
-    (when file
-      (ignore-errors (create-image file)))))
+The files in `welkomscherm/banner-image-files' are tried in order, so a
+build that cannot draw the SVG logo still gets the PNG Emacs installs.
+`create-image' both returns nil and signals for an unsupported type,
+depending on the Emacs version."
+  (when (display-images-p)
+    (cl-loop for file in (welkomscherm/banner-image-files)
+             for image = (and (file-regular-p file)
+                              (ignore-errors (create-image file)))
+             when image return image)))
 
 (defun welkomscherm/insert-banner-image (image)
   "Insert IMAGE centred within `fill-column', then end the line.
@@ -625,15 +632,19 @@ The banner draws a blank line under itself; see `welkomscherm/render-banner'."
 (defun welkomscherm/render-banner ()
   "Draw the banner: the Emacs logo when images work, ASCII otherwise.
 Vanilla Emacs draws its splash logo in a graphical frame and nothing in a
-terminal; the ASCII fallback is what makes one screen work in both."
+terminal; so does welkomscherm, unless `welkomscherm/banner-ascii' asks for
+a text banner there.  The banner has no heading of its own, so it draws the
+blank line that separates it from the title below."
   (let ((image (welkomscherm/banner-image-object)))
-    (if image
-        (welkomscherm/insert-banner-image image)
+    (cond
+     (image
+      (welkomscherm/insert-banner-image image)
+      (welkomscherm/insert-new-line))
+     (welkomscherm/banner-ascii
       (dolist (line welkomscherm/banner-ascii)
         (welkomscherm/insert-muted line)
-        (welkomscherm/insert-new-line)))
-    ;; The banner has no heading to separate it from the title below.
-    (welkomscherm/insert-new-line)))
+        (welkomscherm/insert-new-line))
+      (welkomscherm/insert-new-line)))))
 
 ;;; Section bodies
 

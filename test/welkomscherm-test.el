@@ -681,6 +681,34 @@ which is the fallback the option promises."
           (should (equal (welkomscherm/banner-image-file) file)))
       (delete-file file))))
 
+(ert-deftest welkomscherm-test/banner-draws-no-ascii-by-default ()
+  "Without a display and without art, the banner leaves no line behind."
+  (should-not welkomscherm/banner-ascii)
+  (with-temp-buffer
+    (let ((welkomscherm/centered nil))
+      (welkomscherm/render-banner))
+    (should (equal (buffer-string) ""))))
+
+(ert-deftest welkomscherm-test/banner-tries-the-png-logo-when-svg-fails ()
+  "A build without SVG falls back to the PNG logo before giving up."
+  (let (tried)
+    (cl-letf (((symbol-function 'display-images-p) (lambda (&optional _) t))
+              ((symbol-function 'create-image)
+               (lambda (file &rest _)
+                 (push file tried)
+                 (if (string-suffix-p ".svg" file)
+                     (error "Invalid image type 'svg'")
+                   (list 'image :file file)))))
+      (let ((image (welkomscherm/banner-image-object)))
+        (should (string-suffix-p ".png" (plist-get (cdr image) :file)))
+        (should (equal (nreverse tried)
+                       (welkomscherm/banner-image-files)))))))
+
+(ert-deftest welkomscherm-test/banner-keeps-a-custom-image-alone ()
+  "An absolute image path is not extended with Emacs's PNG logo."
+  (let ((welkomscherm/banner-image "/tmp/my-logo.svg"))
+    (should (equal (welkomscherm/banner-image-files) '("/tmp/my-logo.svg")))))
+
 (ert-deftest welkomscherm-test/banner-can-be-turned-off ()
   "A hidden banner section renders nothing at all."
   (let ((text (welkomscherm-test--body
