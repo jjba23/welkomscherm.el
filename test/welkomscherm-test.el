@@ -460,7 +460,11 @@ by the muted directory, and centring keeps that column aligned."
   (let* ((dir-a (make-temp-file "welkomscherm-dir-a" t))
          (dir-b (make-temp-file "welkomscherm-dir-b" t))
          (file-a (expand-file-name "a.org" dir-a))
-         (file-b (expand-file-name "much-longer.org" dir-b)))
+         (file-b (expand-file-name "much-longer.org" dir-b))
+         ;; The screen abbreviates a directory under `~', as Emacs does
+         ;; everywhere else, so the expected text is abbreviated too.
+         (dir-a-label (abbreviate-file-name (directory-file-name dir-a)))
+         (dir-b-label (abbreviate-file-name (directory-file-name dir-b))))
     (unwind-protect
         (progn
           (write-region "" nil file-a)
@@ -472,10 +476,13 @@ by the muted directory, and centring keeps that column aligned."
                 (welkomscherm/render-recent-files))
               (let ((lines (split-string (buffer-string) "\n" t)))
                 (should (= (length lines) 2))
-                (should (string-match-p (regexp-quote dir-a) (nth 0 lines)))
-                (should (string-match-p (regexp-quote dir-b) (nth 1 lines)))
-                (should (= (string-match (regexp-quote dir-a) (nth 0 lines))
-                           (string-match (regexp-quote dir-b)
+                (should (string-match-p (regexp-quote dir-a-label)
+                                        (nth 0 lines)))
+                (should (string-match-p (regexp-quote dir-b-label)
+                                        (nth 1 lines)))
+                (should (= (string-match (regexp-quote dir-a-label)
+                                         (nth 0 lines))
+                           (string-match (regexp-quote dir-b-label)
                                          (nth 1 lines))))))))
       (delete-directory dir-a t)
       (delete-directory dir-b t))))
